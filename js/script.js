@@ -7,7 +7,8 @@ function body_loaded() {
     showcase.registerControls();
     showcase.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-    homogenous_rotation_2d();
+     a1_2d();
+    // homogenous_rotation_2d();
 }
 
 function init() {

@@ -46,10 +46,22 @@ var Showcase = function(config) {
   this.init();
 };
 
+Showcase.prototype.setOrthoDistance = function(dist) {
+  var aspect = this.container.offsetWidth / this.container.offsetHeight;
+  this.camera.left = -dist * aspect;
+  this.camera.right = dist * aspect;
+  this.camera.top = dist;
+  this.camera.bottom = -dist;
+  this.camera.position.z = dist;
+}
+
 Showcase.prototype.init = function() {
 
-  this.camera = new THREE.PerspectiveCamera(this.camera_config.fov, this.container.offsetWidth / this.container.offsetHeight, this.camera_config.near, this.camera_config.far);
-  //this.camera =  new THREE.OrthographicCamera();
+  //this.camera = new THREE.PerspectiveCamera(this.camera_config.fov, this.container.offsetWidth / this.container.offsetHeight, this.camera_config.near, this.camera_config.far);
+  var d = 100;
+  var aspect = this.container.offsetWidth / this.container.offsetHeight;
+  this.camera = new THREE.OrthographicCamera( - d * aspect, d * aspect, d, - d, 1, 1000 );
+  // debugger;
   this.camera.position.x = this.camera_config.x;
   this.camera.position.y = this.camera_config.y;
   this.camera.position.z = this.camera_config.z;
@@ -109,6 +121,20 @@ Showcase.prototype.registerControls = function(object) {
 
 Showcase.prototype.addObject = function(obj) {
     this.scene.add(obj);
+}
+
+Showcase.prototype.cleanObjects = function() {
+    var found = [];
+    for(var i = 0; i < this.scene.children.length; i++) {
+      if(showcase.scene.children[0] instanceof THREE.AmbientLight ||
+        showcase.scene.children[0] instanceof THREE.PointLight ||
+        showcase.scene.children[0] instanceof THREE.LineSegments)
+        continue;
+      found.push(this.scene.children[i]);
+    }
+
+    for(var n = 0; n < found.length; n++)
+      this.scene.remove(found[n]);
 }
 
 Showcase.prototype.initAnimation = function() {
