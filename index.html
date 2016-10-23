@@ -8,10 +8,30 @@
         <script type="text/javascript" src="js/showcase/showcaseutilities.js?a=4"></script> 
         <script type="text/javascript" src="js/showcase/showcase.js?a=4"></script> 
         <script type="text/javascript" src="js/script.js?a=4"></script> 
-        <script type="text/javascript" src="js/exercises/homogenous_rotation_2d.js?a=4"></script> 
-        <script type="text/javascript" src="js/exercises/a1_2d.js?a=4"></script> 
+        <script type="text/javascript" src="js/tests.js?a=4"></script> 
+        <script type="text/javascript" src="js/exercises/homogenous_rotation_2d.js?a=4"></script>
+        <script type="text/javascript" src="js/math/quaternion.js?a=4"></script>
+        <script type="text/javascript" src="js/three_quaternion.js?a=4"></script> 
+        <script type="text/javascript" src="js/exercises/a1_2d.js?a=4"></script>
+        <script type="text/javascript" src="js/exercises/quaternions.js?a=4"></script>
+        <style type="text/css">
+            label {
+                display: block;
+                padding: 12px;
+            }
+            label select {
+                padding: 4px;
+            }
+            label select option {
+                text-align: center;
+            }
+        </style>
     </head>
-    <body onload="javascript:body_loaded()">
+    <body onload="on_body_loaded();" onhashchange="on_hash_changed();">
+        <label for="task_selector">Select Task:
+            <select id="task_selector" name="task_selector" onchange="on_task_changed();">
+        </select>
+        </label>
         <div id="canvas" style="width: 500px; height: 500px;"></div>
     </body>
 </html>

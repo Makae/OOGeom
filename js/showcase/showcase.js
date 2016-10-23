@@ -125,10 +125,11 @@ Showcase.prototype.addObject = function(obj) {
 
 Showcase.prototype.cleanObjects = function() {
     var found = [];
+
     for(var i = 0; i < this.scene.children.length; i++) {
-      if(showcase.scene.children[0] instanceof THREE.AmbientLight ||
-        showcase.scene.children[0] instanceof THREE.PointLight ||
-        showcase.scene.children[0] instanceof THREE.LineSegments)
+      if(showcase.scene.children[i] instanceof THREE.AmbientLight ||
+        showcase.scene.children[i] instanceof THREE.PointLight ||
+        showcase.scene.children[i] instanceof THREE.LineSegments)
         continue;
       found.push(this.scene.children[i]);
     }

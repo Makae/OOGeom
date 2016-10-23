@@ -1,4 +1,11 @@
 var PointUtils = { 
+    getDefaultPointSet : function() {
+        return PointUtils.threePointSet(
+        3, 20, 40, 
+        3, 20, 40
+        );
+    },
+
     threePointSet: function(numX, minX, maxX, 
                            numY, minY, maxY) {
         var set = [];
@@ -13,7 +20,7 @@ var PointUtils = {
                 x = minX + c_x * x_section_width;
                 y = minY + c_y * y_section_width;
                 
-                set.push(new THREE.Vector3(x, y, 0));
+                set.push(new THREE.Vector3(x, y, 1));
             }
         }
 
@@ -22,7 +29,7 @@ var PointUtils = {
 
 
     newThreePoint: function(vector) {
-        var z = z && typeof z != 'undefined' ? z : 0;
+        var z = z && typeof z != 'undefined' ? z : 1;
         var point = new THREE.Mesh( new THREE.CubeGeometry(1, 1, 1), new THREE.MeshBasicMaterial({color:0xff0000}) );
    
         point.position.x = vector.x;
@@ -50,7 +57,7 @@ var PointUtils = {
     deHomogenize2D : function(vectors) {
         var vectors_type = vectors instanceof Array ? 'array' : 'single';
         vectors = vectors_type == 'array' ? vectors : [vectors];
-        debugger;
+        
         for(var i = 0; i < vectors.length; i++) {
             if(vectors[i].z != 1 && vectors[i].z != 0){
                 vectors[i].x /= vectors[i].z
@@ -115,6 +122,18 @@ var MatrixUtils = {
     AXIS_Y : 'y',
     AXIS_Z : 'z',
 
+    columnsToRows : function(matrix, type) {
+        var type = type | 3;
+        var new_matrix = new Array(type * type);
+        var elms = matrix.elements;
+
+        for(var i = 0; i < elms.length; i++) {
+            idx = (i % type) * type + Math.floor(i / type);
+            new_matrix[i] = elms[idx];
+        }
+        return new_matrix;
+    },
+
     project2: function(u, v) {
         var mat_u = new THREE.Matrix3().set(
             1,           0, 0,
@@ -139,31 +158,20 @@ var MatrixUtils = {
         var new_mat = new THREE.Matrix3();
         var ea = mat1.elements;
         var eb = mat2.elements;
-        // new_mat.set(
-        //     ea[0] * eb[0] + ea[0] * eb[3] + ea[0] * eb[6],
-        //     ea[1] * eb[0] + ea[1] * eb[3] + ea[1] * eb[6],
-        //     ea[2] * eb[0] + ea[2] * eb[3] + ea[2] * eb[6],
-        //     ea[3] * eb[1] + ea[3] * eb[4] + ea[3] * eb[7],
-        //     ea[4] * eb[1] + ea[4] * eb[4] + ea[4] * eb[7],
-        //     ea[5] * eb[1] + ea[5] * eb[4] + ea[5] * eb[7],
-        //     ea[6] * eb[2] + ea[6] * eb[5] + ea[6] * eb[8],
-        //     ea[7] * eb[2] + ea[7] * eb[5] + ea[7] * eb[8],
-        //     ea[8] * eb[2] + ea[8] * eb[5] + ea[8] * eb[8]
-        //     );
+
         new_mat.set(
-           ea[0]*eb[0] + ea[0]*eb[1] + ea[0]*eb[2],
-           ea[3]*eb[3] + ea[3]*eb[4] + ea[3]*eb[5],
-           ea[6]*eb[6] + ea[6]*eb[7] + ea[6]*eb[8],
+           ea[0]*eb[0] + ea[3]*eb[1] + ea[6]*eb[2],
+           ea[0]*eb[3] + ea[3]*eb[4] + ea[6]*eb[5],
+           ea[0]*eb[6] + ea[3]*eb[7] + ea[6]*eb[8],
 
-           ea[1]*eb[0] + ea[1]*eb[1] + ea[1]*eb[2],
-           ea[4]*eb[3] + ea[4]*eb[4] + ea[4]*eb[5],
-           ea[7]*eb[6] + ea[7]*eb[7] + ea[7]*eb[8],
+           ea[1]*eb[0] + ea[4]*eb[1] + ea[7]*eb[2],
+           ea[1]*eb[3] + ea[4]*eb[4] + ea[7]*eb[5],
+           ea[1]*eb[6] + ea[4]*eb[7] + ea[7]*eb[8],
 
-           ea[2]*eb[0] + ea[2]*eb[1] + ea[2]*eb[2],
-           ea[5]*eb[3] + ea[5]*eb[4] + ea[5]*eb[5],
-           ea[8]*eb[6] + ea[8]*eb[7] + ea[8]*eb[8]
+           ea[2]*eb[0] + ea[5]*eb[1] + ea[8]*eb[2],
+           ea[2]*eb[3] + ea[5]*eb[4] + ea[8]*eb[5],
+           ea[2]*eb[6] + ea[5]*eb[7] + ea[8]*eb[8]
         );
-
         return new_mat;
     },
 
@@ -210,17 +218,18 @@ var MatrixUtils = {
 
     rotatePoint2d : function(point, axis, rad) {
         var T = MatrixUtils.translate2d(new THREE.Vector3(-point.x, -point.y, -point.z));
-        
         var T_1 = MatrixUtils.getInverseMatrix3(T);
         var R = MatrixUtils.rotateAxis(axis, rad);
 
         var new_mat = MatrixUtils.multiply3x3(T_1, MatrixUtils.multiply3x3(R, T));
+        //var new_mat = T; //MatrixUtils.multiply3x3(R, T);
+        console.log(new_mat);
         return new_mat;
     },
 
     getInverseMatrix3 : function(mat3) {
-        debugger;
-        var inv = (new THREE.Matrix3()).getInverse(mat3).multiplyScalar(mat3.determinant());
+        var inv = (new THREE.Matrix3()).getInverse(mat3);
+
         return inv;
     },
 
@@ -238,7 +247,7 @@ var MatrixUtils = {
     applyMatrix : function(vectors, mat) {
         var vectors_type = vectors instanceof Array ? 'array' : 'single';
         vectors = vectors_type == 'array' ? vectors : [vectors];
-
+        
         for(var i = 0; i < vectors.length; i++)
             vectors[i].applyMatrix3(mat);
 
@@ -247,4 +256,18 @@ var MatrixUtils = {
         return vectors;
     }
 
-}
+};
+
+var QuatUtils = {
+    applyQuaternion : function(vectors, quaternion) {
+        var vectors_type = vectors instanceof Array ? 'array' : 'single';
+        vectors = vectors_type == 'array' ? vectors : [vectors];
+        
+        for(var i = 0; i < vectors.length; i++)
+            quaternion.applyToVector(vectors[i]);
+
+         if(vectors_type == 'single')
+            return vectors[0];
+        return vectors;
+    }
+};
