@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="libs/mathjs/math.min.js"></script>
+        <script src="libs/highlight/highlight.pack.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.js"></script>
         <script src="https://threejs.org/examples/js/controls/TrackballControls.js"></script>
         <script type="text/javascript" src="js/utilities.js?a=4"></script> 
@@ -14,7 +14,14 @@
         <script type="text/javascript" src="js/three_quaternion.js?a=4"></script> 
         <script type="text/javascript" src="js/exercises/a1_2d.js?a=4"></script>
         <script type="text/javascript" src="js/exercises/quaternions.js?a=4"></script>
+
+        <link rel="stylesheet" href="libs/highlight/styles/rainbow.css">
         <style type="text/css">
+            body {
+                padding: 0;
+                margin: 0;
+                background-color: #101010;
+            }
             label {
                 display: block;
                 padding: 12px;
@@ -25,6 +32,34 @@
             label select option {
                 text-align: center;
             }
+            canvas {
+                float: left;
+                display: inline-block;
+            }
+            .wrapper {
+                float: none;
+                clear: both;
+                overflow: hidden;
+            }
+            .canvas_wrapper {
+                display:inline-block;
+                float:left;
+                padding:0;
+                margin:0;
+                overflow:hidden;
+                width: 50%;
+
+            }
+            #code {
+                display:inline-block;
+                float:right;
+                padding:0;
+                margin:0;
+                overflow:hidden;
+                width: 50%;
+                box-sizing: border-box;
+                padding: 12px;
+            }
         </style>
     </head>
     <body onload="on_body_loaded();" onhashchange="on_hash_changed();">
@@ -32,6 +67,12 @@
             <select id="task_selector" name="task_selector" onchange="on_task_changed();">
         </select>
         </label>
-        <div id="canvas" style="width: 500px; height: 500px;"></div>
+        <div class="wrapper">
+            <div class="canvas_wrapper">
+                <div id="canvas" style="width: 500px; height: 500px;"></div>
+            </div>
+            <code id="code" class="javascript"></code>
+            <div class="clear"></div>
+        </div>
     </body>
 </html>

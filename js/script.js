@@ -9,7 +9,7 @@ function on_body_loaded() {
 
     // run_tests();
     // homogenous_rotation_2d();
-
+    hljs.initHighlightingOnLoad();
     updateTaskSelection();
     loadTaskFromHash();
 }
@@ -35,6 +35,13 @@ function on_task_changed() {
 function execute_task(task) {
   showcase.cleanObjects();
   task();
+
+
+  var code = task.toString();
+  code = code.replace(new RegExp("\n", 'g'), "<br />");
+  // code = code.replace(new RegExp('/^([^\/])?\/\/(.*)$/'),'$1\/* $2 *\/')
+  document.getElementById("code").innerHTML = code;
+  hljs.highlightBlock(document.getElementById("code"))
 }
 
 function init() {

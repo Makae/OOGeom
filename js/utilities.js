@@ -6,6 +6,14 @@ var PointUtils = {
         );
     },
 
+    getDefaultPointSet3D : function() {
+        return PointUtils.three3dPointSet(
+        3, 20, 40, 
+        3, 20, 40,
+        3, 20, 40
+        );
+    },
+
     threePointSet: function(numX, minX, maxX, 
                            numY, minY, maxY) {
         var set = [];
@@ -27,6 +35,32 @@ var PointUtils = {
         return set;
     },
 
+    three3dPointSet: function(numX, minX, maxX, 
+                              numY, minY, maxY,
+                              numZ, minZ, maxZ) {
+        var set = [];
+        var x, y, z;
+        var x_width = maxX - minX;
+        var y_width = maxY - minY;
+        var z_width = maxZ - minZ;
+        var x_section_width = x_width / numX;
+        var y_section_width = y_width / numY;
+        var z_section_width = z_width / numZ;
+
+        for(var c_x = 0; c_x < numX; c_x++) {
+            for(var c_y = 0; c_y < numY; c_y++) {
+                for(var c_z = 0; c_z < numZ; c_z++) {
+                    x = minX + c_x * x_section_width;
+                    y = minY + c_y * y_section_width;
+                    z = minZ + c_z * z_section_width;
+                    
+                    set.push(new THREE.Vector3(x, y, z));
+                }
+            }
+        }
+
+        return set;
+    },
 
     newThreePoint: function(vector) {
         var z = z && typeof z != 'undefined' ? z : 1;
@@ -182,24 +216,24 @@ var MatrixUtils = {
             case MatrixUtils.AXIS_X:
                 throw new Exception("Not yet implemented");
                 mat = new THREE.Matrix3().set(
-                    math.cos(angle), -math.sin(angle),  0,
-                    math.sin(angle),  math.cos(angle),  0,
+                    Math.cos(angle), -Math.sin(angle),  0,
+                    Math.sin(angle),  Math.cos(angle),  0,
                     0,                0,                1
                 );
             break;
             case MatrixUtils.AXIS_Y:
                 throw new Exception("Not yet implemented");
                 mat = new THREE.Matrix3().set(
-                    math.cos(angle), -math.sin(angle),  0,
-                    math.sin(angle),  math.cos(angle),  0,
+                    Math.cos(angle), -Math.sin(angle),  0,
+                    Math.sin(angle),  Math.cos(angle),  0,
                     0,                0,                1
                 );
             break;
 
             case MatrixUtils.AXIS_Z:
                 mat = new THREE.Matrix3().set(
-                    math.cos(angle), -math.sin(angle),  0,
-                    math.sin(angle),  math.cos(angle),  0,
+                    Math.cos(angle), -Math.sin(angle),  0,
+                    Math.sin(angle),  Math.cos(angle),  0,
                     0,                0,                1
                 );
             break;
