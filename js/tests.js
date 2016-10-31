@@ -50,3 +50,16 @@ function testMatrixMultiplication() {
         console.error("Failed: testMatrixMultiplication()");
 
 }
+
+function testDotProduct() {
+  var v1 = new THREE.Vector3(1, 0, 0);
+  var v2 = new THREE.Vector3(1, -1, 0);
+  var v3 = new THREE.Vector3(1, 1, 0);
+  var v4 = new THREE.Vector3(-1, 1, 0);
+  var v5 = new THREE.Vector3(-1, -1, 0);
+
+  console.log("Is v2 left of v1 ? A: " + VectorUtils.isLeftOf(v1, v2));
+  console.log("Is v3 left of v1 ? A: " + VectorUtils.isLeftOf(v1, v3));
+  console.log("Is v4 left of v1 ? A: " + VectorUtils.isLeftOf(v1, v4));
+  console.log("Is v5 left of v1 ? A: " + VectorUtils.isLeftOf(v1, v5));
+}

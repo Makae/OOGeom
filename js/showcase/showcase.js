@@ -77,10 +77,14 @@ Showcase.prototype.init = function() {
 Showcase.prototype.initRoom = function() {
 
   var ambient_light = new THREE.AmbientLight(this.light_config.ambient.color);
+  ambient_light.__static = true;
+
   this.scene.add(ambient_light);
 
   point_light = new THREE.PointLight(this.light_config.point.color, this.light_config.point.intensity);
   point_light.position.set(this.light_config.point.x, this.light_config.point.y, this.light_config.point.z);
+  ambient_light.__static = true;
+
   this.scene.add(point_light);
 
 };
@@ -127,9 +131,7 @@ Showcase.prototype.cleanObjects = function() {
     var found = [];
 
     for(var i = 0; i < this.scene.children.length; i++) {
-      if(showcase.scene.children[i] instanceof THREE.AmbientLight ||
-        showcase.scene.children[i] instanceof THREE.PointLight ||
-        showcase.scene.children[i] instanceof THREE.LineSegments)
+      if(typeof showcase.scene.children[i].__static != 'undefined' && showcase.scene.children[i].__static === true)
         continue;
       found.push(this.scene.children[i]);
     }
@@ -242,6 +244,9 @@ Showcase.prototype.toggleAxis = function() {
     if(!this.axis) {
         this.axis = ShowcaseUtilities.addAxis(this.scene);
         this.axis_active = true;
+        for(var i = 0; i < this.axis.length; i++) {
+          this.axis[i].__static = true;
+        }
         return;
     }
 

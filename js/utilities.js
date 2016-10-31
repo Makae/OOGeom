@@ -123,7 +123,7 @@ var GeomUtils = {
         return triangleGeometry;
     }
 
-}
+};
 
 var GeneralUtils = {
     colorMaterial : function(objs, color) {
@@ -146,10 +146,55 @@ var GeneralUtils = {
         }
     },
 
+    printStraightOriginLine : function(_line, color) {
+        var material = new THREE.LineBasicMaterial({
+            color: color
+        });
+
+        var line = _line.normalize();
+
+        var geometry = new THREE.Geometry();
+        geometry.vertices.push(
+            new THREE.Vector3(-line.x * 10000, -line.y * 10000, -line.z * 10000),
+            new THREE.Vector3(0, 0, 0),
+            new THREE.Vector3(line.x * 10000, line.y * 10000, line.z * 10000)
+        );
+        showcase.addObject(new THREE.Line(geometry, material));
+    },
+
+    printStraightLine : function(inclination, offset, color) {
+        var material = new THREE.LineBasicMaterial({
+            color: color
+        });
+
+        var inclination = inclination.normalize();
+
+        var geometry = new THREE.Geometry();
+        geometry.vertices.push(
+            new THREE.Vector3(0 - inclination.x * 10000, offset.y - inclination.y * 10000, offset.z - inclination.z * 10000),
+            new THREE.Vector3(0, offset.y, offset.z),
+            new THREE.Vector3(0 + inclination.x * 10000, offset.y + inclination.y * 10000, offset.z + inclination.z * 10000)
+        );
+        showcase.addObject(new THREE.Line(geometry, material));
+    },
+
     clone : function(data) {
         return JSON.parse(JSON.stringify(data));
     }
-}
+};
+
+var VectorUtils = {
+    isLeftOf : function(v1, v2) {
+        var d = VectorUtils.perp3d(v1).dot(v2);
+        if(d == 0)
+            return 0;
+        return (d < 0 ? 1 : -1)
+    },
+
+    perp3d : function(v) {
+         return  v.z < v.x  ? new THREE.Vector3(v.y, -v.x, 0) : new THREE.Vector3(0, -v.z, v.y);
+    }
+};
 
 var MatrixUtils = {
     AXIS_X : 'x',
@@ -188,6 +233,61 @@ var MatrixUtils = {
         return new_mat;
     },
 
+
+    /*
+     * Multiplies an array of matrices together and returns the result
+     */
+    multiplyMatrices : function(matrices) {
+        if(!(matrices instanceof Array))
+            return matrices;
+
+        if(matrices.length == 1)
+            return matrices[0];
+
+        // var new_mat = MatrixUtils.multiply3x3(T_1, MatrixUtils.multiply3x3(R, T));
+        var mat = matrices[matrices.length - 1];
+        for(var i = matrices.length - 2; i >= 0; i--) {
+            mat = MatrixUtils.multiply3x3(matrices[i], mat);
+            // DEBUG
+            //mat +=  
+        }
+        return mat;
+    },
+
+    /**
+     * This method provides a shorthand for creating a matrix stack order
+     * which is then used by multiplyMatrices.
+     *
+     * matrixStackOrder([A,B,C,D], F) -> [A, B, C, D, F, D_1, C_1, B_1, A_1]
+     *
+     *
+     * @param matrices Array<Mat3> - An array of matrices
+     * @param apply_matrix Mat3 - The Matrix in the middle of the sandwich
+     * 
+     */
+    matrixStackOrder : function(matrices, apply_matrix) {
+        if(!(matrices instanceof Array))
+            matrices = [matrices];
+
+        var mats = [];
+        var rev_stack = []
+        //for(var i = matrices.length - 1; i >= 0; i--) {
+        for(var i = 0; i < matrices.length; i++) {
+            mats.push(matrices[i]);
+            rev_stack.unshift(MatrixUtils.getInverseMatrix3(matrices[i]));
+            // DEBUG
+            //rev_stack.unshift(matrices[i] + "_1");
+        }
+        
+        mats.push(apply_matrix);
+        
+        for(var n = 0; n < rev_stack.length; n++) {
+            mats.push(rev_stack[n]);
+        }
+        
+        return mats;
+    },
+
     multiply3x3 : function(mat1, mat2) {
         var new_mat = new THREE.Matrix3();
         var ea = mat1.elements;
@@ -214,7 +314,7 @@ var MatrixUtils = {
 
         switch(axis) {
             case MatrixUtils.AXIS_X:
-                throw new Exception("Not yet implemented");
+                throw new Error("Not yet implemented");
                 mat = new THREE.Matrix3().set(
                     Math.cos(angle), -Math.sin(angle),  0,
                     Math.sin(angle),  Math.cos(angle),  0,
@@ -222,7 +322,7 @@ var MatrixUtils = {
                 );
             break;
             case MatrixUtils.AXIS_Y:
-                throw new Exception("Not yet implemented");
+                throw new Error("Not yet implemented");
                 mat = new THREE.Matrix3().set(
                     Math.cos(angle), -Math.sin(angle),  0,
                     Math.sin(angle),  Math.cos(angle),  0,
@@ -252,22 +352,64 @@ var MatrixUtils = {
 
     rotatePoint2d : function(point, axis, rad) {
         var T = MatrixUtils.translate2d(new THREE.Vector3(-point.x, -point.y, -point.z));
-        var T_1 = MatrixUtils.getInverseMatrix3(T);
         var R = MatrixUtils.rotateAxis(axis, rad);
 
-        var new_mat = MatrixUtils.multiply3x3(T_1, MatrixUtils.multiply3x3(R, T));
+        var mso = MatrixUtils.matrixStackOrder([T], R);
+        var new_mat = MatrixUtils.multiplyMatrices(mso);
+
         //var new_mat = T; //MatrixUtils.multiply3x3(R, T);
-        console.log(new_mat);
+        // console.log(new_mat);
         return new_mat;
+    },
+
+    mirrorOriginLine2d: function(line) {
+        var x_axis = new THREE.Vector3(1, 0, 0);
+        var onTheRight = -1 * VectorUtils.isLeftOf(line, x_axis);
+        var angleToX = onTheRight * line.angleTo(x_axis);
+        var R = MatrixUtils.rotateAxis(MatrixUtils.AXIS_Z, angleToX);
+        var M = MatrixUtils.mirrorOnXAxis();
+
+        var R_1 = MatrixUtils.getInverseMatrix3(R);
+
+        // W = R_1 * M
+        // W * R
+        var new_mat1 = MatrixUtils.multiply3x3(R, MatrixUtils.multiply3x3(M, R_1));
+
+
+        var mso = MatrixUtils.matrixStackOrder([R], M);
+        var new_mat = MatrixUtils.multiplyMatrices(mso);
+        debugger;
+        return new_mat;
+    },
+
+    mirrorLine2d: function(line, offsetY) {
+        debugger;
+        var x_axis = new THREE.Vector3(1, 0, 0);
+        var onTheRight = -1 * VectorUtils.isLeftOf(line, x_axis);
+        var angleToX = onTheRight * line.angleTo(x_axis);
+
+        var T = MatrixUtils.translate2d(new THREE.Vector3(0, -offsetY));
+        var R = MatrixUtils.rotateAxis(MatrixUtils.AXIS_Z, angleToX);
+        var M = MatrixUtils.mirrorOnXAxis();
+
+        var mso = MatrixUtils.matrixStackOrder([T, R], M);
+        var new_mat = MatrixUtils.multiplyMatrices(mso);
+
+        return new_mat;
+    },
+
+    mirrorOnXAxis: function() {
+        return new THREE.Matrix3().set(
+            1,  0, 0,
+            0, -1, 0,
+            0,  0, 1
+        );
     },
 
     getInverseMatrix3 : function(mat3) {
         var inv = (new THREE.Matrix3()).getInverse(mat3);
-
         return inv;
     },
-
-
 
     mat3ToMat4 : function(mat3) {
         return new THREE.Matrix4().set(

@@ -24,6 +24,39 @@ function task_a1_2d_homo_rotation_center() {
     GeneralUtils.printPoints(points, 0xff0000);
 }
 
+function task_a1_2d_mirror_origin_line() {
+    var points = PointUtils.getDefaultPointSet();
+    var line = new THREE.Vector3(2, 2.5, 0);
+    GeneralUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00);
+    GeneralUtils.printStraightOriginLine(line, 0xff00ff);
+
+    debugger;
+    var mat = MatrixUtils.mirrorOriginLine2d(line);
+    MatrixUtils.applyMatrix(points, mat);
+    GeneralUtils.printPoints(points); 
+
+}
+
+function task_a1_2d_mirror_arbitrary_line() {
+    var points = PointUtils.getDefaultPointSet();
+    var my = 2;
+    var y = 10;
+    var line = new Line(my, y)
+    GeneralUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00);
+
+    var line_set = line.asVectorSet();
+    GeneralUtils.printStraightLine(line_set[1], line_set[0], 0xff00ff);
+
+    var mat = MatrixUtils.mirrorLine2d(line_set[1], line_set[0].y);
+    MatrixUtils.applyMatrix(points, mat);
+    GeneralUtils.printPoints(points); 
+
+}
+
+function task_a1_2d_shear() {
+    GeneralUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00);
+}
+
 function task_a1_2d_homo_perspective() {
     GeneralUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00);
     
@@ -44,4 +77,5 @@ function task_a1_2d_homo_perspective() {
     new_points = PointUtils.deHomogenize2D(new_points);
     GeneralUtils.printPoints(new_points, 0xff00ff);
  }
+
 

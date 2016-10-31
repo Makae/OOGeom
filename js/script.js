@@ -38,8 +38,9 @@ function execute_task(task) {
 
 
   var code = task.toString();
-  code = code.replace(new RegExp("\n", 'g'), "<br />");
-  // code = code.replace(new RegExp('/^([^\/])?\/\/(.*)$/'),'$1\/* $2 *\/')
+  code = code.replace(new RegExp("\n", 'g'), "<br />\n");
+  code = code.replace(/^([^\/])*\/\/(.*)$/, '$1\/\* $2 \*\/');
+
   document.getElementById("code").innerHTML = code;
   hljs.highlightBlock(document.getElementById("code"))
 }

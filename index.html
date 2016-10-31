@@ -11,9 +11,13 @@
         <script type="text/javascript" src="js/tests.js?a=4"></script> 
         <script type="text/javascript" src="js/exercises/homogenous_rotation_2d.js?a=4"></script>
         <script type="text/javascript" src="js/math/quaternion.js?a=4"></script>
-        <script type="text/javascript" src="js/three_quaternion.js?a=4"></script> 
-        <script type="text/javascript" src="js/exercises/a1_2d.js?a=4"></script>
+        <script type="text/javascript" src="js/math/line.js?a=4"></script>
+        <script type="text/javascript" src="js/three_quaternion.js?a=4"></script>
+
+        <script type="text/javascript" src="js/exercises/a1_2d_homo.js?a=4"></script>
+        <script type="text/javascript" src="js/exercises/a1_2d_affin.js?a=4"></script>
         <script type="text/javascript" src="js/exercises/quaternions.js?a=4"></script>
+        <script type="text/javascript" src="js/exercises/affin_operations.js?a=4"></script>
 
         <link rel="stylesheet" href="libs/highlight/styles/rainbow.css">
         <style type="text/css">
@@ -63,9 +67,8 @@
         </style>
     </head>
     <body onload="on_body_loaded();" onhashchange="on_hash_changed();">
-        <label for="task_selector">Select Task:
-            <select id="task_selector" name="task_selector" onchange="on_task_changed();">
-        </select>
+        <label for="task_selector">
+            <select id="task_selector" name="task_selector" onchange="on_task_changed();"></select>
         </label>
         <div class="wrapper">
             <div class="canvas_wrapper">
