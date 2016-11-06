@@ -378,23 +378,33 @@ var MatrixUtils = {
 
         var mso = MatrixUtils.matrixStackOrder([R], M);
         var new_mat = MatrixUtils.multiplyMatrices(mso);
-        debugger;
+        
         return new_mat;
     },
 
     mirrorLine2d: function(line, offsetY) {
-        debugger;
         var x_axis = new THREE.Vector3(1, 0, 0);
         var onTheRight = -1 * VectorUtils.isLeftOf(line, x_axis);
         var angleToX = onTheRight * line.angleTo(x_axis);
-
+        
+        console.log(offsetY);
         var T = MatrixUtils.translate2d(new THREE.Vector3(0, -offsetY));
+        var T_1 = MatrixUtils.getInverseMatrix3(T);
+        
+        console.log(angleToX);
         var R = MatrixUtils.rotateAxis(MatrixUtils.AXIS_Z, angleToX);
+        var R_1 = MatrixUtils.getInverseMatrix3(R);
         var M = MatrixUtils.mirrorOnXAxis();
+        
 
-        var mso = MatrixUtils.matrixStackOrder([T, R], M);
+        var mso = MatrixUtils.matrixStackOrder([T], R);
         var new_mat = MatrixUtils.multiplyMatrices(mso);
 
+        // new_mat = MatrixUtils.multiply3x3(MatrixUtils.multiply3x3(MatrixUtils.multiply3x3(MatrixUtils.multiply3x3(T, R), M), R_1), T_1);
+         // new_mat = MatrixUtils.multiply3x3(T_1, R_1);
+         // new_mat2 = MatrixUtils.multiply3x3(R, T);
+         // new_mat3 = MatrixUtils.multiply3x3(new_mat, M);
+         // new_mat4 = MatrixUtils.multiply3x3(new_mat3, new_mat2);
         return new_mat;
     },
 
@@ -447,3 +457,9 @@ var QuatUtils = {
         return vectors;
     }
 };
+
+var DOMUtils = {
+    hasClass : function(element, cls) {
+        return ( (" " + element.className + " ").replace(/[\n\t]/g, " ").indexOf(" " + cls + " ") > -1 )
+    }
+}
