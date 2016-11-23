@@ -4,10 +4,18 @@
         <script src="libs/highlight/highlight.pack.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.js"></script>
         <script src="https://threejs.org/examples/js/controls/TrackballControls.js"></script>
-        <script type="text/javascript" src="js/utilities.js?a=4"></script> 
+        <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
+
+        <script type="text/javascript" src="js/config.js?a=4"></script> 
+        
+        <!-- <script type="text/javascript" src="js/utilities.js?a=4"></script> -->
         <script type="text/javascript" src="js/showcase/showcaseutilities.js?a=4"></script> 
         <script type="text/javascript" src="js/showcase/showcase.js?a=4"></script> 
         <script type="text/javascript" src="js/script.js?a=4"></script> 
+        <script type="text/javascript" src="js/networking/request.js?a=4"></script> 
+        <script type="text/javascript" src="js/networking/service.js?a=4"></script> 
+        <script type="text/javascript" src="js/networking/contentloader.js?a=4"></script> 
+
         <script type="text/javascript" src="js/tests.js?a=4"></script> 
         <script type="text/javascript" src="js/exercises/homogenous_rotation_2d.js?a=4"></script>
         <script type="text/javascript" src="js/math/quaternion.js?a=4"></script>
@@ -20,109 +28,19 @@
         <script type="text/javascript" src="js/exercises/affin_operations.js?a=4"></script>
 
         <link rel="stylesheet" href="libs/highlight/styles/rainbow.css">
-        <style type="text/css">
-            html, body {
-                padding: 0;
-                margin: 0;
-                background-color: #101010;
-                font-family: Arial, sans-serif;
-            }
+        <link rel="stylesheet" href="css/styles.css">
 
-            label {
-                display: block;
-                padding: 12px;
-            }
-
-            label select {
-                padding: 4px;
-            }
-
-            label select option {
-                text-align: center;
-            }
-
-            canvas {
-                float: left;
-                display: inline-block;
-            }
-
-            .wrapper {
-                float: none;
-                clear: both;
-                overflow: hidden;
-            }
-
-            .canvas_wrapper {
-                display:inline-block;
-                float:left;
-                padding:0;
-                margin:0;
-                overflow:hidden;
-                width: 50%;
-
-            }
-
-            #code {
-                display:inline-block;
-                float:right;
-                padding:0;
-                margin:0;
-                overflow:hidden;
-                width: 50%;
-                box-sizing: border-box;
-                padding: 12px;
-            }
-
-            code input {
-                display: inline-block;
-                margin: 0;
-                padding: 4px 1px 4px 11px;
-                width: 3em;
-                border: none;
-                background-color: #292929;
-                color: #afafaf;
-                text-align: center;
-            }
-
-           code input[type="color"] {
-                width: 1.5em;
-                padding: 0px;
-                background-color: #292929;
-                cursor: pointer;
-            }
-
-            .code_wrapper label[for="live_update"] {
-                display: inline-block;
-                position: relative;
-                padding: 9px;
-                padding-left: 37px;
-                color: #afafaf;
-            }
-
-            .code_wrapper input[type="checkbox"] {
-                position: absolute;
-                top: 8px;
-                left: 12px;
-                margin: 0;
-                padding: -1px;
-                height: 20px;
-                width: 20px;
-            }
-
-            button {
-                background-color: #292929;
-                border: none;
-                padding: 0.75em 1.2em;
-                color: #afafaf;
-                cursor: pointer;
-            }
-
-            button:hover {
-                background-color: #202020;
-            }
-        </style>
     </head>
     <body onload="on_body_loaded();" onhashchange="TaskHandler.on_hash_changed();">
+        <nav>
+            <ul>
+                <li data-contenpage="home">Home</li>
+                <li data-contenpage="affin_transformation">Affin transformation</li>
+                <li data-contenpage="homogenous_transformation">Homogene Transformationen</li>
+                <li data-contenpage="dual_quaternions">Duale Quaternionen</li>
+                <li data-contenpage="clifford_algebra">Clifford Algebra</li>
+            </ul>
+        </nav>
         <label for="task_selector">
             <select id="task_selector" name="task_selector" onchange="TaskHandler.on_task_changed();"></select>
         </label>

@@ -28,8 +28,8 @@ function task_a1_2d_mirror_origin_line() {
     var points = PointUtils.getDefaultPointSet();
     var line = new THREE.Vector3(2/*#float*/, 2.5/*#float*/, 0/*#float*/);
 
-    GeneralUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*//*#color*/);
-    GeneralUtils.printStraightOriginLine(line, 0xff00ff/*#color*//*#color*/);
+    GeneralUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
+    GeneralUtils.printStraightOriginLine(line, 0xff00ff/*#color*/);
 
     var mat = MatrixUtils.mirrorOriginLine2d(line);
     MatrixUtils.applyMatrix(points, mat);

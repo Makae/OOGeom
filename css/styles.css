@@ -1,0 +1,104 @@
+html, body {
+    padding: 0;
+    margin: 0;
+    background-color: #101010;
+    font-family: Arial, sans-serif;
+}
+
+label {
+    display: block;
+    padding: 12px;
+}
+
+label select {
+    padding: 4px;
+}
+
+label select option {
+    text-align: center;
+}
+
+canvas {
+    float: left;
+    display: inline-block;
+}
+
+.wrapper {
+    float: none;
+    clear: both;
+    overflow: hidden;
+}
+
+.canvas_wrapper {
+    display:inline-block;
+    float:left;
+    padding:0;
+    margin:0;
+    overflow:hidden;
+    width: 50%;
+
+}
+
+#code {
+    display:inline-block;
+    float:right;
+    padding:0;
+    margin:0;
+    overflow:hidden;
+    width: 50%;
+    box-sizing: border-box;
+    padding: 12px;
+}
+
+code input {
+    display: inline-block;
+    margin: 0;
+    padding: 4px 1px 4px 11px;
+    width: 3em;
+    border: none;
+    background-color: #292929;
+    color: #afafaf;
+    text-align: center;
+}
+
+code input[type="color"] {
+    width: 1.5em;
+    padding: 0px;
+    background-color: #292929;
+    cursor: pointer;
+}
+
+code .space {
+    display: inline-block;
+    width: 0.7em;
+}
+
+.code_wrapper label[for="live_update"] {
+    display: inline-block;
+    position: relative;
+    padding: 9px;
+    padding-left: 37px;
+    color: #afafaf;
+}
+
+.code_wrapper input[type="checkbox"] {
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    margin: 0;
+    padding: -1px;
+    height: 20px;
+    width: 20px;
+}
+
+button {
+    background-color: #292929;
+    border: none;
+    padding: 0.75em 1.2em;
+    color: #afafaf;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #202020;
+}

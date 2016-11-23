@@ -1,0 +1,23 @@
+Objektorientierte Geometrie:
+
+Präsentationsseite für die Objektorientierte Geometrie:
+In der Abteilung der Technik und Informatik der Berner Fachhochschule ist die Lineare Algebra ein wichtiger Bestandteil des Studiums. Die Studenten müssen während ihrem Studium den Aufbau und die Anwendung von Vektoren, Matrizen und Transformationen lernen. Dabei könenn sie auf die Anwendungsbeispiele aus dem Script oder Beispielprogrammen der Dozenten zurückgreifen.
+
+Dieses Projekt soll die Demonstration und den Einsatz der Laboraufgaben in der Objektorientierten Geometrie anschaulich und interaktiv Präsentieren. Beim Benutzen des Programmes sollen die Studenten direkt den Einfluss
+
+Umzusetzende Seiten:
+Matrizen:
+  > Multiplikation
+  > Aufbau für Affine Transformation
+    > Rotation
+    > Skalierung / Scherung
+    > Translation
+  > Aufbau für Homogene Transformation
+    > Rotation
+    > Skalierung / Scherung
+    > Translation
+
+Quaternions:
+  > abcw elemente Zahl mit 3 imaginärantilen
+  > Definition über Euler-Winkel
+
