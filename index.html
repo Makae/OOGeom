@@ -1,37 +1,48 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <!-- DEPENDENCIES-->
         <script src="libs/highlight/highlight.pack.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.js"></script>
         <script src="https://threejs.org/examples/js/controls/TrackballControls.js"></script>
         <script src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous"></script>
 
-        <script type="text/javascript" src="js/config.js?a=4"></script> 
-        
-        <!-- <script type="text/javascript" src="js/utilities.js?a=4"></script> -->
-        <script type="text/javascript" src="js/showcase/showcaseutilities.js?a=4"></script> 
-        <script type="text/javascript" src="js/showcase/showcase.js?a=4"></script> 
-        <script type="text/javascript" src="js/script.js?a=4"></script> 
+        <!-- NETWORKING -->
         <script type="text/javascript" src="js/networking/request.js?a=4"></script> 
         <script type="text/javascript" src="js/networking/service.js?a=4"></script> 
         <script type="text/javascript" src="js/networking/contentloader.js?a=4"></script> 
-
-        <script type="text/javascript" src="js/tests.js?a=4"></script> 
+        
+        <!-- MATH -->
+        <script type="text/javascript" src="js/utilities.js?a=4"></script>
         <script type="text/javascript" src="js/exercises/homogenous_rotation_2d.js?a=4"></script>
         <script type="text/javascript" src="js/math/quaternion.js?a=4"></script>
         <script type="text/javascript" src="js/math/line.js?a=4"></script>
         <script type="text/javascript" src="js/three_quaternion.js?a=4"></script>
+        
+        <!-- THREEJS FACADE -->
+        <script type="text/javascript" src="js/showcase/showcaseutilities.js?a=4"></script> 
+        <script type="text/javascript" src="js/showcase/showcase.js?a=4"></script> 
 
+        <!-- CODE LOADING AND EDITING -->
+        <script type="text/javascript" src="js/code/dynamiccodecontainer.js?a=4"></script>
+        <script type="text/javascript" src="js/code/exampleblock.js?a=4"></script>
+        <script type="text/javascript" src="js/code/taskhandler.js?a=4"></script>
+
+        <!-- Exercises -->
         <script type="text/javascript" src="js/exercises/a1_2d_homo.js?a=4"></script>
         <script type="text/javascript" src="js/exercises/a1_2d_affin.js?a=4"></script>
         <script type="text/javascript" src="js/exercises/quaternions.js?a=4"></script>
         <script type="text/javascript" src="js/exercises/affin_operations.js?a=4"></script>
 
+        <!-- APP -->
+        <script type="text/javascript" src="js/config.js?a=4"></script> 
+        <script type="text/javascript" src="js/script.js?a=4"></script>
+
         <link rel="stylesheet" href="libs/highlight/styles/rainbow.css">
         <link rel="stylesheet" href="css/styles.css">
 
     </head>
-    <body onload="on_body_loaded();" onhashchange="TaskHandler.on_hash_changed();">
+    <body>
         <nav>
             <ul>
                 <li data-contenpage="home">Home</li>
@@ -44,14 +55,15 @@
         <label for="task_selector">
             <select id="task_selector" name="task_selector" onchange="TaskHandler.on_task_changed();"></select>
         </label>
-        <div class="wrapper">
-            <div class="canvas_wrapper">
-                <div id="canvas" style="width: 500px; height: 500px;"></div>
-            </div>
+    
+        <div class="example_block" data-type="threejs-orto">
             <div class="code_wrapper">
                 <button id="execute_code" value="execute">Execute</button>
                 <label for="live_update"> <input type="checkbox" name="live_update" id="live_update" checked="checked" /> Live Update</label>
-                <code id="code" class="javascript"></code>
+                <code class="codeblock javascript" data-fn="task_a1_2d_homo_rotation_center"></code>
+            </div>
+            <div class="canvas_wrapper">
+                <div id="canvas" style="width: 500px; height: 500px;"></div>
             </div>
             <div class="clear"></div>
         </div>

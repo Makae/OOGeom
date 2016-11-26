@@ -23,7 +23,27 @@ canvas {
     display: inline-block;
 }
 
-.wrapper {
+
+nav li {
+    float: left;
+    padding: 28px 12px;
+
+    color: #ffcc66;
+    list-style-type: none;
+    cursor: pointer;
+}
+
+nav li:hover {
+    background-color: #202020;
+}
+
+nav {
+    display: block;
+    float: none;
+    clear: both;
+    overflow: hidden;
+}
+.example_wrapper {
     float: none;
     clear: both;
     overflow: hidden;
