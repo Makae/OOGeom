@@ -131,7 +131,7 @@ Showcase.prototype.cleanObjects = function() {
     var found = [];
 
     for(var i = 0; i < this.scene.children.length; i++) {
-      if(typeof showcase.scene.children[i].__static != 'undefined' && showcase.scene.children[i].__static === true)
+      if(typeof this.scene.children[i].__static != 'undefined' && this.scene.children[i].__static === true)
         continue;
       found.push(this.scene.children[i]);
     }

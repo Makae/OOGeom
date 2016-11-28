@@ -1,5 +1,7 @@
 function DynamicCodeContainer(config) {
   this.container = config.container;
+  this.callbacks = config.callbacks || {};
+  
   this.code = null;
 };
 
@@ -7,6 +9,7 @@ DynamicCodeContainer.prototype.fields = {
   float: {
     pattern : /(-?\d+(\.\d)?)\/\*\s?#(float)\*\//g,
     input: '<input class="float" type="number" step="0.1" value="$1" />',
+    selector: 'input.float',
     tpl_var: '%$float%',
     tpl_var_pattern: /%\$float%/gi,
 
@@ -15,16 +18,17 @@ DynamicCodeContainer.prototype.fields = {
     },
 
     convertToScript: function(val) {
-      return val;
+      return parseFloat(val);
     },
 
     validate : function(val) {
-      return !isNaN(val)
+      return !isNaN(val);
     }
   },
   color: {
     pattern : /(0x([0-9a-fA-F]{6}))\/\*\s?#(color)\*\//g,
     input: '<input class="color" type="color" value="#$2" />',
+    selector: 'input.color',
     tpl_var: '%$color%',
     tpl_var_pattern: /%\$color%/gi,
 
@@ -38,7 +42,36 @@ DynamicCodeContainer.prototype.fields = {
     },
 
     validate : function(val) {
-      return true
+      return true;
+    }
+  }
+};
+
+DynamicCodeContainer.prototype.trigger = function(task, data) {
+  data = data || {};
+  data.instance = this;
+  
+  if(typeof this.callbacks[task] == "undefined")
+    return;
+
+  return this.callbacks[task](data);
+};
+
+DynamicCodeContainer.prototype.registerHandlers  = function() {
+  var self = this;
+
+  /*********************
+   * INPUTFIELD CHANGE *
+   *********************/
+  var register = function(field) {
+    field.addEventListener("change", function() {
+      self.trigger("onFieldChange", field);
+    });
+  };
+  for(var type in this.fields) {
+    var fields = this.container.querySelectorAll(this.fields[type].selector);
+    for(var i = 0; i < fields.length; i++) {
+      register(fields[i]);
     }
   }
 };
@@ -47,18 +80,22 @@ DynamicCodeContainer.prototype.fields = {
 DynamicCodeContainer.prototype.loadNewCode  = function(code) {
     this.code = (' ' + code).slice(1);
 
-    for(var type in this.fields)
-      this.code = this.code.replace(this.fields[type].pattern, this.fields.color.tpl_var);
+    for(var type in this.fields) {
+      this.code = this.code.replace(this.fields[type].pattern, this.fields[type].tpl_var);
+      code = code.replace(this.fields[type].pattern, this.fields[type].input);
+    }
     
-    var code = code.replace(this.fields.float.pattern, this.fields.float.input);
-    code = code.replace(this.fields.color.pattern, this.fields.color.input);
-
     code = code.replace(new RegExp("\n", 'g'), "<br />\n");
     // Replace single slash comments with slash star comments
     code = code.replace(/^([^\/])*\/\/(.*)$/g, '$1\/\* $2 \*\/');
     code = code.replace(/\s*(\s{2})/g, '<span class="space">$1</span>')
 
-    this.container.textContent = code;
+    this.container.innerHTML = code;
+
+    this.trigger("onHTMLAppended", {code: code});
+
+    this.registerHandlers();
+
     return code;
 };
 
@@ -70,6 +107,7 @@ DynamicCodeContainer.prototype.prepareCustomCode  = function() {
   for(var type in this.fields) {
     if(typeof values[type] == 'undefined')
       continue;
+
     task = this.replaceTemplateValues(task, this.fields[type].tpl_var_pattern , values[type]);
   }
 
@@ -93,7 +131,7 @@ DynamicCodeContainer.prototype.replaceTemplateValues  = function(code, pattern, 
 };
 
 DynamicCodeContainer.prototype.getValues  = function(container) {
-  var fields = container.getElementsByTagName('input');
+  var fields = this.container.getElementsByTagName('input');
   var values = {};
 
   for(var type in this.fields)

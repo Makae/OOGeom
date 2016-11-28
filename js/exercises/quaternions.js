@@ -1,5 +1,5 @@
 function task_quaternion_axis() {
-    GeneralUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0x00ff00/*#color*/);
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0x00ff00/*#color*/);
     
     var points = PointUtils.getDefaultPointSet3D();
     /* Around z-axis / 90deg */
@@ -9,7 +9,7 @@ function task_quaternion_axis() {
     );
     // test
     QuatUtils.applyQuaternion(points, quaternion90);
-    GeneralUtils.printPoints(points, 0x0000ff/*#color*/);
+    PrintUtils.printPoints(points, 0x0000ff/*#color*/);
 
     var points = PointUtils.getDefaultPointSet3D();
     
@@ -20,12 +20,12 @@ function task_quaternion_axis() {
     );
 
     QuatUtils.applyQuaternion(points, quaternion_30);
-    GeneralUtils.printPoints(points, 0x00ffff/*#color*/);
+    PrintUtils.printPoints(points, 0x00ffff/*#color*/);
 
 }
 
 function task_quaternion_3daxis() {
-    GeneralUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0x00ff00/*#color*/);
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0x00ff00/*#color*/);
     
     var points = PointUtils.getDefaultPointSet3D();
     /* Around z-axis / 90deg */
@@ -35,11 +35,11 @@ function task_quaternion_3daxis() {
     );
     // test
     QuatUtils.applyQuaternion(points, quaternion90xy);
-    GeneralUtils.printPoints(points, 0x0000ff/*#color*/);
+    PrintUtils.printPoints(points, 0x0000ff/*#color*/);
 }
 
 function task_quaternion_translation() {
-    GeneralUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0x00ff00/*#color*/);
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0x00ff00/*#color*/);
     
     var points = PointUtils.getDefaultPointSet3D();
     /* Around z-axis / 90deg */
@@ -47,5 +47,5 @@ function task_quaternion_translation() {
     
     // test
     QuatUtils.applyQuaternion(points, quaternionZ);
-    GeneralUtils.printPoints(points, 0x0000ff/*#color*/);
+    PrintUtils.printPoints(points, 0x0000ff/*#color*/);
 }

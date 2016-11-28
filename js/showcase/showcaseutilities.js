@@ -99,7 +99,6 @@ var ShowcaseUtilities = (function() {
 
     return {
         // Performance optimization, instead of recalculating the values for each operation
-
         'one_rad': rad,
         'half_rad': half_rad,
         'quart_rad': quart_rad,

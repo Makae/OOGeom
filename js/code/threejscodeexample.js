@@ -1,5 +1,5 @@
-var ThreeJSExampleBlock = function(config) {
-  this.container = config.container;
+var ThreeJSCodeExample = function(config) {
+  this.context = config.context;
   this.callbacks = config.callbacks || {};
   this.camera_config = config.camera_config;
 
@@ -7,7 +7,7 @@ var ThreeJSExampleBlock = function(config) {
   this.showcase = null;
 };
 
-ThreeJSExampleBlock.prototype.trigger = function(task, data) {
+ThreeJSCodeExample.prototype.trigger = function(task, data) {
   data = data || {};
   data.instance = this;
   
@@ -17,12 +17,13 @@ ThreeJSExampleBlock.prototype.trigger = function(task, data) {
   return this.callbacks[task](data);
 };
 
-ThreeJSExampleBlock.prototype.init = function() {
-  this.canvas = document.getElementById('canvas');
+ThreeJSCodeExample.prototype.init = function() {
+  this.canvas = this.context.querySelector('.canvas_container');
   this.showcase = new Showcase({
     container: this.canvas,
     camera: this.camera_config
   });
+
   this.showcase.toggleAxis();
   this.showcase.registerControls();
   this.showcase.camera.lookAt(new THREE.Vector3(0, 0, 0));
@@ -30,7 +31,10 @@ ThreeJSExampleBlock.prototype.init = function() {
   this.trigger("onInit");
 };
 
-ThreeJSExampleBlock.prototype.clean = function() {
+ThreeJSCodeExample.prototype.clean = function() {
   this.showcase.cleanObjects();
+  
+  PrintUtils.setContext(this.showcase);
+  
   this.trigger("onClean");
 };

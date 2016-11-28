@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <!-- DEPENDENCIES-->
         <script src="libs/highlight/highlight.pack.js"></script>
@@ -24,9 +24,12 @@
         <script type="text/javascript" src="js/showcase/showcase.js?a=4"></script> 
 
         <!-- CODE LOADING AND EDITING -->
+        <script type="text/javascript" src="js/code/taskhandler.js?a=4"></script>
         <script type="text/javascript" src="js/code/dynamiccodecontainer.js?a=4"></script>
         <script type="text/javascript" src="js/code/exampleblock.js?a=4"></script>
-        <script type="text/javascript" src="js/code/taskhandler.js?a=4"></script>
+        <script type="text/javascript" src="js/code/threejscodeexample.js?a=4"></script>
+        <script type="text/javascript" src="js/code/codeexampleloader.js?a=4"></script>
+        <script type="text/javascript" src="js/code/codeexampleloader.js?a=4"></script>
 
         <!-- Exercises -->
         <script type="text/javascript" src="js/exercises/a1_2d_homo.js?a=4"></script>
@@ -38,34 +41,52 @@
         <script type="text/javascript" src="js/config.js?a=4"></script> 
         <script type="text/javascript" src="js/script.js?a=4"></script>
 
+        <!-- DEPENDENCIES -->
+        <link rel="stylesheet" href="http://yandex.st/bootstrap/3.1.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="libs/highlight/styles/rainbow.css">
+
+        <!-- CUSTOM STYLES -->
         <link rel="stylesheet" href="css/styles.css">
 
     </head>
     <body>
-        <nav>
-            <ul>
-                <li data-contenpage="home">Home</li>
-                <li data-contenpage="affin_transformation">Affin transformation</li>
-                <li data-contenpage="homogenous_transformation">Homogene Transformationen</li>
-                <li data-contenpage="dual_quaternions">Duale Quaternionen</li>
-                <li data-contenpage="clifford_algebra">Clifford Algebra</li>
-            </ul>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <ul class="nav navbar-nav">
+                        <li data-contenpage="home">
+                            <a href="#">Home</a>
+                        </li>
+                        <li data-contenpage="affin_transformation">
+                            <a href="#">Affin transformation</a>
+                        </li>
+                        <li data-contenpage="homogenous_transformation">
+                            <a href="#">Homogene Transformationen</a>
+                        </li>
+                        <li data-contenpage="dual_quaternions">
+                            <a href="#">Duale Quaternionen</a>
+                        </li>
+                        <li data-contenpage="clifford_algebra">
+                            <a href="#">Clifford Algebra</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </nav>
-        <label for="task_selector">
-            <select id="task_selector" name="task_selector" onchange="TaskHandler.on_task_changed();"></select>
-        </label>
-    
-        <div class="example_block" data-type="threejs-orto">
-            <div class="code_wrapper">
-                <button id="execute_code" value="execute">Execute</button>
-                <label for="live_update"> <input type="checkbox" name="live_update" id="live_update" checked="checked" /> Live Update</label>
-                <code class="codeblock javascript" data-fn="task_a1_2d_homo_rotation_center"></code>
+        <div class="container">
+            <div class="example_block row" data-type="threejs-orto">
+                <div class="code_wrapper col-md-8 col-sm-12">
+                    <div class="clearfix toolbox">
+                        <label for="live_update" class="pull-right"> <input type="checkbox" name="live_update" class="live_update" checked="checked" /> Live Update</label>
+                        <button class="execute_code btn btn-primary pull-left" name="execute" value="execute"><span class="glyphicon glyphicon-play-circle"></span>Execute</button>
+                    </div>
+                    <code class="codeblock javascript" data-autoexec="1" data-fn="task_a1_2d_homo_rotation_center"></code>
+                </div>
+                <div class="canvas_wrapper col-md-4 col-sm-12">
+                    <div class="canvas_container"></div>
+                </div>
+                <div class="clear"></div>
             </div>
-            <div class="canvas_wrapper">
-                <div id="canvas" style="width: 500px; height: 500px;"></div>
-            </div>
-            <div class="clear"></div>
         </div>
     </body>
 </html>

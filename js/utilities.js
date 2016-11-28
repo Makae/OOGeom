@@ -126,6 +126,7 @@ var GeomUtils = {
 };
 
 var GeneralUtils = {
+
     colorMaterial : function(objs, color) {
         var objs_type = objs instanceof Array ? 'array' : 'single';
         objs = objs_type == 'array' ? objs : [objs];
@@ -137,12 +138,22 @@ var GeneralUtils = {
             return objs;
         return objs[0];
     },
+    clone : function(data) {
+        return JSON.parse(JSON.stringify(data));
+    }
+};
+
+var PrintUtils = {
+    context : null,
+    setContext : function(ctxt) {
+        this.context = ctxt;
+    },
 
     printPoints : function(points, color) {
-        for(var i = 0; i<points.length; i++) {
+        for(var i = 0; i < points.length; i++) {
             var r_point = PointUtils.newThreePoint(points[i]);
             GeneralUtils.colorMaterial(r_point, color);
-            showcase.addObject(r_point);
+            this.context.addObject(r_point);
         }
     },
 
@@ -159,7 +170,7 @@ var GeneralUtils = {
             new THREE.Vector3(0, 0, 0),
             new THREE.Vector3(line.x * 10000, line.y * 10000, line.z * 10000)
         );
-        showcase.addObject(new THREE.Line(geometry, material));
+        this.context.addObject(new THREE.Line(geometry, material));
     },
 
     printStraightLine : function(inclination, offset, color) {
@@ -175,13 +186,9 @@ var GeneralUtils = {
             new THREE.Vector3(0, offset.y, offset.z),
             new THREE.Vector3(0 + inclination.x * 10000, offset.y + inclination.y * 10000, offset.z + inclination.z * 10000)
         );
-        showcase.addObject(new THREE.Line(geometry, material));
-    },
-
-    clone : function(data) {
-        return JSON.parse(JSON.stringify(data));
+        this.context.addObject(new THREE.Line(geometry, material));
     }
-};
+}
 
 var VectorUtils = {
     isLeftOf : function(v1, v2) {

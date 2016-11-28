@@ -1,80 +1,26 @@
-html, body {
-    padding: 0;
-    margin: 0;
-    background-color: #101010;
-    font-family: Arial, sans-serif;
+body { 
+    padding-top: 70px;
 }
-
-label {
-    display: block;
-    padding: 12px;
-}
-
-label select {
-    padding: 4px;
-}
-
-label select option {
-    text-align: center;
-}
-
-canvas {
-    float: left;
-    display: inline-block;
-}
-
 
 nav li {
-    float: left;
-    padding: 28px 12px;
-
     color: #ffcc66;
-    list-style-type: none;
-    cursor: pointer;
 }
 
-nav li:hover {
-    background-color: #202020;
-}
-
-nav {
-    display: block;
-    float: none;
-    clear: both;
-    overflow: hidden;
-}
 .example_wrapper {
     float: none;
     clear: both;
     overflow: hidden;
 }
 
-.canvas_wrapper {
-    display:inline-block;
-    float:left;
-    padding:0;
-    margin:0;
-    overflow:hidden;
-    width: 50%;
-
-}
-
-#code {
-    display:inline-block;
-    float:right;
-    padding:0;
-    margin:0;
-    overflow:hidden;
-    width: 50%;
-    box-sizing: border-box;
-    padding: 12px;
+code.hljs {
+    padding: 1em;
 }
 
 code input {
     display: inline-block;
     margin: 0;
-    padding: 4px 1px 4px 11px;
-    width: 3em;
+    padding: 4px 0px 4px 11px;
+    width: 4.6em;
     border: none;
     background-color: #292929;
     color: #afafaf;
@@ -91,6 +37,16 @@ code input[type="color"] {
 code .space {
     display: inline-block;
     width: 0.7em;
+}
+
+.codeblock,
+.canvas_wrapper,
+.canvas_container {
+    min-height: 360px;
+}
+
+.canvas_wrapper {
+    padding-top: 43px;
 }
 
 .code_wrapper label[for="live_update"] {
@@ -111,14 +67,8 @@ code .space {
     width: 20px;
 }
 
-button {
-    background-color: #292929;
-    border: none;
-    padding: 0.75em 1.2em;
-    color: #afafaf;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #202020;
+.code_wrapper .execute_code > span {
+    top: 3px;
+    padding-right: 8px;
+    line-height: 1.1em;
 }
