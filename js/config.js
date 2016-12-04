@@ -3,6 +3,12 @@ var config = {
         content_path : "content/",
     },
 
+    block_builder : {
+        'threejs-orto' : {
+            tpl: "exampleblocks/threejs-orto.html"
+        }
+    },
+
     camera : {
       orto: {
         'x' : 0,

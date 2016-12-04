@@ -34,6 +34,7 @@
         <script type="text/javascript" src="js/code/threejscodeexample.js?a=4"></script>
         <script type="text/javascript" src="js/code/codeexampleloader.js?a=4"></script>
         <script type="text/javascript" src="js/code/codeexampleloader.js?a=4"></script>
+        <script type="text/javascript" src="js/code/exampleblockbuilder.js?a=4"></script>
 
         <!-- EXERCISES -->
         <script type="text/javascript" src="js/exercises/a1_2d_homo.js?a=4"></script>
@@ -62,8 +63,8 @@
             <div class="container">
                 <div class="navbar-header">
                     <ul class="nav navbar-nav">
-                        <li data-async-content="home">
-                            <a href="#">Home</a>
+                        <li>
+                            <a href="#page/home.html" data-async-target="main">Home</a>
                         </li>
                         <li>
                             <a href="#page/affin_transformation.html" data-async-target="main">Affin transformation</a>
@@ -81,20 +82,8 @@
                 </div>
             </div>
         </nav>
-        <div class="container" data-async-container="main">
-            <div class="example_block row" data-type="threejs-orto">
-                <div class="code_wrapper col-md-8 col-sm-12">
-                    <div class="clearfix toolbox">
-                        <label for="live_update" class="pull-right"> <input type="checkbox" name="live_update" class="live_update" checked="checked" /> Live Update</label>
-                        <button class="execute_code btn btn-primary pull-left" name="execute" value="execute"><span class="glyphicon glyphicon-play-circle"></span>Execute</button>
-                    </div>
-                    <code class="codeblock javascript" data-autoexec="1" data-fn="task_a1_2d_homo_rotation_center"></code>
-                </div>
-                <div class="canvas_wrapper col-md-4 col-sm-12">
-                    <div class="canvas_container"></div>
-                </div>
-                <div class="clear"></div>
-            </div>
-        </div>
+        <div class="container" data-async-container="main" data-default-content="page/home.html">
+            <!-- DYNAMICALLY LOADED -->
+         </div>
     </body>
 </html>
