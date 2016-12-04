@@ -11,6 +11,7 @@ var ContentLoader = (function() {
 
   ContentLoader.prototype.setBase = function(base) {
     this.base = base;
+    return this;
   }
 
   ContentLoader.prototype.load = function(element, success, error) {
@@ -24,5 +25,5 @@ var ContentLoader = (function() {
     });
   };
 
-  return ContentLoader;
+  return new ContentLoader;
 })();

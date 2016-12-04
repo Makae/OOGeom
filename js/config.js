@@ -1,4 +1,8 @@
 var config = {
+    app : {
+        content_path : "content/",
+    },
+
     camera : {
       orto: {
         'x' : 0,

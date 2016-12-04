@@ -12,7 +12,7 @@ ThreeJSCodeExample.prototype.trigger = function(task, data) {
   data.instance = this;
   
   if(typeof this.callbacks[task] == "undefined")
-    return;
+    return data;
 
   return this.callbacks[task](data);
 };

@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <!-- CONFIGURATION FILE -->
+        <script type="text/javascript" src="js/config.js?a=4"></script> 
+        
         <!-- DEPENDENCIES-->
         <script src="libs/highlight/highlight.pack.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.js"></script>
@@ -12,9 +15,10 @@
         <script type="text/javascript" src="js/networking/service.js?a=4"></script> 
         <script type="text/javascript" src="js/networking/contentloader.js?a=4"></script> 
         
+        <!-- DYNAMIC CONTENT LOADING -->
+
         <!-- MATH -->
         <script type="text/javascript" src="js/utilities.js?a=4"></script>
-        <script type="text/javascript" src="js/exercises/homogenous_rotation_2d.js?a=4"></script>
         <script type="text/javascript" src="js/math/quaternion.js?a=4"></script>
         <script type="text/javascript" src="js/math/line.js?a=4"></script>
         <script type="text/javascript" src="js/three_quaternion.js?a=4"></script>
@@ -31,15 +35,19 @@
         <script type="text/javascript" src="js/code/codeexampleloader.js?a=4"></script>
         <script type="text/javascript" src="js/code/codeexampleloader.js?a=4"></script>
 
-        <!-- Exercises -->
+        <!-- EXERCISES -->
         <script type="text/javascript" src="js/exercises/a1_2d_homo.js?a=4"></script>
         <script type="text/javascript" src="js/exercises/a1_2d_affin.js?a=4"></script>
         <script type="text/javascript" src="js/exercises/quaternions.js?a=4"></script>
         <script type="text/javascript" src="js/exercises/affin_operations.js?a=4"></script>
+        <script type="text/javascript" src="js/exercises/homogenous_rotation_2d.js?a=4"></script>
 
         <!-- APP -->
-        <script type="text/javascript" src="js/config.js?a=4"></script> 
-        <script type="text/javascript" src="js/script.js?a=4"></script>
+        <script type="text/javascript" src="js/app/app.js?a=4"></script> 
+        <script type="text/javascript" src="js/app/asynccontent.js?a=4"></script> 
+
+        <!-- INIT -->
+        <script type="text/javascript" src="js/init.js?a=4"></script>
 
         <!-- DEPENDENCIES -->
         <link rel="stylesheet" href="http://yandex.st/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -54,26 +62,26 @@
             <div class="container">
                 <div class="navbar-header">
                     <ul class="nav navbar-nav">
-                        <li data-contenpage="home">
+                        <li data-async-content="home">
                             <a href="#">Home</a>
                         </li>
-                        <li data-contenpage="affin_transformation">
-                            <a href="#">Affin transformation</a>
+                        <li>
+                            <a href="#page/affin_transformation.html" data-async-target="main">Affin transformation</a>
                         </li>
-                        <li data-contenpage="homogenous_transformation">
-                            <a href="#">Homogene Transformationen</a>
+                        <li>
+                            <a href="#page/homogenous_transformation.html" data-async-target="main">Homogene Transformationen</a>
                         </li>
-                        <li data-contenpage="dual_quaternions">
-                            <a href="#">Duale Quaternionen</a>
+                        <li>
+                            <a href="#page/dual_quaternions.html" data-async-target="main">Duale Quaternionen</a>
                         </li>
-                        <li data-contenpage="clifford_algebra">
-                            <a href="#">Clifford Algebra</a>
+                        <li>
+                            <a href="#page/clifford_algebra.html" data-async-target="main">Clifford Algebra</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
-        <div class="container">
+        <div class="container" data-async-container="main">
             <div class="example_block row" data-type="threejs-orto">
                 <div class="code_wrapper col-md-8 col-sm-12">
                     <div class="clearfix toolbox">

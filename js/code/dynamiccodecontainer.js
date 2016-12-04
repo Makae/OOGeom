@@ -25,6 +25,7 @@ DynamicCodeContainer.prototype.fields = {
       return !isNaN(val);
     }
   },
+
   color: {
     pattern : /(0x([0-9a-fA-F]{6}))\/\*\s?#(color)\*\//g,
     input: '<input class="color" type="color" value="#$2" />',
@@ -52,7 +53,7 @@ DynamicCodeContainer.prototype.trigger = function(task, data) {
   data.instance = this;
   
   if(typeof this.callbacks[task] == "undefined")
-    return;
+    return data;
 
   return this.callbacks[task](data);
 };

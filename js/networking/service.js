@@ -23,7 +23,7 @@ Service.prototype._next_request = function() {
   if(!this.queue.length) {
     return;
   } else if (this.processing.length >= this.max_processing) {
-    //console.warn("Too many open requests. Queue-Length:" + this.queue.length);
+    console.warn("Too many open requests. Queue-Length:" + this.queue.length);
     return;
   }
   var request = this.queue.shift();
