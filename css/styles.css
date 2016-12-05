@@ -17,6 +17,9 @@ nav li:focus a {
     color: #f0ad4e !important;
 }
 
+/*
+ * CODE EXAMPLE
+ */
 .example_wrapper {
     float: none;
     clear: both;
@@ -47,7 +50,33 @@ code input[type="color"] {
 
 code .space {
     display: inline-block;
-    width: 0.7em;
+    width: 1em;
+}
+
+code [data-codepeeker-fn] {
+  border-bottom: 1px dotted #d1d9e1;
+  cursor: pointer;
+}
+
+.codepeek-wrapper {
+  box-shadow: 2px 2px 18px 0px rgba(105,105,105,0.25);
+}
+
+.codepeek-wrapper .close {
+    position: absolute;
+    z-index: 100;
+    right: 10px;
+    top: 10px;
+    color: black;
+}
+
+.codepeek-wrapper code {
+    border: 1px solid #afafaf;
+    background-color: #585858;
+}
+
+.codepeek-wrapper .close::before {
+  color: #000000;
 }
 
 .codeblock,
@@ -84,6 +113,14 @@ code .space {
     line-height: 1.1em;
 }
 
+/*
+ * CODE PEEKER
+ */
+code.codepeeker {
+  position: absolute;
+  padding: 24px;
+  border-radius: 5px;
+}
 
 /*
  * LOADER

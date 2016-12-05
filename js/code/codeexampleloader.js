@@ -19,9 +19,9 @@ CodeExampleLoader.prototype.loadCodeExamples = function(context) {
 };
 
 CodeExampleLoader.prototype.prepareExampleBlock = function(example_block_container) {
-  var example_block = new ExampleBlock({
-    container: example_block_container
-  });
+  var cfg = config.example_block;
+  cfg.container = example_block_container;
+  var example_block = new ExampleBlock(cfg);
 
   var display_element;
   switch(example_block.type) {

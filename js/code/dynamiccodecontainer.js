@@ -86,10 +86,9 @@ DynamicCodeContainer.prototype.loadNewCode  = function(code) {
       code = code.replace(this.fields[type].pattern, this.fields[type].input);
     }
     
-    code = code.replace(new RegExp("\n", 'g'), "<br />\n");
-    // Replace single slash comments with slash star comments
-    code = code.replace(/^([^\/])*\/\/(.*)$/g, '$1\/\* $2 \*\/');
-    code = code.replace(/\s*(\s{2})/g, '<span class="space">$1</span>')
+    code = codehighlighter.prepareCode(code);
+
+    code = this.trigger("onBeforeHTMLAppended", {code: code}).code;
 
     this.container.innerHTML = code;
 

@@ -97,7 +97,7 @@ TaskHandler.prototype = {
     code = DynamicCode.prepare_code(code);
 
     this.container.getElementById("code").innerHTML = code;
-    hljs.highlightBlock(this.container.getElementById("code"))
+    codehighlighter.highlightBlock(this.container.getElementById("code"))
 
     this.execute_task(task);
   },

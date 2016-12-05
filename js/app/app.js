@@ -15,15 +15,13 @@ var app = (function() {
       app.async_content = new AsyncContent({
         container: ac,
         callbacks: {
-          onContentLoaded: function(data) {
-            self.onAfterReplaceContent(data);
+          onAfterReplaceContent: function(data) {
+            self.onContentLoaded(data);
           }
         }
       });
 
-      app.async_content.loadDefaultContents(function() {
-        self.updateMainContainerBindings();
-      });
+      app.async_content.loadDefaultContents();
     };
 
     App.prototype.onContentLoaded = function(data) {

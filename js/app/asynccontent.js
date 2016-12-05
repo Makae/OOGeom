@@ -17,7 +17,7 @@ AsyncContent.prototype.loadDefaultContents = function(callback) {
   var containers = document.querySelectorAll("[data-default-content]");
   var num = containers.length;
   var onLoaded = function() {
-    if(--num == 0)
+    if(--num == 0 && typeof callback == 'function')
       callback();
   };
 
