@@ -15,8 +15,17 @@ var codehighlighter = (function() {
     
     return code;
   };
-  CodeHighlighter.prototype.highlightBlock = function(element) {
+
+  CodeHighlighter.prototype.highlightBlock = function(element, codepeeker) {
+    var codepeeker = typeof codepeeker != "undefined" ? codepeeker : true;
+
     hljs.highlightBlock(element);
+   
+    if(codepeeker) { 
+      var cfg = config.codepeeker;
+      cfg.container = element;
+      new CodePeeker(cfg);
+    }
   };
 
   return new CodeHighlighter;

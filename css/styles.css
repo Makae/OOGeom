@@ -56,9 +56,10 @@ code .space {
 code [data-codepeeker-fn] {
   border-bottom: 1px dotted #d1d9e1;
   cursor: pointer;
-}
+} 
 
 .codepeek-wrapper {
+  z-index: 1;
   box-shadow: 2px 2px 18px 0px rgba(105,105,105,0.25);
 }
 
@@ -68,6 +69,11 @@ code [data-codepeeker-fn] {
     right: 10px;
     top: 10px;
     color: black;
+    opacity: 0.15;
+}
+
+.codepeek-wrapper .close:hover {
+  opacity: 0.5;
 }
 
 .codepeek-wrapper code {
@@ -118,7 +124,7 @@ code [data-codepeeker-fn] {
  */
 code.codepeeker {
   position: absolute;
-  padding: 24px;
+  /* padding: 24px; */
   border-radius: 5px;
 }
 

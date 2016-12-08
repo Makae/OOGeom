@@ -3,7 +3,10 @@ var CodePeeker = (function(){
 
   function CodePeeker(config) {
     this.config = config;
+    this.codelinks = config.codelinks;
     this.container = config.container;
+
+    this.prepareCode(this.container);
     this.registerHandlers(this.container);
   };
 
@@ -17,12 +20,23 @@ var CodePeeker = (function(){
     return this.callbacks[task](data);
   };
 
+  CodePeeker.prototype.prepareCode = function(element) {
+    var code = element.innerHTML;
+    for(var i = 0; i < this.codelinks.length; i++) {
+      var cl = this.codelinks[i];
+      for(var i = 0; i < cl.patterns.length; i++) {
+        var pattern = cl.patterns[i]; 
+        code = code.replace(pattern, cl.replace);
+      }
+    }
+    element.innerHTML = code;
+  }
+
   CodePeeker.prototype.peekCode = function(element) {
     var identifier = element.getAttribute("data-codepeeker-fn");
     var idx = element.getAttribute("data-codepeeker-id");
     var dimensions = this.getPeekDimension(element);
 
-    this.hidePeeks();
     this.showPeek(idx, dimensions, identifier); 
   };
 
@@ -53,20 +67,33 @@ var CodePeeker = (function(){
     
   };
 
+  CodePeeker.prototype.hidePeek = function(idx) {
+    var elm = document.querySelector("[data-codepeeker-idx='" + idx + "']");
+    if(elm)
+      elm.parentElement.removeChild(elm);
+  };
+
+  CodePeeker.prototype.hidePeekById = function(identifier) {
+    var elm = document.querySelector("[data-codepeeker-id='" + identifier + "']");
+    if(elm)
+      elm.parentElement.removeChild(elm);
+  }
+
   CodePeeker.prototype.hidePeeks = function() {
     var elements = document.querySelectorAll("div.codepeek-wrapper");
     for(var i = 0; i < elements.length; i++)
-      elements[i].parentElement.removeChild(elements[i]);
+      this.hidePeek(elements[i].getAttribute("data-codepeeker-idx"));
   };
 
   CodePeeker.prototype.showPeek = function(idx, dimensions, identifier) {
+    this.hidePeekById(identifier);
     var self = this;
     var code = this.loadCode(identifier);
     var style = 'position:absolute; top: ' + dimensions.top + 'px; left:' + dimensions.left + 'px; max-width:' + dimensions.width + 'px; max-height:' + dimensions.height + 'px';
     var html = 
-      '<div class="codepeek-wrapper" style="' + style + '" data-codepeeker-idx="' + idx + '">' +
+      '<div class="codepeek-wrapper" style="' + style + '" data-codepeeker-idx="' + idx + '" data-codepeeker-id="' + identifier + '">' +
         '<span class="glyphicon glyphicon-remove close"></span>' +
-        '<code class="codepeeker javascript">' + code + '</code>' +
+        '<code class="codepeeker javascript" style="max-width:' + dimensions.width + 'px;">' + code + '</code>' +
       '</div>';
     var wrapper = document.createElement("div");
     wrapper.innerHTML = html;
@@ -80,10 +107,12 @@ var CodePeeker = (function(){
     
     cp_wrapper_elm.style.height = code_elm.offsetHeight + "px";
     cp_wrapper_elm.style.width = code_elm.offsetWidth + "px";
+    code_elm.style.width = code_elm.offsetWidth + "px";
     
 
     cp_wrapper_elm.querySelector(".close").addEventListener("click", function() {
-      self.hidePeeks();
+      var idx = this.parentElement.getAttribute("data-codepeeker-idx");
+      self.hidePeek(idx);
     });
 
 
@@ -97,6 +126,7 @@ var CodePeeker = (function(){
     }
 
     var code = ref.toString();
+    code = code.replace("function (", "function " + identifier + "(")
 
     return codehighlighter.prepareCode(code);
   };

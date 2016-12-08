@@ -4,6 +4,11 @@ var config = {
     },
 
     example_block: {
+    },
+
+    codepeeker: {
+        width: 640,
+        height: 600,
         codelinks : [
             {
                 'id' : 'utils',
@@ -11,15 +16,11 @@ var config = {
                 'patterns' : [
                     /(PrintUtils\.[^\(]+)\(/gi,
                     /(PointUtils\.[^\(]+)\(/gi,
-                    /(MatrixUtils\.[^\(]+)\(/gi
+                    /(MatrixUtils\.[^\(]+)\(/gi,
+                    /(GeneralUtils\.[^\(]+)\(/gi,
                 ]
             }
         ]
-    },
-
-    codepeeker: {
-        width: 640,
-        height: 600
     },
 
     block_builder : {

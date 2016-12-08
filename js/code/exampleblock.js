@@ -1,8 +1,6 @@
 var ExampleBlock = function(config) {
   this.container = config.container;
   this.callbacks = config.callbacks || {};
-  this.codelinks = config.codelinks || [];
-
 
   this.codeblock = this.container.querySelector(".codeblock");
   this.type = this.container.getAttribute("data-type");
@@ -35,22 +33,12 @@ ExampleBlock.prototype.init = function() {
       },
 
       onBeforeHTMLAppended : function(data) {
-        for(var i = 0; i < self.codelinks.length; i++) {
-          var cl = self.codelinks[i];
-          for(var i = 0; i < cl.patterns.length; i++) {
-            var pattern = cl.patterns[i]; 
-            data.code = data.code.replace(pattern, cl.replace);
-          }
-        }
         return data;
       },
 
       onHTMLAppended : function() {
-        var cfg = config.codepeeker;
-        cfg.container = self.codeblock;
-        codehighlighter.highlightBlock(self.codeblock);
-        new CodePeeker(cfg);
-      }
+        codehighlighter.highlightBlock(self.codeblock)
+    ;  }
     }
   });
   
