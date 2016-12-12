@@ -1,0 +1,57 @@
+ <article class="row">
+    <header>
+        <h1>Homogene Transformation</h1>
+    </header>
+    <section>
+        <div class="col-md-5 col-sm-12">
+            <p>Die Anwendung von affinen Transfomrationen zwingt einen dazu mehrere Rechnungsschritte einzeln auszuführen. Die Wurzel des Bösens liegt zwischen den unterschiedlichen Rechnungsschritten für Rotation und Translation. <br />Was wäre, wenn man diese zusammenfassen könnte? Kein Problem, die homogene Transformation kommt hier zu Hilfe. Mit dieser Methode kann man Translation und Rotation als eine einzige Matrixoperation definieren. Dies ist nur möglich, weil man in einem höheren Raum rechnet als das Ursprüngliche Problem angesiedelt ist.</p>
+            <p>Möchte man also eine Translation und eine Rotation auf ein Element im R^2 anwenden, so muss man mit Matrizen in R^3 rechnen.</p>
+            <ul>
+                <li>Die neue Spalte wird dabei verwendet um die Translation zu definieren.</li>
+                <li>Die neue Zeile wird dabei für perspektivische Verzerrungen verwendet.</li>
+            </ul>
+        </div>
+        <div class="col-md-7 col-sm-12">
+            <div class="example_block_template" data-type="code" data-fn="homogenous_example_matrix" data-executable="0" data-autoexec="1"></div>
+        </div>
+        <div class="clearfix"></div>
+    </section>
+    <header>
+        <h2>Aufgaben in R^2</h2>
+    </header>
+    <section>
+        <ul>
+            <li><a href="#first">Drehen um Ursprung, Drehen um Zentrum m=(m1,m2) Aufgabe auch in C.)</a></li>
+            <li><a href="#first">Spiegeln an der Gerade ax+bx+c=0</a></li>
+            <li><a href="#first">Streckung, Scherung</a></li>
+            <li><a href="#first">Perspektive Darstellung mit Fernpunkten u=(u1,u2) und v=(v1,v2).</a></li>
+        </ul>
+    </section>
+    <section>
+        <h3>Rotationen</h3>
+        <p>Verwendet man homogenen Koordinaten für die Rotation, so kann gleich vorgegangen werden wie bei den affinen. Man muss aber aufpassen dass man die Matrix ergänzt.</p>
+        <p>Da wir in R2 sind, muessen wir die bereits bekannte Rotationsmatrix von der affinen Transformation mit den homogenen Koordinaten ergänzen. Dies ergibt die zusätzliche Reihe und Spalte am Ende der Matrix</p>
+        <h4>Drehen um Ursprung</h4>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_example_rotation_orign" data-autoexec="1"></div>
+    </section>
+
+
+
+    <section>
+        <p>Die Affine Transformation...</p>
+        <h2>R3</h2>
+        <ul>
+            <li>Drehen um Ursprung, Drehen um Zentrum m=(m1,m2,m3)</li>
+            <ul>
+                <li>Rodriguez, affin und homogen</li>
+                <li>Eulerwinkel affin und homogen</li>
+                <li>(dualen)Quaternionen (H, DH)</li>
+                <li>Clifford Algebra</li>
+            </ul>
+            <li>Spiegeln an der Ebene ax+bx+cz+d=0</li>
+            <li>Streckung, Scherung</li>
+            <li>Affine Projektionen auf Ebene</li>
+            <li>Perspektive Darstellung mit Fernpunkten u=(u1,u2,u3) und v=(v1,v2,v3), w=(w1,w2,w3)</li>
+        </ul>
+    </section>
+</article>

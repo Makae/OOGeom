@@ -6,6 +6,8 @@ var ExampleBlock = function(config) {
   this.type = this.container.getAttribute("data-type");
   this.fn = this.codeblock.getAttribute("data-fn");
   this.autoexec = this.codeblock.getAttribute("data-autoexec") || false;
+  this.executable = this.codeblock.getAttribute("data-executable") == "0" ? 0 : 1;
+  this.container.setAttribute("data-executable", this.executable);
 
   this.dcc = null;
 };
@@ -74,6 +76,8 @@ ExampleBlock.prototype.onFieldChange = function(field) {
 };
 
 ExampleBlock.prototype.execute = function() {
+  if(!this.executable)
+    return;
   var code;
   try {
     code = this.dcc.prepareCustomCode();

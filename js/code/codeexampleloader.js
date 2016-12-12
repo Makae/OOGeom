@@ -34,11 +34,13 @@ CodeExampleLoader.prototype.prepareExampleBlock = function(example_block_contain
   }
 
   example_block.callbacks.onExecuteCode = function() {
-    display_element.clean();
+    if(display_element)
+      display_element.clean();
   };
 
   example_block.callbacks.onPreInit = function() {
-    display_element.init();
+    if(display_element)
+      display_element.init();
   };
 
   example_block.init();

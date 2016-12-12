@@ -25,6 +25,7 @@ var app = (function() {
     };
 
     App.prototype.onContentLoaded = function(data) {
+      app.async_content.registerLinks();
       if(data.target_id != 'main')
         return;
 
@@ -35,7 +36,6 @@ var app = (function() {
       var ac = document.querySelector("[data-async-container='main']");
       ExampleBlockBuilder.buildBlocksInContainer(ac, function() {
         app.example_blocks = CodeExampleLoader.instance().loadCodeExamples(ac);
-        app.async_content.registerLinks();
       });
       
     };

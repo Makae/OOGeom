@@ -1,3 +1,37 @@
+function homogenous_example_matrix() {
+    /* Alte, "affine" Matrix in R^2 für R^2 */
+    var mat_affin = new THREE.Matrix2().set(
+        Math.cos(angle), -Math.sin(angle),
+        Math.sin(angle),  Math.cos(angle)
+    );
+    
+    /* Neue, homogene Matrix in R^3 für R^2 */
+    var mat_homogenous = new THREE.Matrix3().set(
+        Math.cos(angle), -Math.sin(angle),  0,
+        Math.sin(angle),  Math.cos(angle),  0,
+        0,                0,                   1
+    );
+};
+function homogenous_example_rotation_orign() {
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
+    
+    var points = PointUtils.getDefaultPointSet();
+
+    var angle = 45.0/*#float*/;
+    angle = THREE.Math.degToRad(angle);
+
+    /* Neue R^3 Matrix für Berechnungen in R^2 */
+    var new_mat = new THREE.Matrix3().set(
+        Math.cos(angle), -Math.sin(angle),  0,
+        Math.sin(angle),  Math.cos(angle),  0,
+        0,                0,                   1
+    );
+    
+    MatrixUtils.applyMatrix(points, new_mat);
+    PrintUtils.printPoints(points, 0x0000ff/*#color*/);
+
+}
+
 function task_a1_2d_homo_rotation_ursprung() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
     

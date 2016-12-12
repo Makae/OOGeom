@@ -25,6 +25,7 @@ var ExampleBlockBuilder = (function() {
     var type = template_block.getAttribute("data-type");
     var fn = template_block.getAttribute("data-fn");
     var autoexec = template_block.getAttribute("data-autoexec");
+    var executable = template_block.getAttribute("data-executable");
 
     template_block.setAttribute("data-loading", "1");
 
@@ -32,6 +33,7 @@ var ExampleBlockBuilder = (function() {
       html = html.replace("$type", type);
       html = html.replace("$fn", fn);
       html = html.replace("$autoexec", autoexec);
+      html = html.replace("$executable", executable);
 
       self.replaceTemplate(template_block, html);
       callback();

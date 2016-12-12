@@ -18,12 +18,23 @@ nav li:focus a {
 }
 
 /*
+ * ARTICLE AND SECTIONS
+ */
+section {
+  margin-bottom: 4em;
+}
+
+/*
  * CODE EXAMPLE
  */
 .example_wrapper {
     float: none;
     clear: both;
     overflow: hidden;
+}
+
+.example_block[data-executable="0"] .toolbox {
+  display: none;
 }
 
 code.hljs {
@@ -91,8 +102,16 @@ code [data-codepeeker-fn] {
     min-height: 360px;
 }
 
+.example_block[data-type="code"] .codeblock {
+  min-height: 260px;
+}
+
 .canvas_wrapper {
     padding-top: 43px;
+}
+
+.canvas_wrapper canvas {
+  border-radius: 5px;
 }
 
 .code_wrapper label[for="live_update"] {

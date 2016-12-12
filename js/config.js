@@ -19,6 +19,13 @@ var config = {
                     /(MatrixUtils\.[^\(]+)\(/gi,
                     /(GeneralUtils\.[^\(]+)\(/gi,
                 ]
+            },
+            {
+                'id' : 'threejs-vector3',
+                'replace' : '<span data-codepeeker-fn="THREE.Vector3.prototype.$2">$1$2</span>(',
+                'patterns' : [
+                    /(\.)(applyMatrix3)\(/gi
+                ]
             }
         ]
     },
@@ -26,7 +33,10 @@ var config = {
     block_builder : {
         'threejs-orto' : {
             tpl: "exampleblocks/threejs-orto.html"
-        }
+        },
+        'code' : {
+            tpl: "exampleblocks/code.html"
+        },
     },
 
     camera : {

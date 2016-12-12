@@ -24,8 +24,9 @@ var CodePeeker = (function(){
     var code = element.innerHTML;
     for(var i = 0; i < this.codelinks.length; i++) {
       var cl = this.codelinks[i];
-      for(var i = 0; i < cl.patterns.length; i++) {
-        var pattern = cl.patterns[i]; 
+ 
+      for(var n = 0; n < cl.patterns.length; n++) {
+        var pattern = cl.patterns[n]; 
         code = code.replace(pattern, cl.replace);
       }
     }
@@ -45,7 +46,7 @@ var CodePeeker = (function(){
     var width = this.config.width;
     var height = this.config.height;
     var left = rect.left;
-    var top = rect.top + rect.height;
+    var top = rect.top + rect.height + this.calcScrollOffset();
     
     var too_wide = Math.max(left + width - window.innerWidth, 0);
 
@@ -66,6 +67,12 @@ var CodePeeker = (function(){
     }
     
   };
+
+  CodePeeker.prototype.calcScrollOffset = function(element) {
+    var scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
+    scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    return scrollTop;
+  }
 
   CodePeeker.prototype.hidePeek = function(idx) {
     var elm = document.querySelector("[data-codepeeker-idx='" + idx + "']");

@@ -1,8 +1,15 @@
 var AsyncContent = function(config) {
   this.container = config.container;
   this.callbacks = config.callbacks || {};
+
+  //this.registerHandler();
 };
 
+AsyncContent.prototype.registerHandler = function(task, data) {
+  if(!this.maincontent)
+    return;
+
+};
 AsyncContent.prototype.trigger = function(task, data) {
   data = data || {};
   data.instance = this;
@@ -21,9 +28,13 @@ AsyncContent.prototype.loadDefaultContents = function(callback) {
       callback();
   };
 
+  var main_path = window.location.hash.length ? window.location.hash.substring(1) : false;
   for(var i = 0; i < containers.length; i++) {
     var container = containers[i];
     var path = container.getAttribute("data-default-content");
+    
+    if(main_path && container.getAttribute("data-async-container") == "main")
+      path = main_path;
     var target = container.getAttribute("data-async-container");
     this.loadContentInTarget(target, path, onLoaded);
   }
@@ -31,6 +42,7 @@ AsyncContent.prototype.loadDefaultContents = function(callback) {
 
 AsyncContent.prototype.registerLinks = function() {
   var links = document.querySelectorAll("[data-async-target]");
+
   for(var i = 0; i < links.length; i++) {
     if(links[i].getAttribute("data-async-registered"))
       continue;
@@ -43,7 +55,6 @@ AsyncContent.prototype.registerHandler = function(link) {
   var onclick = function(e) {
     var content_path = self.determineContentPath(this);
     var target = this.getAttribute("data-async-target");
-
     self.loadContentInTarget(target, content_path);
   };
 
@@ -58,16 +69,17 @@ AsyncContent.prototype.determineContentPath = function(elm) {
     return elm.getAttribute("href").split('#')[1];
   if(elm.hasAttribute("src"))
     return elm.getAttribute("src");
-};  
+  return false;
+};
 
 AsyncContent.prototype.loadContentInTarget = function(target, path, callback) {
   var self = this;
 
-    document.querySelectorAll("data-async-target").forEach(function(elm) {
-      elm.removeAttribute("data-active");
-      if(elm.getAttribute("data-sync-target") == target)
-        elm.setAttribute("data-active", "1");
-    });
+  document.querySelectorAll("[data-async-target]").forEach(function(elm) {
+    elm.removeAttribute("data-active");
+    if(self.determineContentPath(elm) == path  && elm.getAttribute("data-async-target") == target)
+      elm.setAttribute("data-active", "1");
+  });
 
   var success = function(request) {
     self.getTargetDom(target).removeAttribute("data-loading");
