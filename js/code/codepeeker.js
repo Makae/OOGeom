@@ -95,7 +95,11 @@ var CodePeeker = (function(){
   CodePeeker.prototype.showPeek = function(idx, dimensions, identifier) {
     this.hidePeekById(identifier);
     var self = this;
+    
     var code = this.loadCode(identifier);
+    code = codehighlighter.highlightCode(code);
+    code = codehighlighter.prepareCode(code);
+
     var style = 'position:absolute; top: ' + dimensions.top + 'px; left:' + dimensions.left + 'px; max-width:' + dimensions.width + 'px; max-height:' + dimensions.height + 'px';
     var html = 
       '<div class="codepeek-wrapper" style="' + style + '" data-codepeeker-idx="' + idx + '" data-codepeeker-id="' + identifier + '">' +
@@ -110,8 +114,10 @@ var CodePeeker = (function(){
     var cp_wrapper_elm =  document.querySelector("[data-codepeeker-idx='" + idx + "']");
     var code_elm = cp_wrapper_elm.querySelector("code");
 
-    codehighlighter.highlightBlock(code_elm);
+    codehighlighter.addCodePeeker(code_elm);
     
+    code_elm.className += " hljs";
+
     cp_wrapper_elm.style.height = code_elm.offsetHeight + "px";
     cp_wrapper_elm.style.width = code_elm.offsetWidth + "px";
     code_elm.style.width = code_elm.offsetWidth + "px";
@@ -135,7 +141,7 @@ var CodePeeker = (function(){
     var code = ref.toString();
     code = code.replace("function (", "function " + identifier + "(")
 
-    return codehighlighter.prepareCode(code);
+    return code;
   };
 
   CodePeeker.prototype.registerHandlers = function(container) {

@@ -12,12 +12,13 @@ function homogenous_example_matrix() {
         0,                0,                   1
     );
 };
+
 function homogenous_example_rotation_orign() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
     
     var points = PointUtils.getDefaultPointSet();
 
-    var angle = 45.0/*#float*/;
+    var angle = 45/*#float:5:-360:360*/;
     angle = THREE.Math.degToRad(angle);
 
     /* Neue R^3 Matrix für Berechnungen in R^2 */
@@ -29,7 +30,47 @@ function homogenous_example_rotation_orign() {
     
     MatrixUtils.applyMatrix(points, new_mat);
     PrintUtils.printPoints(points, 0x0000ff/*#color*/);
+}
 
+function homogenous_example_translation() {
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0xff0000/*#color*/);
+    var x = 25/*#float:5:10*/;
+    var y = 25/*#float:5*/;
+
+    
+    var points = PointUtils.getDefaultPointSet();
+    /* Neue R^3 Matrix für Berechnungen in R^2 */
+    var matx = new THREE.Matrix3();
+    matx.set(
+       1, 0, x,
+       0, 1, 0,
+       0, 0, 1
+    );
+    MatrixUtils.applyMatrix(points, matx);
+    PrintUtils.printPoints(points, 0x0000ff/*#color*/);
+
+
+    var points = PointUtils.getDefaultPointSet();
+    /* Neue R^3 Matrix für Berechnungen in R^2 */
+    var maty = new THREE.Matrix3().set(
+       1, 0, 0,
+       0, 1, y,
+       0, 0, 1
+    );
+    MatrixUtils.applyMatrix(points, maty);
+    PrintUtils.printPoints(points, 0x00ff00/*#color*/);
+
+
+    var points = PointUtils.getDefaultPointSet();
+    /* Neue R^3 Matrix für Berechnungen in R^2 */
+    var matxy = new THREE.Matrix3().set(
+       1, 0, x,
+       0, 1, y,
+       0, 0, 1
+    );
+
+    MatrixUtils.applyMatrix(points, matxy);
+    PrintUtils.printPoints(points, 0x00ffff/*#color*/);
 }
 
 function task_a1_2d_homo_rotation_ursprung() {

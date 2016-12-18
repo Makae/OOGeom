@@ -34,13 +34,21 @@ ExampleBlock.prototype.init = function() {
         self.onFieldChange();
       },
 
-      onBeforeHTMLAppended : function(data) {
+      onBeforeLoadNewCode : function(data) {
+        data.code = codehighlighter.highlightCode(data.code);
         return data;
       },
 
-      onHTMLAppended : function() {
-        codehighlighter.highlightBlock(self.codeblock)
-    ;  }
+      onBeforeHTMLAppended : function(data) {
+        data.code = codehighlighter.prepareCode(data.code)
+        return data;
+      },
+
+      onHTMLAppended : function(data) {
+        codehighlighter.addCodePeeker(data.container);
+        data.container.className += " hljs";
+        return data;
+      }
     }
   });
   
@@ -78,6 +86,7 @@ ExampleBlock.prototype.onFieldChange = function(field) {
 ExampleBlock.prototype.execute = function() {
   if(!this.executable)
     return;
+
   var code;
   try {
     code = this.dcc.prepareCustomCode();
@@ -86,6 +95,7 @@ ExampleBlock.prototype.execute = function() {
     throw e;
     return;
   }
+  
   this.executeCode(code);
 };
 

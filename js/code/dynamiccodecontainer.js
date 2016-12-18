@@ -7,8 +7,19 @@ function DynamicCodeContainer(config) {
 
 DynamicCodeContainer.prototype.fields = {
   float: {
-    pattern : /(-?\d+(\.\d)?)\/\*\s?#(float)\*\//g,
-    input: '<input class="float" type="number" step="0.1" value="$1" />',
+    pattern : /(-?\d+(\.\d)?)\<\/span\>\<span class="hljs-comment"\>\/\*\s?#(float)(:(\d+(\.\d+)?)(:(-?\d+(\.\d+)?))?(:(-?\d+(\.\d+)?))?)?\*\//g,
+    pattern_tpl: /(-?\d+(\.\d)?)\/\*\s?#(float)(:(\d+(\.\d+)?)(:(-?\d+(\.\d+)?))?(:(-?\d+(\.\d+)?))?)?\*\//g, 
+    input: function() {
+      var match = arguments[0];
+      var value = arguments[1];
+      var step = arguments[5];
+      var min_attr = arguments[8] ? "min=\"" + arguments[8] + "\" " : "";
+      var max_attr = arguments[11] ? "max=\"" + arguments[11] + "\" " : "";
+      var html = '<input class="float" type="number" step="' + step + '" value="' + value + '" ' + min_attr + '' + max_attr + '/>';
+
+      return html;
+      
+    },
     selector: 'input.float',
     tpl_var: '%$float%',
     tpl_var_pattern: /%\$float%/gi,
@@ -27,7 +38,8 @@ DynamicCodeContainer.prototype.fields = {
   },
 
   color: {
-    pattern : /(0x([0-9a-fA-F]{6}))\/\*\s?#(color)\*\//g,
+    pattern : /(0x([0-9a-fA-F]{6}))\<\/span\>\<span class="hljs-comment"\>\/\*\s?#(color)\*\//g,
+    pattern_tpl: /(0x([0-9a-fA-F]{6}))\/\*\s?#(color)\*\//g,
     input: '<input class="color" type="color" value="#$2" />',
     selector: 'input.color',
     tpl_var: '%$color%',
@@ -79,44 +91,46 @@ DynamicCodeContainer.prototype.registerHandlers  = function() {
 
 
 DynamicCodeContainer.prototype.loadNewCode  = function(code) {
-    this.code = (' ' + code).slice(1);
+  this.code = (' ' + code).slice(1);
+  code = this.trigger("onBeforeLoadNewCode", {code: code}).code;
+  
+  for(var type in this.fields) {
+    // Add template variables to original code
+    this.code = this.code.replace(this.fields[type].pattern_tpl, this.fields[type].tpl_var);
+    // Add input fields to highlighted code
+    code = code.replace(this.fields[type].pattern, this.fields[type].input);
+  }
+  
 
-    for(var type in this.fields) {
-      this.code = this.code.replace(this.fields[type].pattern, this.fields[type].tpl_var);
-      code = code.replace(this.fields[type].pattern, this.fields[type].input);
-    }
-    
-    code = codehighlighter.prepareCode(code);
+  code = this.trigger("onBeforeHTMLAppended", {code: code}).code;
 
-    code = this.trigger("onBeforeHTMLAppended", {code: code}).code;
+  this.container.innerHTML = code;
 
-    this.container.innerHTML = code;
+  this.trigger("onHTMLAppended", {code: code, container: this.container});
 
-    this.trigger("onHTMLAppended", {code: code});
+  this.registerHandlers();
 
-    this.registerHandlers();
-
-    return code;
+  return code;
 };
 
 DynamicCodeContainer.prototype.prepareCustomCode  = function() {
   var values = this.getValues();
   this.validateValues(values);
 
-  task = this.code;
+  var custom_code = this.code;
   for(var type in this.fields) {
     if(typeof values[type] == 'undefined')
       continue;
 
-    task = this.replaceTemplateValues(task, this.fields[type].tpl_var_pattern , values[type]);
+    custom_code = this.replaceTemplateValues(custom_code, this.fields[type].tpl_var_pattern , values[type]);
   }
 
   var pattern_fn_rename = /(\s?function\s+)([a-zA-Z0-9_]+)(.*)/;
   var fn_prefix = '__custom_';
   
-  var matches = task.match(pattern_fn_rename);
-  task = task.replace(pattern_fn_rename, '$1 ' + fn_prefix + '$2$3');
-  eval.call(window, task);
+  var matches = custom_code.match(pattern_fn_rename);
+  custom_code = custom_code.replace(pattern_fn_rename, '$1 ' + fn_prefix + '$2$3');
+  eval.call(window, custom_code);
 
   return window[fn_prefix + matches[2]];
 };

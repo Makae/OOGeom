@@ -99,7 +99,8 @@ code [data-codepeeker-fn] {
 .codeblock,
 .canvas_wrapper,
 .canvas_container {
-    min-height: 360px;
+  min-height: 360px;
+  max-height: 460px;
 }
 
 .example_block[data-type="code"] .codeblock {

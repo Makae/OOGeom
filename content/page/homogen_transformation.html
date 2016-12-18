@@ -4,7 +4,7 @@
     </header>
     <section>
         <div class="col-md-5 col-sm-12">
-            <p>Die Anwendung von affinen Transfomrationen zwingt einen dazu mehrere Rechnungsschritte einzeln auszuführen. Die Wurzel des Bösens liegt zwischen den unterschiedlichen Rechnungsschritten für Rotation und Translation. <br />Was wäre, wenn man diese zusammenfassen könnte? Kein Problem, die homogene Transformation kommt hier zu Hilfe. Mit dieser Methode kann man Translation und Rotation als eine einzige Matrixoperation definieren. Dies ist nur möglich, weil man in einem höheren Raum rechnet als das Ursprüngliche Problem angesiedelt ist.</p>
+            <p>Die Anwendung von affinen Transfomrationen zwingt einen dazu mehrere Rechnungsschritte einzeln auszuführen. Die Wurzel des Bösens liegt debei bei den sich unterscheidenden Rechnungsschritten für Rotation und Translation. <br />Was wäre, wenn man diese beiden Rechnugnsoperationen zusammenfassen könnte? Genau dies bieten homogene Transformationen. Mit dieser Methode kann man Translation und Rotation als eine einzige Matrixoperation definieren. Dies ist nur möglich, weil man in einem höheren Raum rechnet als das Ursprüngliche Problem angesiedelt ist.</p>
             <p>Möchte man also eine Translation und eine Rotation auf ein Element im R^2 anwenden, so muss man mit Matrizen in R^3 rechnen.</p>
             <ul>
                 <li>Die neue Spalte wird dabei verwendet um die Translation zu definieren.</li>
@@ -26,6 +26,12 @@
             <li><a href="#first">Streckung, Scherung</a></li>
             <li><a href="#first">Perspektive Darstellung mit Fernpunkten u=(u1,u2) und v=(v1,v2).</a></li>
         </ul>
+    </section>
+    <section>
+        <h3>Translation</h3>
+        <p>Mit Hilfe der zusätzlichen Dimension können wir die Translation in der letzten Spalte abbilden.</p>
+        <h4>Translation</h4>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_example_translation" data-autoexec="1"></div>
     </section>
     <section>
         <h3>Rotationen</h3>
