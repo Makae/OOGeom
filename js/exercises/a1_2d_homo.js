@@ -13,25 +13,6 @@ function homogenous_example_matrix() {
     );
 };
 
-function homogenous_example_rotation_orign() {
-    PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
-    
-    var points = PointUtils.getDefaultPointSet();
-
-    var angle = 45/*#float:5:-360:360*/;
-    angle = THREE.Math.degToRad(angle);
-
-    /* Neue R^3 Matrix für Berechnungen in R^2 */
-    var new_mat = new THREE.Matrix3().set(
-        Math.cos(angle), -Math.sin(angle),  0,
-        Math.sin(angle),  Math.cos(angle),  0,
-        0,                0,                   1
-    );
-    
-    MatrixUtils.applyMatrix(points, new_mat);
-    PrintUtils.printPoints(points, 0x0000ff/*#color*/);
-}
-
 function homogenous_example_translation() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0xff0000/*#color*/);
     var x = 25/*#float:5:10*/;
@@ -73,75 +54,133 @@ function homogenous_example_translation() {
     PrintUtils.printPoints(points, 0x00ffff/*#color*/);
 }
 
-function task_a1_2d_homo_rotation_ursprung() {
+function homogenous_example_rotation_orign() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
     
     var points = PointUtils.getDefaultPointSet();
 
-    var new_mat = MatrixUtils.rotateAxis(MatrixUtils.AXIS_Z, THREE.Math.degToRad(45/*#float*/));
-    MatrixUtils.applyMatrix(points, new_mat);
-    PrintUtils.printPoints(points, 0x0000ff/*#color*/);
+    var angle = 45/*#float:5:-360:360*/;
+    angle = THREE.Math.degToRad(angle);
 
+    /* Neue R^3 Matrix für Berechnungen in R^2 */
+    var new_mat = new THREE.Matrix3().set(
+        Math.cos(angle), -Math.sin(angle),  0,
+        Math.sin(angle),  Math.cos(angle),  0,
+        0,                0,                   1
+    );
+    
+    MatrixUtils.applyMatrix(points, new_mat);
+    PrintUtils.printPoints(points, 0xff0000/*#color*/); 
 }
 
-function task_a1_2d_homo_rotation_center() {
+function homogenous_example_rotation_point() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
     
     var points = PointUtils.getDefaultPointSet();
-    var center = PointUtils.getCenter(points);
+
+
+    /* center of the defaultPointSet as Default*/
+    var r_point_x = 26.6/*#float*/;
+    var r_point_y = 26.6/*#float*/;
+    var alpha = THREE.Math.degToRad(45/*#float:5*/);
+
+    var r_point = new THREE.Vector3(r_point_x, r_point_y, 1)
+
     var R = MatrixUtils.rotatePoint2d(
-        center, 
+        r_point, 
         MatrixUtils.AXIS_Z, 
-        THREE.Math.degToRad(45/*#float*/)
+        alpha
     );
     
     MatrixUtils.applyMatrix(points, R);
 
-    // make the center more visible
-    center.z = 2;
-    PrintUtils.printPoints([center], 0xffffff/*#color*/);
+    /* make the r_point more visible */
+    r_point.z = 2;
+    PrintUtils.printPoints([r_point], 0xffffff/*#color*/);
     PrintUtils.printPoints(points, 0xff0000/*#color*/);
 }
 
-function task_a1_2d_mirror_origin_line() {
+function homogenous_mirror_axis() {
     var points = PointUtils.getDefaultPointSet();
-    var line = new THREE.Vector3(2/*#float*/, 2.5/*#float*/, 0/*#float*/);
+    var line = new THREE.Vector3(1, 0, 0);
+
+    var mirror_x = -1/*#float:2:-1:1*/;
+    var mirror_y = 1/*#float:2:-1:1*/;
+
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
+
+    var mat =  new THREE.Matrix3().set(
+        mirror_x,  0,  0,
+        0,  mirror_y,  0,
+        0,         0,   1
+    );
+
+    MatrixUtils.applyMatrix(points, mat);
+    PrintUtils.printPoints(points, 0xff0000/*#color*/);  
+
+}
+
+function homogenous_mirror_origin_line() {
+    var points = PointUtils.getDefaultPointSet();
+    var declination = 2.5/*#float:0.1*/;
+    var line = new THREE.Vector3(1, declination, 0);
 
     PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
     PrintUtils.printStraightOriginLine(line, 0xff00ff/*#color*/);
 
+    /* MIRROR on a straight line which is going through the origin*/
     var mat = MatrixUtils.mirrorOriginLine2d(line);
+
     MatrixUtils.applyMatrix(points, mat);
-    PrintUtils.printPoints(points); 
+    PrintUtils.printPoints(points, 0xff0000/*#color*/); 
 
 }
 
-function task_a1_2d_mirror_arbitrary_line() {
+function homogenous_shear() {
     var points = PointUtils.getDefaultPointSet();
-    var my = 2;
-    var y = 0;
-    var line = new Line(my, y)
+    var line = new THREE.Vector3(1, 0, 0);
+
+    var shear_x = 0.5/*#float:0.1:-100:100*/;
+    var shear_y = 0/*#float:0.1:-100:100*/;
+
     PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
 
-    var line_set = line.asVectorSet();
-    PrintUtils.printStraightLine(line_set[1], line_set[0], 0xff00ff/*#color*/);
+    var mat =  new THREE.Matrix3().set(
+        1, shear_x,  0,
+        shear_y, 1,  0,
+        0,       0,   1
+    );
 
-    var mat = MatrixUtils.mirrorLine2d(line_set[1], line_set[0].y);
     MatrixUtils.applyMatrix(points, mat);
-    PrintUtils.printPoints(points); 
-
+    PrintUtils.printPoints(points, 0xff0000/*#color*/); 
 }
 
-function task_a1_2d_shear() {
-    PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
-}
-
-function task_a1_2d_homo_perspective() {
+function homogenous_perspective() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
     
     var points = PointUtils.getDefaultPointSet();
-    var vanishing_point_a = new THREE.Vector3(200/*#float*/, 600/*#float*/);
-    var vanishing_point_b = new THREE.Vector3(-1000/*#float*/, -1000/*#float*/);
+    var vanishing_point_a = new THREE.Vector3(400/*#float:10*/, 400/*#float:10*/);
+    
+    var mat = new THREE.Matrix3().set(
+        1,           0, 0,
+        0,           1, 0,
+        -1 / vanishing_point_a.x, -1/vanishing_point_a.y, 1
+    );
+    
+    var new_points = MatrixUtils.applyMatrix(points, mat);
+
+    PrintUtils.printPoints([vanishing_point_a], 0xffffff/*#color*/);
+
+    new_points = PointUtils.deHomogenize2D(new_points);
+    PrintUtils.printPoints(new_points, 0xff0000/*#color*/);
+ }
+
+function homogenous_perspective_two() {
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
+    
+    var points = PointUtils.getDefaultPointSet();
+    var vanishing_point_a = new THREE.Vector3(400/*#float:10*/, 400/*#float:10*/);
+    var vanishing_point_b = new THREE.Vector3(-400/*#float:10*/, 400/*#float:10*/);
     var mat = MatrixUtils.project2(
             vanishing_point_a,
             vanishing_point_b
@@ -154,7 +193,5 @@ function task_a1_2d_homo_perspective() {
     PrintUtils.printPoints([vanishing_point_b], 0xffffff/*#color*/);
 
     new_points = PointUtils.deHomogenize2D(new_points);
-    PrintUtils.printPoints(new_points, 0xff00ff/*#color*/);
+    PrintUtils.printPoints(new_points, 0xff0000/*#color*/);
  }
-
-

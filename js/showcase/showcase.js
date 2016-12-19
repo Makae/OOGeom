@@ -87,6 +87,10 @@ Showcase.prototype.initRoom = function() {
 
   this.scene.add(point_light);
 
+  this.model = new THREE.Mesh( new THREE.BoxBufferGeometry( 0.001, 0.001, 0.0001 ),  new THREE.MeshBasicMaterial( {color: 0x000000, opacity: 0} ) );
+  this.model.position.set(0, 0, 0);
+  this.scene.add(this.model);
+
 };
 
 Showcase.prototype.loadSkybox = function(skybox_config, success) {
@@ -116,11 +120,11 @@ Showcase.prototype.registerControls = function(object) {
   this.camera_control = new THREE.TrackballControls(this.camera, this.renderer.domElement);
   this.camera_control.panCamera = function() {};
   //this.camera_control = new THREE.CustomControls(object, this.renderer.domElement);
-  // this.camera_control = new THREE.MouseControls(object);
+  this.camera_control = new THREE.OrbitControl(object);
   // this.camera_control.rotateSpeed = 0.5;
   this.camera_control.minDistance = this.camera_config.minDistance;
   this.camera_control.maxDistance = this.camera_config.maxDistance;
-  //this.camera_control.addEventListener( 'change', render );
+  this.camera_control.addEventListener( 'change', render );
 };
 
 Showcase.prototype.addObject = function(obj) {

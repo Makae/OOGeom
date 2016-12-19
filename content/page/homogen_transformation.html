@@ -2,10 +2,10 @@
     <header>
         <h1>Homogene Transformation</h1>
     </header>
-    <section>
+    <section class="intro">
         <div class="col-md-5 col-sm-12">
-            <p>Die Anwendung von affinen Transfomrationen zwingt einen dazu mehrere Rechnungsschritte einzeln auszuführen. Die Wurzel des Bösens liegt debei bei den sich unterscheidenden Rechnungsschritten für Rotation und Translation. <br />Was wäre, wenn man diese beiden Rechnugnsoperationen zusammenfassen könnte? Genau dies bieten homogene Transformationen. Mit dieser Methode kann man Translation und Rotation als eine einzige Matrixoperation definieren. Dies ist nur möglich, weil man in einem höheren Raum rechnet als das Ursprüngliche Problem angesiedelt ist.</p>
-            <p>Möchte man also eine Translation und eine Rotation auf ein Element im R^2 anwenden, so muss man mit Matrizen in R^3 rechnen.</p>
+            <p>Die Anwendung von affinen Transfomrationen zwingt einen dazu mehrere Rechnungsschritte einzeln auszuführen. Die Wurzel des Bösens liegt dabei bei den sich unterscheidenden Rechnungsschritten für Rotation und Translation. <br />Was wäre, wenn man diese beiden Rechnugnsoperationen zusammenfassen könnte? Genau dies bieten homogene Transformationen. Mit dieser Methode kann man Translation und Rotation als eine einzige Matrixoperation definieren. Dies ist nur möglich, weil man in einem höheren Raum rechnet als das Ursprüngliche Problem angesiedelt ist.</p>
+            <p>Möchte man also eine Translation und eine Rotation auf ein Element im &real;<sup>2</sup> anwenden, so muss man mit Matrizen in &real;<sup>3</sup> rechnen.</p>
             <ul>
                 <li>Die neue Spalte wird dabei verwendet um die Translation zu definieren.</li>
                 <li>Die neue Zeile wird dabei für perspektivische Verzerrungen verwendet.</li>
@@ -16,8 +16,9 @@
         </div>
         <div class="clearfix"></div>
     </section>
+
     <header>
-        <h2>Aufgaben in R^2</h2>
+        <h2>Aufgaben in &real;<sup>2</sup></h2>
     </header>
     <section>
         <ul>
@@ -27,20 +28,93 @@
             <li><a href="#first">Perspektive Darstellung mit Fernpunkten u=(u1,u2) und v=(v1,v2).</a></li>
         </ul>
     </section>
+
     <section>
         <h3>Translation</h3>
-        <p>Mit Hilfe der zusätzlichen Dimension können wir die Translation in der letzten Spalte abbilden.</p>
-        <h4>Translation</h4>
+        <p>Mit Hilfe der zusätzlichen Dimension können wir die Translation in der letzten Spalte abbilden.<br />Durch den Einsatz von Homogenen Koordinaten, können wir die Translation in X und Y Richtung in zwei dedizierte Matrizen-Zellen definieren.</p>
+        <p>Dabei gilt für:</p>
+        <ul>
+            <li><strong>X-Translation</strong>: M<sub>1,3</sub></li>
+            <li><strong>Y-Translation</strong>: M<sub>2,3</sub></li>
+        </ul>
         <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_example_translation" data-autoexec="1"></div>
     </section>
+
     <section>
         <h3>Rotationen</h3>
-        <p>Verwendet man homogenen Koordinaten für die Rotation, so kann gleich vorgegangen werden wie bei den affinen. Man muss aber aufpassen dass man die Matrix ergänzt.</p>
-        <p>Da wir in R2 sind, muessen wir die bereits bekannte Rotationsmatrix von der affinen Transformation mit den homogenen Koordinaten ergänzen. Dies ergibt die zusätzliche Reihe und Spalte am Ende der Matrix</p>
+        <p>Verwendet man Homogene Koordinaten für die Rotation, so kann gleich vorgegangen werden wie bei der Affinen Methode. Man muss aber aufpassen dass man die Matrix mt der neuen Spalte und Zeile ergänzt. Dies ergibt die zusätzliche Reihe und Spalte am Ende der Matrix</p>
         <h4>Drehen um Ursprung</h4>
+        <p>Beim drehen um den Ursprung können wir wie bei der Affinen Transformation vorgehen. Wichtig ist jedoch in Matrix bei <strong>M<sub>3,3</sub></strong> eine 1 reinzuschreiben, die restlichen neuen Zellen werden mit einer 0 abgefüllt. Dies führt dazu dass der gesammte neue Bereich keine Auswirkung auf die bestehende Berechnung hat.</p>
         <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_example_rotation_orign" data-autoexec="1"></div>
+        
+        <h4>Drehen um einen Punkt</h4>
+        <p>Hier zeigt sich das erste mal die Stärke der Homogenen Transformation. Man hat nämlich die ganze Berechnung schlussendlich innerhalb einer einzigen Matrix. Diese kann dann für alle Punkte angewandt werden.</p>
+        <p>Da wir nur Rotationen um den Ursprung kennen, müssen wir das zu rotierende Objekt zuerst in den Ursprung versetzen. Dies tun wir, in dem wir die Position des Rotationszentrums (r_point_x und r_point_y) vom Objekt abziehen durch eine Translation. Erst danach können wir eine Rotation um den gewünschten Winkel ausführen. Damit die Punkte schlussendlich wieder an der richtigen Position stehen, müssen sie wieder um die Position des Rotationszentrums r_point_x und r_point_y verschoben werden durch die Inverse Matrix der vorherigen Transformation.</p>
+        <p>Wir führen also folgende Matrixoperationen durch:</p>
+        <ul>
+            <li><strong>Translation T</strong>: Verschiebung um -r_point_x und -r_point_y </li>
+            <li><strong>Rotation R</strong>: Rotation um Winkel &alpha; </li>
+            <li><strong>Translation T<sup>1</sup></strong>: Verschiebung um +r_point_x und +r_point_y </li>
+        </ul>
+        <p>
+            <strong>Achtung! Die Reihenfolge der Multiplikation wird folgendermassen angewandt:<br /></strong>
+            <pre class="example-short">M = T<sup>1</sup> * R * T</pre>
+        </p>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_example_rotation_point" data-autoexec="1"></div>
     </section>
+    <section>
+        <h3>Spiegelung und Scherung</h3>
+        <h4>Spiegelung an einer Achse</h4>
+        <p>Bei der Spiegelung an einer Achse können wir einfach die zur Achse gehörigen Identitätswärte negieren.<br />
+        Dabei gilt folgendes:</p>
+        <ul>
+            <li>Spiegelung X:  M<sub>1,1</sub> = -1</li>
+            <li>Spiegelung Y:  M<sub>2,2</sub> = -1</li>
+            <li>Spiegelung XY: M<sub>1,1</sub> = -1 und M<sub>2,2</sub> = -1</li>
+        </ul>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_mirror_axis" data-autoexec="1"></div>
+        
+        <h4>Spiegelung an Geraden</h4>
+        <p>Die Spiegelung an einer Geraden kann in 3 Schritten definiert werden:</p>
+        <ul>
+            <li>Rotation auf X-Achse</li>
+            <li>Spiegelung an X-Achse</li>
+            <li>Rück-Rotation</li>
+        </ul>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_mirror_origin_line" data-autoexec="1"></div>
 
+        <h4>Scherung</h4>
+        <p>Ähnlich wie bei der Spiegelung an einer Achse kann man bei der Scherung durch Anpassung von 2 Matrixzellen die Scherung in X- und Y-Richtung gesteuert werden<br />Dabei gilt folgendes:</p>
+        <ul>
+            <li>Scherung X:  M<sub>1,2</sub> &isin; &real;</li>
+            <li>Scherung Y:  M<sub>2,1</sub> &isin; &real;</li>
+            <li>Scherung XY: M<sub>1,2</sub> &isin; &real; und M<sub>2,1</sub> &isin; &real;</li>
+        </ul>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_shear" data-autoexec="1"></div>
+    </section>
+    <section>
+        <h3>Perspektivische Darstellungen</h3>
+        <p>Auch hier bietetn die Homogenen Koordinaten einen entscheidenden Vorteil. Wie bei den Matrix-Zellen für die Translation (M<sub>1,3</sub> und M<sub>2,3</sub>) können die 2 anderen Zellen M<sub>3,1</sub> und M<sub>3,2</sub> perspektivische Verzerrungen an Hand von Fluchtpunkten darstellen.</p>
+        <p>Beim Anwenden einer solchen Matrix, werden die Punkte entlang der neuen homogenen Koordinatenachse verschoben. Damit diese aber im aktuellen &real;<sup>2</sup> dargestellt werden müssen sie noch korrigiert werden. Vektoren die welche keine 1 als Z-Koordinate haben müssen korrigiert werden. Dies macht man über dehomogenisierung und geschieht indem man alle Koordinaten durch den Z-Anteil des Vektors dividiert.</p>
+        <p>Wir führen also folgende Schritte durch</p>
+        <ul>
+            <li>Definieren Prespektivische Matrix für Fluchtpunkte</li>
+            <li>Anwenden der Matrix auf Punkte</li>
+            <li>De-Homogenisieren der Punkte durch Teilen deren Vektorenanteile mit deren Z-Vektoranteil.<br /></li>
+        </ul>
+        <p>
+            <strong>De-Homogenisieren von Vektoren:</strong>
+            <pre class="example-short">V<sub>dehomogen</sub> = &lang;
+    V<sub>homogen<sub>x</sub></sub> &frasl; V<sub>homogen<sub>z</sub></sub>
+    V<sub>homogen<sub>y</sub></sub> &frasl; V<sub>homogen<sub>z</sub></sub>
+    V<sub>homogen<sub>z</sub></sub> &frasl; V<sub>homogen<sub>z</sub></sub>
+&rang;</pre>
+        </p>
+        <h4>Ein Fluchtpunkt</h4>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_perspective" data-autoexec="1"></div>
+        <h4>Zwei Fluchtpunkt</h4>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_perspective_two" data-autoexec="1"></div>
+    </section>
 
 
     <section>

@@ -360,32 +360,26 @@ var MatrixUtils = {
     rotatePoint2d : function(point, axis, rad) {
         var T = MatrixUtils.translate2d(new THREE.Vector3(-point.x, -point.y, -point.z));
         var R = MatrixUtils.rotateAxis(axis, rad);
-
-        var mso = MatrixUtils.matrixStackOrder([T], R);
-        var new_mat = MatrixUtils.multiplyMatrices(mso);
-
-        //var new_mat = T; //MatrixUtils.multiply3x3(R, T);
+        var T_1 = MatrixUtils.getInverseMatrix3(T);
+        
+        var new_mat = MatrixUtils.multiplyMatrices([T_1, R, T]);
         // console.log(new_mat);
         return new_mat;
     },
 
     mirrorOriginLine2d: function(line) {
         var x_axis = new THREE.Vector3(1, 0, 0);
+        /* check if the line vector is on the left or on the right of the x-axis */
         var onTheRight = -1 * VectorUtils.isLeftOf(line, x_axis);
+        /* This is necessary for determining the direction of the angle */
         var angleToX = onTheRight * line.angleTo(x_axis);
+
         var R = MatrixUtils.rotateAxis(MatrixUtils.AXIS_Z, angleToX);
         var M = MatrixUtils.mirrorOnXAxis();
-
         var R_1 = MatrixUtils.getInverseMatrix3(R);
 
-        // W = R_1 * M
-        // W * R
-        var new_mat1 = MatrixUtils.multiply3x3(R, MatrixUtils.multiply3x3(M, R_1));
+        var new_mat = MatrixUtils.multiply3x3(R, MatrixUtils.multiply3x3(M, R_1));
 
-
-        var mso = MatrixUtils.matrixStackOrder([R], M);
-        var new_mat = MatrixUtils.multiplyMatrices(mso);
-        
         return new_mat;
     },
 

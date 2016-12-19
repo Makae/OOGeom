@@ -21,7 +21,26 @@ nav li:focus a {
  * ARTICLE AND SECTIONS
  */
 section {
-  margin-bottom: 4em;
+    margin-bottom: 4em;
+}
+
+section h3,
+section h4 {
+  margin-top: 1em;
+}
+
+section .example-short {
+  display: block;
+  max-width: 360px;
+}
+
+section .example-middle {
+  display: block;
+  max-width: 560px;
+}
+
+section sub {
+  font-size: 0.95em;
 }
 
 /*
@@ -31,6 +50,14 @@ section {
     float: none;
     clear: both;
     overflow: hidden;
+}
+
+.example_block {
+    margin-top: 2em;
+}
+
+section.intro .example_block {
+  margin-top: 0px;
 }
 
 .example_block[data-executable="0"] .toolbox {

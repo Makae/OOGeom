@@ -9,6 +9,8 @@ var ExampleBlock = function(config) {
   this.executable = this.codeblock.getAttribute("data-executable") == "0" ? 0 : 1;
   this.container.setAttribute("data-executable", this.executable);
 
+  this.livetimer = null;
+
   this.dcc = null;
 };
 
@@ -72,6 +74,7 @@ ExampleBlock.prototype.registerHandlers = function() {
   autoexec.addEventListener("change", function() {
     self.setAutoexec(this.checked);
   });
+
 };
 
 ExampleBlock.prototype.setAutoexec = function(autoexec) {

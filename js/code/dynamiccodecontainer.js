@@ -7,8 +7,8 @@ function DynamicCodeContainer(config) {
 
 DynamicCodeContainer.prototype.fields = {
   float: {
-    pattern : /(-?\d+(\.\d)?)\<\/span\>\<span class="hljs-comment"\>\/\*\s?#(float)(:(\d+(\.\d+)?)(:(-?\d+(\.\d+)?))?(:(-?\d+(\.\d+)?))?)?\*\//g,
-    pattern_tpl: /(-?\d+(\.\d)?)\/\*\s?#(float)(:(\d+(\.\d+)?)(:(-?\d+(\.\d+)?))?(:(-?\d+(\.\d+)?))?)?\*\//g, 
+    pattern : /(-?\d+(\.\d)?)\<\/span\>\<span class="hljs-comment"\>\/\*\s?#(float)(:(-?\d+(\.\d+)?)(:(-?\d+(\.\d+)?))?(:(-?\d+(\.\d+)?))?)?\*\//g,
+    pattern_tpl: /(-?\d+(\.\d)?)\/\*\s?#(float)(:(-?\d+(\.\d+)?)(:(-?\d+(\.\d+)?))?(:(-?\d+(\.\d+)?))?)?\*\//g, 
     input: function() {
       var match = arguments[0];
       var value = arguments[1];

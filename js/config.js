@@ -14,10 +14,11 @@ var config = {
                 'id' : 'utils',
                 'replace' : '<span data-codepeeker-fn="$1">$1</span>(',
                 'patterns' : [
-                    /(PrintUtils\.[^\(]+)\(/gi,
-                    /(PointUtils\.[^\(]+)\(/gi,
-                    /(MatrixUtils\.[^\(]+)\(/gi,
-                    /(GeneralUtils\.[^\(]+)\(/gi,
+                    /(PrintUtils\.[a-zA-Z0-9_]+)\(/gi,
+                    /(PointUtils\.[a-zA-Z0-9_]+)\(/gi,
+                    /(VectorUtils\.[a-zA-Z0-9_]+)\(/gi,
+                    /(MatrixUtils\.[a-zA-Z0-9_]+)\(/gi,
+                    /(GeneralUtils\.[a-zA-Z0-9_]+)\(/gi,
                 ]
             },
             {
