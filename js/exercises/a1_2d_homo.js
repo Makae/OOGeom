@@ -17,7 +17,6 @@ function homogenous_example_translation() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0xff0000/*#color*/);
     var x = 25/*#float:5:10*/;
     var y = 25/*#float:5*/;
-
     
     var points = PointUtils.getDefaultPointSet();
     /* Neue R^3 Matrix für Berechnungen in R^2 */
@@ -73,11 +72,45 @@ function homogenous_example_rotation_orign() {
     PrintUtils.printPoints(points, 0xff0000/*#color*/); 
 }
 
-function homogenous_example_rotation_point() {
+function homogenous_example_rotation_complex() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
     
     var points = PointUtils.getDefaultPointSet();
 
+    var real = 30/*#float:5*/;
+    var imaginary = 30/*#float:5*/;
+    var complex = new Complex(real, imaginary);
+
+    var angle = complex.getAngle();
+    
+    /* Neue R^3 Matrix für Berechnungen in R^2 */
+    var new_mat = new THREE.Matrix3().set(
+        Math.cos(angle), -Math.sin(angle),  0,
+        Math.sin(angle),  Math.cos(angle),  0,
+        0,                0,                   1
+    );
+    
+    MatrixUtils.applyMatrix(points, new_mat);
+
+    var point_real   = new THREE.Vector3(real,         0, 0);
+    var point_imag   = new THREE.Vector3(0,    imaginary, 0);
+    var point_meet   = new THREE.Vector3(real, imaginary, 0);
+    var point_origin = new THREE.Vector3(0,            0, 0);
+
+    PrintUtils.printLine(point_real, point_meet, 0x8f3030/*#color*/);
+    PrintUtils.printLine(point_imag, point_meet, 0x308f30/*#color*/);
+    PrintUtils.printLine(point_origin, point_meet, 0xafafaf/*#color*/);
+
+    PrintUtils.printPoints(points, 0xff0000/*#color*/); 
+
+    var radius = Math.min(complex.getRadius(), 80);
+    PrintUtils.printArc(point_origin, radius, 0, angle, 0x8f8f30/*#color*/);
+}
+
+function homogenous_example_rotation_point() {
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
+    
+    var points = PointUtils.getDefaultPointSet();
 
     /* center of the defaultPointSet as Default*/
     var r_point_x = 26.6/*#float*/;
@@ -155,43 +188,30 @@ function homogenous_shear() {
     PrintUtils.printPoints(points, 0xff0000/*#color*/); 
 }
 
-function homogenous_perspective() {
-    PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
-    
-    var points = PointUtils.getDefaultPointSet();
-    var vanishing_point_a = new THREE.Vector3(400/*#float:10*/, 400/*#float:10*/);
-    
-    var mat = new THREE.Matrix3().set(
-        1,           0, 0,
-        0,           1, 0,
-        -1 / vanishing_point_a.x, -1/vanishing_point_a.y, 1
-    );
-    
-    var new_points = MatrixUtils.applyMatrix(points, mat);
-
-    PrintUtils.printPoints([vanishing_point_a], 0xffffff/*#color*/);
-
-    new_points = PointUtils.deHomogenize2D(new_points);
-    PrintUtils.printPoints(new_points, 0xff0000/*#color*/);
- }
-
 function homogenous_perspective_two() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
     
     var points = PointUtils.getDefaultPointSet();
-    var vanishing_point_a = new THREE.Vector3(400/*#float:10*/, 400/*#float:10*/);
-    var vanishing_point_b = new THREE.Vector3(-400/*#float:10*/, 400/*#float:10*/);
+    var vanishing_point_x = new THREE.Vector3(40/*#float:10*/, 0);
+    var vanishing_point_y = new THREE.Vector3(0, -90/*#float:10*/);
     var mat = MatrixUtils.project2(
-            vanishing_point_a,
-            vanishing_point_b
+            vanishing_point_x,
+            vanishing_point_y
     );
     
     var new_points = MatrixUtils.applyMatrix(points, mat);
-    PrintUtils.printPoints(new_points, 0x00ff00/*#color*/);
+    PrintUtils.printPoints(new_points, 0x3344ff/*#color*/);
     
-    PrintUtils.printPoints([vanishing_point_a], 0xffffff/*#color*/);
-    PrintUtils.printPoints([vanishing_point_b], 0xffffff/*#color*/);
 
     new_points = PointUtils.deHomogenize2D(new_points);
+
+    /* Visualize Projection */
+    PrintUtils.printPoints([vanishing_point_x], 0xffffff/*#color*/);
+    PrintUtils.printPoints([vanishing_point_y], 0xffffff/*#color*/);
+    PrintUtils.printLine(vanishing_point_x, new_points[0], 0xafafaf/*#color*/);
+    PrintUtils.printLine(vanishing_point_x, new_points[2], 0xafafaf/*#color*/);
+    PrintUtils.printLine(vanishing_point_y, new_points[0], 0xafafaf/*#color*/);
+    PrintUtils.printLine(vanishing_point_y, new_points[6], 0xafafaf/*#color*/);
+
     PrintUtils.printPoints(new_points, 0xff0000/*#color*/);
  }

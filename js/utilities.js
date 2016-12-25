@@ -187,6 +187,40 @@ var PrintUtils = {
             new THREE.Vector3(0 + inclination.x * 10000, offset.y + inclination.y * 10000, offset.z + inclination.z * 10000)
         );
         this.context.addObject(new THREE.Line(geometry, material));
+    },
+
+    printLine : function(a, b, color) {
+        var material = new THREE.LineBasicMaterial({
+            color: color
+        });
+        var geometry = new THREE.Geometry();
+        geometry.vertices.push(
+            new THREE.Vector3(a.x, a.y, a.z),
+            new THREE.Vector3(b.x, b.y, b.z)
+        );
+        this.context.addObject(new THREE.Line(geometry, material));
+    },
+
+    printArc : function(center, radius, start_angle, end_angle, color) {
+        var curve = new THREE.EllipseCurve(
+            center.x, center.y,             // ax, aY
+            radius, radius,            // xRadius, yRadius
+            start_angle, end_angle, // aStartAngle, aEndAngle
+            false             // aClockwise
+        );
+
+        var deg_angle = 180;
+        var pieces = deg_angle;
+        var points = curve.getSpacedPoints(pieces);
+
+        var path = new THREE.Path();
+        var geometry = path.createGeometry( points );
+
+        var material = new THREE.LineBasicMaterial( { color : color } );
+
+        var line = new THREE.Line( geometry, material );
+
+        this.context.addObject( line );
     }
 }
 
@@ -208,6 +242,10 @@ var MatrixUtils = {
     AXIS_Y : 'y',
     AXIS_Z : 'z',
 
+    MAT_2: 2,
+    MAT_3: 3,
+    MAT_4: 4,
+
     columnsToRows : function(matrix, type) {
         var type = type | 3;
         var new_matrix = new Array(type * type);
@@ -221,22 +259,12 @@ var MatrixUtils = {
     },
 
     project2: function(u, v) {
-        var mat_u = new THREE.Matrix3().set(
+        var new_mat = new THREE.Matrix3().set(
             1,           0, 0,
             0,           1, 0,
-            -1/u.x, -1/u.y, 1
+            1/u.x, 1/v.y, 1
         );
 
-        if(typeof v == 'undefined')
-            return mat_u;
-
-        var mat_v = new THREE.Matrix3().set(
-            1,           0, 0,
-            0,           1, 0,
-            -1/v.x, -1/v.y, 1
-        );
-
-        var new_mat = MatrixUtils.multiply3x3(mat_u, mat_v);
         return new_mat;
     },
 
@@ -251,14 +279,37 @@ var MatrixUtils = {
         if(matrices.length == 1)
             return matrices[0];
 
-        // var new_mat = MatrixUtils.multiply3x3(T_1, MatrixUtils.multiply3x3(R, T));
+        switch(MatrixUtils.getMatrixType(matrices[0])) {
+            case MatrixUtils.MAT_2:
+                return MatrixUtils.multiplyMatrices2(matrices);
+            break;
+
+            case MatrixUtils.MAT_3:
+                return MatrixUtils.multiplyMatrices3(matrices);
+            break;
+            
+            case MatrixUtils.MAT_4:
+                return MatrixUtils.multiplyMatrices4(matrices);
+            break;
+        }
+
+        return mat;
+    },
+
+    multiplyMatrices3 : function(matrices) {
         var mat = matrices[matrices.length - 1];
         for(var i = matrices.length - 2; i >= 0; i--) {
             mat = MatrixUtils.multiply3x3(matrices[i], mat);
-            // DEBUG
-            //mat +=  
         }
         return mat;
+    },
+
+    multiplyMatrices4 : function(matrices) {
+        var new_mat = new THREE.Matrix4();
+        for(var i = matrices.length - 1; i >= 0; i--) {
+            new_mat.multiply(matrices[i]);
+        }
+        return new_mat;
     },
 
     /**
@@ -316,24 +367,41 @@ var MatrixUtils = {
         return new_mat;
     },
 
-    rotateAxis: function(axis, angle) {
+    rotateAxis: function(axis, angle, matrix_type) {
         var mat;
+        matrix_type = typeof matrix_type != "undefined" ? matrix_type : MatrixUtils.MAT_3;
+        switch(matrix_type) {
+            case MatrixUtils.MAT_2:
+                mat = MatrixUtils.rotateAxis2(axis, angle);
+            break;
 
+            case MatrixUtils.MAT_3:
+                mat = MatrixUtils.rotateAxis3(axis, angle);
+            break;
+            
+            case MatrixUtils.MAT_4:
+                mat = MatrixUtils.rotateAxis4(axis, angle);
+            break;
+        }
+
+       return mat
+    },
+
+    rotateAxis3 : function(axis, angle) {
+        var mat;
         switch(axis) {
             case MatrixUtils.AXIS_X:
-                throw new Error("Not yet implemented");
                 mat = new THREE.Matrix3().set(
-                    Math.cos(angle), -Math.sin(angle),  0,
-                    Math.sin(angle),  Math.cos(angle),  0,
-                    0,                0,                1
+                    1,                 0,                  0,
+                    0, Math.cos(angle),     -Math.sin(angle),
+                    0, Math.sin(angle),      Math.cos(angle)
                 );
             break;
             case MatrixUtils.AXIS_Y:
-                throw new Error("Not yet implemented");
                 mat = new THREE.Matrix3().set(
-                    Math.cos(angle), -Math.sin(angle),  0,
-                    Math.sin(angle),  Math.cos(angle),  0,
-                    0,                0,                1
+                    Math.cos(angle),  0, Math.sin(angle),
+                    0,                  1,                0,
+                    -Math.sin(angle), 0, Math.cos(angle)
                 );
             break;
 
@@ -345,8 +413,39 @@ var MatrixUtils = {
                 );
             break;
         }
+        return mat;
+    },
 
-       return mat
+    rotateAxis4 : function(axis, angle) {
+        var mat;
+        switch(axis) {
+            case MatrixUtils.AXIS_X:
+                mat = new THREE.Matrix4().set(
+                    1,                 0,                  0, 0,
+                    0,   Math.cos(angle),   -Math.sin(angle), 0,
+                    0,   Math.sin(angle),    Math.cos(angle), 0,
+                    0,                 0,                  0, 1
+                );
+            break;
+            case MatrixUtils.AXIS_Y:
+                mat = new THREE.Matrix4().set(
+                    Math.cos(angle),  0, Math.sin(angle), 0,
+                    0,                  1,                0,  0,
+                    -Math.sin(angle), 0, Math.cos(angle), 0,
+                    0,                 0,                  0, 1
+                );
+            break;
+
+            case MatrixUtils.AXIS_Z:
+                mat = new THREE.Matrix4().set(
+                    Math.cos(angle), -Math.sin(angle),  0, 0,
+                    Math.sin(angle),  Math.cos(angle),  0, 0,
+                    0,                0,                1, 0,
+                    0,                 0,                  0, 1
+                );
+            break;
+        }
+        return mat;
     },
 
     translate2d : function(vector) {
@@ -357,13 +456,21 @@ var MatrixUtils = {
         );
     },
 
+    translate3d : function(vector) {
+        return new THREE.Matrix4().set(
+            1, 0, 0, vector.x,
+            0, 1, 0, vector.y,
+            0, 0, 1, vector.z,
+            0, 0, 0, 1
+        );
+    },
+
     rotatePoint2d : function(point, axis, rad) {
         var T = MatrixUtils.translate2d(new THREE.Vector3(-point.x, -point.y, -point.z));
         var R = MatrixUtils.rotateAxis(axis, rad);
         var T_1 = MatrixUtils.getInverseMatrix3(T);
         
         var new_mat = MatrixUtils.multiplyMatrices([T_1, R, T]);
-        // console.log(new_mat);
         return new_mat;
     },
 
@@ -388,11 +495,9 @@ var MatrixUtils = {
         var onTheRight = -1 * VectorUtils.isLeftOf(line, x_axis);
         var angleToX = onTheRight * line.angleTo(x_axis);
         
-        console.log(offsetY);
         var T = MatrixUtils.translate2d(new THREE.Vector3(0, -offsetY));
         var T_1 = MatrixUtils.getInverseMatrix3(T);
         
-        console.log(angleToX);
         var R = MatrixUtils.rotateAxis(MatrixUtils.AXIS_Z, angleToX);
         var R_1 = MatrixUtils.getInverseMatrix3(R);
         var M = MatrixUtils.mirrorOnXAxis();
@@ -417,9 +522,32 @@ var MatrixUtils = {
         );
     },
 
-    getInverseMatrix3 : function(mat3) {
-        var inv = (new THREE.Matrix3()).getInverse(mat3);
-        return inv;
+    getInverseMatrix : function(mat) {
+        switch(MatrixUtils.getMatrixType(mat)) {
+            case MatrixUtils.MAT_2:
+                return MatrixUtils.getInverseMatrix2(mat);
+            break;
+
+            case MatrixUtils.MAT_3:
+                return MatrixUtils.getInverseMatrix3(mat);
+            break;
+            
+            case MatrixUtils.MAT_4:
+                return MatrixUtils.getInverseMatrix4(mat);
+            break;
+        }
+    },
+
+    getInverseMatrix2 : function(mat) {
+        return (new THREE.Matrix3()).getInverse(mat);
+    },
+
+    getInverseMatrix3 : function(mat) {
+        return (new THREE.Matrix3()).getInverse(mat);
+    },
+
+    getInverseMatrix4 : function(mat) {
+        return (new THREE.Matrix4()).getInverse(mat);
     },
 
     mat3ToMat4 : function(mat3) {
@@ -434,14 +562,57 @@ var MatrixUtils = {
     applyMatrix : function(vectors, mat) {
         var vectors_type = vectors instanceof Array ? 'array' : 'single';
         vectors = vectors_type == 'array' ? vectors : [vectors];
-        
-        for(var i = 0; i < vectors.length; i++)
-            vectors[i].applyMatrix3(mat);
+
+        switch(MatrixUtils.getMatrixType(mat)) {
+            case MatrixUtils.MAT_2:
+                vectors = MatrixUtils.applyMatrix2(vectors, mat);
+            break;
+
+            case MatrixUtils.MAT_3:
+                vectors = MatrixUtils.applyMatrix3(vectors, mat);
+            break;
+            
+            case MatrixUtils.MAT_4:
+                vectors = MatrixUtils.applyMatrix4(vectors, mat);
+            break;
+        }
 
          if(vectors_type == 'single')
             return vectors[0];
         return vectors;
+    },
+
+    applyMatrix2 : function(vectors, mat) {
+        for(var i = 0; i < vectors.length; i++)
+            vectors[i].applyMatrix2(mat);
+        return vectors;
+    },
+
+    applyMatrix3 : function(vectors, mat) {
+        for(var i = 0; i < vectors.length; i++)
+            vectors[i].applyMatrix3(mat);
+        return vectors;
+    },
+    
+    applyMatrix4 : function(vectors, mat) {
+        for(var i = 0; i < vectors.length; i++)
+            vectors[i].applyMatrix4(mat);
+        return vectors;
+    },
+
+    getMatrixType : function(mat) {
+        if(mat instanceof THREE.Matrix4) {
+            return MatrixUtils.MAT_4;
+        } else if(mat instanceof THREE.Matrix3) {
+            return MatrixUtils.MAT_3;
+        } else if(mat instanceof THREE.Matrix2) {
+            return MatrixUtils.MAT_2;
+        }
+
+        return undefined;
     }
+
+
 
 };
 

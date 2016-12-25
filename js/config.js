@@ -27,6 +27,13 @@ var config = {
                 'patterns' : [
                     /(\.)(applyMatrix3)\(/gi
                 ]
+            },
+            {
+                'id' : 'complex-numbers',
+                'replace' : '<span data-codepeeker-fn="Complex.prototype.$2">$1</span>',
+                'patterns' : [
+                    /(complex[a-zA-Z0-9_]*\.([a-zA-Z0-9_]+)\()/gi
+                ]
             }
         ]
     },

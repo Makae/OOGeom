@@ -4,7 +4,7 @@
     </header>
     <section class="intro">
         <div class="col-md-5 col-sm-12">
-            <p>Die Anwendung von affinen Transfomrationen zwingt einen dazu mehrere Rechnungsschritte einzeln auszuführen. Die Wurzel des Bösens liegt dabei bei den sich unterscheidenden Rechnungsschritten für Rotation und Translation. <br />Was wäre, wenn man diese beiden Rechnugnsoperationen zusammenfassen könnte? Genau dies bieten homogene Transformationen. Mit dieser Methode kann man Translation und Rotation als eine einzige Matrixoperation definieren. Dies ist nur möglich, weil man in einem höheren Raum rechnet als das Ursprüngliche Problem angesiedelt ist.</p>
+            <p>Die Anwendung von affinen Transformationen zwingt einen dazu mehrere Rechnungsschritte einzeln auszuführen. Die Wurzel des Bösens liegt dabei bei den sich unterscheidenden Rechnungsschritten für Rotation und Translation. <br />Was wäre, wenn man diese beiden Rechnugnsoperationen zusammenfassen könnte? Genau dies bieten homogene Transformationen. Mit dieser Methode kann man Translation und Rotation als eine einzige Matrixoperation definieren. Dies ist nur möglich, weil man in einem höheren Raum rechnet als das Ursprüngliche Problem angesiedelt ist.</p>
             <p>Möchte man also eine Translation und eine Rotation auf ein Element im &real;<sup>2</sup> anwenden, so muss man mit Matrizen in &real;<sup>3</sup> rechnen.</p>
             <ul>
                 <li>Die neue Spalte wird dabei verwendet um die Translation zu definieren.</li>
@@ -61,6 +61,10 @@
             <pre class="example-short">M = T<sup>1</sup> * R * T</pre>
         </p>
         <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_example_rotation_point" data-autoexec="1"></div>
+
+        <h4>Mit Komplexen Zahlen</h4>
+        <p>Anstatt eines Winkels können wir auch komplexe Zahlen verwenden um den zu drehenden Winkel zu repräsentieren.</p>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_example_rotation_complex" data-autoexec="1"></div>
     </section>
     <section>
         <h3>Spiegelung und Scherung</h3>
@@ -94,8 +98,8 @@
     </section>
     <section>
         <h3>Perspektivische Darstellungen</h3>
-        <p>Auch hier bietetn die Homogenen Koordinaten einen entscheidenden Vorteil. Wie bei den Matrix-Zellen für die Translation (M<sub>1,3</sub> und M<sub>2,3</sub>) können die 2 anderen Zellen M<sub>3,1</sub> und M<sub>3,2</sub> perspektivische Verzerrungen an Hand von Fluchtpunkten darstellen.</p>
-        <p>Beim Anwenden einer solchen Matrix, werden die Punkte entlang der neuen homogenen Koordinatenachse verschoben. Damit diese aber im aktuellen &real;<sup>2</sup> dargestellt werden müssen sie noch korrigiert werden. Vektoren die welche keine 1 als Z-Koordinate haben müssen korrigiert werden. Dies macht man über dehomogenisierung und geschieht indem man alle Koordinaten durch den Z-Anteil des Vektors dividiert.</p>
+        <p>Auch hier bieten die Homogenen Koordinaten einen entscheidenden Vorteil. Wie bei den neuen homogenen Matrix-Zellen für die Translation (M<sub>1,3</sub> und M<sub>2,3</sub>) können die 2 anderen Zellen M<sub>3,1</sub> und M<sub>3,2</sub> perspektivische Verzerrungen an Hand von Fluchtpunkten darstellen.</p>
+        <p>Beim Anwenden einer solchen Matrix, werden die Punkte entlang der neuen homogenen Koordinatenachse verschoben. Damit diese aber im aktuellen &real;<sup>2</sup> dargestellt werden müssen sie noch korrigiert werden. Vektoren welche keine 1 als Z-Koordinate haben müssen zurücktransformiert werden. Dies macht man über dehomogenisierung und geschieht indem man alle Koordinaten durch den Z-Anteil des Vektors dividiert.</p>
         <p>Wir führen also folgende Schritte durch</p>
         <ul>
             <li>Definieren Prespektivische Matrix für Fluchtpunkte</li>
@@ -110,28 +114,7 @@
     V<sub>homogen<sub>z</sub></sub> &frasl; V<sub>homogen<sub>z</sub></sub>
 &rang;</pre>
         </p>
-        <h4>Ein Fluchtpunkt</h4>
-        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_perspective" data-autoexec="1"></div>
-        <h4>Zwei Fluchtpunkt</h4>
-        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_perspective_two" data-autoexec="1"></div>
-    </section>
-
-
-    <section>
-        <p>Die Affine Transformation...</p>
-        <h2>R3</h2>
-        <ul>
-            <li>Drehen um Ursprung, Drehen um Zentrum m=(m1,m2,m3)</li>
-            <ul>
-                <li>Rodriguez, affin und homogen</li>
-                <li>Eulerwinkel affin und homogen</li>
-                <li>(dualen)Quaternionen (H, DH)</li>
-                <li>Clifford Algebra</li>
-            </ul>
-            <li>Spiegeln an der Ebene ax+bx+cz+d=0</li>
-            <li>Streckung, Scherung</li>
-            <li>Affine Projektionen auf Ebene</li>
-            <li>Perspektive Darstellung mit Fernpunkten u=(u1,u2,u3) und v=(v1,v2,v3), w=(w1,w2,w3)</li>
-        </ul>
+        <h4>Fluchtpunkte</h4>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_perspective_two" data-autoexec="1" data-config="cameradistance:100"></div>
     </section>
 </article>

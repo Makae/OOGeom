@@ -26,6 +26,15 @@ var ExampleBlockBuilder = (function() {
     var fn = template_block.getAttribute("data-fn");
     var autoexec = template_block.getAttribute("data-autoexec");
     var executable = template_block.getAttribute("data-executable");
+    
+    var config = template_block.getAttribute("data-config");
+    var config = typeof config == "string" ? config.split("|") : [];
+    var config_tpl = {};
+
+    for(var i = 0; i < config.length; i++){
+      var val = config[i].split(":");
+      config_tpl[val[0]] = val[1];
+    }
 
     template_block.setAttribute("data-loading", "1");
 
@@ -34,6 +43,12 @@ var ExampleBlockBuilder = (function() {
       html = html.replace("$fn", fn);
       html = html.replace("$autoexec", autoexec);
       html = html.replace("$executable", executable);
+
+      for(var i in config_tpl) {
+        html = html.replace("$" + i, config_tpl[i]);
+      }
+     
+      html = html.replace(/(data-[^=]+)\s?=\s?"\$[^"]+"/, "$1=\"\"");
 
       self.replaceTemplate(template_block, html);
       callback();

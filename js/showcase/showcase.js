@@ -53,6 +53,8 @@ Showcase.prototype.setOrthoDistance = function(dist) {
   this.camera.top = dist;
   this.camera.bottom = -dist;
   this.camera.position.z = dist;
+
+  this.camera.updateProjectionMatrix();
 }
 
 Showcase.prototype.init = function() {
@@ -118,13 +120,13 @@ Showcase.prototype.initRenderer = function() {
 
 Showcase.prototype.registerControls = function(object) {
   this.camera_control = new THREE.TrackballControls(this.camera, this.renderer.domElement);
+  // this.camera_control = new THREE.OrbitControls(object);
   this.camera_control.panCamera = function() {};
   //this.camera_control = new THREE.CustomControls(object, this.renderer.domElement);
-  this.camera_control = new THREE.OrbitControl(object);
   // this.camera_control.rotateSpeed = 0.5;
   this.camera_control.minDistance = this.camera_config.minDistance;
   this.camera_control.maxDistance = this.camera_config.maxDistance;
-  this.camera_control.addEventListener( 'change', render );
+  //this.camera_control.addEventListener( 'change', render );
 };
 
 Showcase.prototype.addObject = function(obj) {
@@ -329,8 +331,6 @@ Showcase.prototype.toggleRaycastDebug = (function() {
         // (-1 to +1) for both components
         mouse.x = ( event.offsetX / this.offsetWidth ) * 2 - 1;
         mouse.y = - ( event.offsetY /this.offsetHeight ) * 2 + 1;
-
-        console.log(mouse);
     };
 
     var clean_triangles = function(scene, triangles) {

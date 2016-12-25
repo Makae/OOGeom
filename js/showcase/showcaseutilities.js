@@ -372,7 +372,7 @@ var ShowcaseUtilities = (function() {
             geometry.colors.push(cp, cq);
             geometry.computeLineDistances();
 
-            var line = new THREE.Line(geometry, material, THREE.LinePieces);
+            var line = new THREE.Line(geometry, material, THREE.LineSegments);
             scene.add(line);
             return line;
         },
