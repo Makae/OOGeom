@@ -191,39 +191,84 @@ function homogenous_example_rotation_point_r3() {
     PrintUtils.printPoints([r_point], 0xff0000/*#color*/);
 }
 
-function homogenous_mirror_axis_r3() {
-    var points = PointUtils.getDefaultPointSet3D();
-    var line = new THREE.Vector3(1, 0, 0);
+function homogenous_rotate_origin_axis_r3() {
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
+    
 
-    var mirror_x = -1/*#float:2:-1:1*/;
-    var mirror_y = 1/*#float:2:-1:1*/;
-
-    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0x00ff00/*#color*/);
-
-    var mat =  new THREE.Matrix4().set(
-        mirror_x,  0,  0,
-        0,  mirror_y,  0,
-        0,         0,   1
+    var angle = 45/*#float:5:-360:360*/;
+    angle = THREE.Math.degToRad(angle);
+    var axis = new THREE.Vector3(
+        1/*#float:1*/,
+        1/*#float:1*/,
+        1/*#float:1*/
     );
 
-    MatrixUtils.applyMatrix(points, mat);
-    PrintUtils.printPoints(points, 0xff0000/*#color*/);  
+    var axis_normed = (new THREE.Vector3()).copy(axis).normalize();
+       
+    var axis_line = (new THREE.Vector3()).copy(axis).multiplyScalar(500);
+    PrintUtils.printLine(VectorUtils.ORIGIN, 
+        axis_line, 
+        0xc0c0c0/*#color*/
+    );
 
+    var points = PointUtils.getDefaultPointSet3D();
+    new_mat =  MatrixUtils.multiplyMatrices([MatrixUtils.rotateOriginAxis(axis_normed, angle)]);
+    MatrixUtils.applyMatrix(points, new_mat);
+    PrintUtils.printPoints(points, 0x00a000/*#color*/);
+    
+    var points = PointUtils.getDefaultPointSet3D();
+    new_mat =  MatrixUtils.multiplyMatrices([MatrixUtils.rotateOriginAxisCondensed(axis_normed, angle)]);
+    MatrixUtils.applyMatrix(points, new_mat);
+    PrintUtils.printPoints(points, 0xa00000/*#color*/);
 }
 
-function homogenous_mirror_origin_line_r3() {
+function homogenous_mirror_plane_r3() {
     var points = PointUtils.getDefaultPointSet3D();
-    var declination = 2.5/*#float:0.1*/;
-    var line = new THREE.Vector3(1, declination, 0);
+    /* E = ax + by + cz + d = 0 */
+    var a = 1/*#float:0.1*/;
+    var b = 1/*#float:0.1*/;
+    var c = 1/*#float:0.1*/;
+    var x = 0/*#float:0.1*/;
+    var y = 0/*#float:0.1*/;
+    var z = 0/*#float:0.1*/;
+    var d = 1/*#float:0.1*/;
 
-    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0x00ff00/*#color*/);
-    PrintUtils.printStraightOriginLine(line, 0xff00ff/*#color*/);
+    var plane = new Plane(
+        a, x,
+        b, y,
+        c, z,
+        d);
 
-    /* MIRROR on a straight line which is going through the origin*/
-    var mat = MatrixUtils.mirrorOriginLine2d(line);
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
+
+    var plane_data = plane.asVectorSet();
+    var position = plane_data[0];
+    var normal = plane_data[1];
+
+    var up     = VectorUtils.perp3d((new THREE.Vector3()).copy(normal));
+    var target = (new THREE.Vector3()).copy(normal).negate();
+
+
+    
+    var Rlk   = MatrixUtils.lookAt(normal, target, new THREE.Vector3(1/*#float*/,1/*#float*/,1/*#float*/));
+  
+
+    PrintUtils.printPoints(
+        MatrixUtils.applyMatrix(
+            PointUtils.getDefaultPointSet3D(),
+            MatrixUtils.multiplyMatrices([Rlk])
+        ), 
+        0x00ff00/*#color*/
+    );
+
+    PrintUtils.printPlane(position, normal, 150, 0xddaa00/*#color*/, opacity);
+
+    var mat = MatrixUtils.multiplyMatrices([Rlk]);
 
     MatrixUtils.applyMatrix(points, mat);
-    PrintUtils.printPoints(points, 0xff0000/*#color*/); 
+    
+    var opacity = 0.5/*#float:0.1:0.1:1.0*/;
+    PrintUtils.printPoints(points, 0x00ff00/*#color*/); 
 
 }
 

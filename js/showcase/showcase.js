@@ -59,10 +59,10 @@ Showcase.prototype.setOrthoDistance = function(dist) {
 
 Showcase.prototype.init = function() {
 
-  //this.camera = new THREE.PerspectiveCamera(this.camera_config.fov, this.container.offsetWidth / this.container.offsetHeight, this.camera_config.near, this.camera_config.far);
-  var d = 100;
-  var aspect = this.container.offsetWidth / this.container.offsetHeight;
-  this.camera = new THREE.OrthographicCamera( - d * aspect, d * aspect, d, - d, 1, 1000 );
+  this.camera = new THREE.PerspectiveCamera(this.camera_config.fov, this.container.offsetWidth / this.container.offsetHeight, this.camera_config.near, this.camera_config.far);
+  // var d = 100;
+  // var aspect = this.container.offsetWidth / this.container.offsetHeight;
+  // this.camera = new THREE.OrthographicCamera( - d * aspect, d * aspect, d, - d, 1, 1000 );
   // debugger;
   this.camera.position.x = this.camera_config.x;
   this.camera.position.y = this.camera_config.y;
@@ -110,7 +110,7 @@ Showcase.prototype.loadSkybox = function(skybox_config, success) {
 
 Showcase.prototype.initRenderer = function() {
   this.renderer = new THREE.WebGLRenderer({antialiasing: true, preserveDrawingBuffer: true});
-
+  //this.renderer = new THREE.CanvasRenderer();
   this.renderer.setClearColor(0x555555);
   this.renderer.setPixelRatio(window.devicePixelRatio);
   this.renderer.setSize(this.container.offsetWidth, this.container.offsetHeight);

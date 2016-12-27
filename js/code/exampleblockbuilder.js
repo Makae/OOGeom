@@ -47,8 +47,8 @@ var ExampleBlockBuilder = (function() {
       for(var i in config_tpl) {
         html = html.replace("$" + i, config_tpl[i]);
       }
-     
-      html = html.replace(/(data-[^=]+)\s?=\s?"\$[^"]+"/, "$1=\"\"");
+    
+      html = html.replace(/(data-[^=]+)\s?=\s?"\$[^"]+"/gi, "$1=\"\"");
 
       self.replaceTemplate(template_block, html);
       callback();

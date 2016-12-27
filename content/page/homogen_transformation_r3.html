@@ -43,27 +43,15 @@
             <pre class="example-short">M = T<sup>1</sup> * R<sub>x</sub> * R<sub>y</sub> * R<sub>z</sub> * T</pre>
         </p>
         <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_example_rotation_point_r3" data-config="camerapos:50,50,50" data-autoexec="1"></div>
-
-        <h4>Mit Komplexen Zahlen</h4>
-        <p>Anstatt eines Winkels können wir auch komplexe Zahlen verwenden um den zu drehenden Winkel zu repräsentieren.</p>
-        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_example_rotation_complex_r3" data-config="camerapos:50,50,50" data-autoexec="1"></div>
     </section>
     <section>
         <h3>Spiegelung und Scherung</h3>
-        <h4>Spiegelung an einer Achse</h4>
-        <p>Bei der Spiegelung an einer Achse können wir einfach die zur Achse gehörigen Identitätswärte negieren.<br />
-        Dabei gilt folgendes:</p>
+
+        <h4>Spiegelung an einer Ebene</h4>
+        <p>Die Spiegelung an einer Ebene kann in 3 Schritten definiert werden:</p>
         <ul>
-            <li>Spiegelung X:  M<sub>1,1</sub> = -1</li>
-            <li>Spiegelung Y:  M<sub>2,2</sub> = -1</li>
-            <li>Spiegelung XY: M<sub>1,1</sub> = -1 und M<sub>2,2</sub> = -1</li>
-        </ul>
-        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_mirror_axis_r3" data-config="camerapos:50,50,50" data-autoexec="1"></div>
-        
-        <h4>Spiegelung an Geraden</h4>
-        <p>Die Spiegelung an einer Geraden kann in 3 Schritten definiert werden:</p>
-        <ul>
-            <li>Rotation auf X-Achse</li>
+            <li>Rotation der Ebene</li>
+            <li>Rotation der Ebene damit parallel zu XY-Ebene</li>
             <li>Spiegelung an X-Achse</li>
             <li>Rück-Rotation</li>
         </ul>

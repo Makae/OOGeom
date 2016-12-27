@@ -5,6 +5,7 @@ var ThreeJSCodeExample = function(config) {
 
   this.camera_distance =  config.context.hasAttribute("data-cameradistance") && config.context.getAttribute("data-cameradistance") != "" ? parseInt(config.context.getAttribute("data-cameradistance")) : 100;
   var camera_pos =  config.context.hasAttribute("data-camerapos") && config.context.getAttribute("data-camerapos") != "" ? config.context.getAttribute("data-camerapos") : false;
+
   if(camera_pos) {
     camera_pos = camera_pos.split(",");
     config.camera_config.x = camera_pos[0];

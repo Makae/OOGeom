@@ -221,10 +221,41 @@ var PrintUtils = {
         var line = new THREE.Line( geometry, material );
 
         this.context.addObject( line );
+    },
+
+    printPlane : function(position, normal, size, color, opacity) {
+        opacity = opacity || 0.45;
+
+        var geometry = new THREE.PlaneGeometry(size, size, size);
+        var material = new THREE.MeshBasicMaterial( {color: color, side: THREE.DoubleSide, opacity: opacity, transparent: true} );
+        var plane = new THREE.Mesh( geometry, material );
+        
+        this.context.addObject( plane );
+
+        var new_mat;
+        var r_xyz_t = [
+            MatrixUtils.lookAt(VectorUtils.ORIGIN, normal, (new THREE.Vector3()).copy(VectorUtils.UNIT_X)),
+            MatrixUtils.translate3d(position)
+        ];
+       
+        new_mat = MatrixUtils.multiplyMatrices(r_xyz_t);
+
+        plane.matrixWorld.copy(new_mat);
+        plane.matrix.copy(new_mat);
+        plane.matrixAutoUpdate = false;
+
+        var nml = (new THREE.Vector3()).copy(position).add(normal).multiplyScalar(size / 10);
+        PrintUtils.printLine(position, nml, color);
+
     }
 }
 
 var VectorUtils = {
+    ORIGIN : new THREE.Vector3(0, 0, 0),
+    UNIT_X : new THREE.Vector3(1, 0, 0),
+    UNIT_Y : new THREE.Vector3(0, 1, 0),
+    UNIT_Z : new THREE.Vector3(0, 0, 1),
+
     isLeftOf : function(v1, v2) {
         var d = VectorUtils.perp3d(v1).dot(v2);
         if(d == 0)
@@ -234,6 +265,41 @@ var VectorUtils = {
 
     perp3d : function(v) {
          return  v.z < v.x  ? new THREE.Vector3(v.y, -v.x, 0) : new THREE.Vector3(0, -v.z, v.y);
+    },
+
+    unitVectorAngles : function(v) {
+        var v_xz = new THREE.Vector3(v.x, 0, v.z);
+        var v_yz = new THREE.Vector3(0, v.y, v.z);
+
+        var result = {
+            y : VectorUtils.UNIT_Z.angleTo(v_xz),
+            x : VectorUtils.UNIT_Z.angleTo(v_yz)
+        };
+
+
+        var result2 = {
+            x: Math.acos(
+                VectorUtils.UNIT_Z.dot(v_yz) / (VectorUtils.UNIT_Z.length() * (new THREE.Vector3()).copy(v_yz).length())
+            ),
+            y: Math.acos(
+                VectorUtils.UNIT_Z.dot(v_xz) / (VectorUtils.UNIT_Z.length() * (new THREE.Vector3()).copy(v_xz).length())
+            )
+        };
+
+        var result3 = {
+            x: Math.acos(
+                v.z / Math.sqrt(v.y * v.y + v.z * v.z)
+            ),
+            y: Math.acos(
+                v.x / Math.sqrt(v.x * v.x + v.z * v.z)
+            )
+        };
+        console.log(result);
+        console.log(result2);
+        console.log(result3);
+        result.y = 2 * Math.PI - result.y;
+        console.log(result);
+        return result;
     }
 };
 
@@ -268,6 +334,49 @@ var MatrixUtils = {
         return new_mat;
     },
 
+    houseHolder : function(normal) {
+
+        var hh_matrix = new THREE.Matrix4().set(
+
+        );
+
+        return MatrixUtils.subtract(new THREE.Matrix4(), hh_matrix);
+
+    },
+
+    subtractMatrices : function(m1, m2) {
+        var mat = MatrixUtils.generateSameMatrixType(m1);
+        for(var i = 0; i < m1.element.length; i++)
+            mat.elements[i] = m1.elements[i] - m1.elements[i];
+        return mat;
+    },
+
+    addMatrices : function(m1, m2) {
+        var mat = MatrixUtils.generateSameMatrixType(m1);
+        for(var i = 0; i < m1.element.length; i++)
+            mat.elements[i] = m1.elements[i] + m1.elements[i];
+        return mat;
+    },
+
+
+    generateSameMatrixType : function(matrix) {
+        var mat;
+        switch(MatrixUtils.getMatrixType(matrix)) {
+            case MatrixUtils.MAT_2:
+                mat = new THREE.Matrix2();
+            break;
+
+            case MatrixUtils.MAT_3:
+                mat = new THREE.Matrix3();
+            break;
+            
+            case MatrixUtils.MAT_4:
+                mat = new THREE.Matrix4();
+            break;
+        }
+        return mat;
+
+    },
 
     /*
      * Multiplies an array of matrices together and returns the result
@@ -429,10 +538,10 @@ var MatrixUtils = {
             break;
             case MatrixUtils.AXIS_Y:
                 mat = new THREE.Matrix4().set(
-                    Math.cos(angle),  0, Math.sin(angle), 0,
-                    0,                  1,                0,  0,
-                    -Math.sin(angle), 0, Math.cos(angle), 0,
-                    0,                 0,                  0, 1
+                    Math.cos(angle), 0, Math.sin(angle),  0,
+                                  0, 1,               0,  0,
+                   -Math.sin(angle), 0, Math.cos(angle),  0,
+                                  0, 0,                0, 1
                 );
             break;
 
@@ -440,12 +549,40 @@ var MatrixUtils = {
                 mat = new THREE.Matrix4().set(
                     Math.cos(angle), -Math.sin(angle),  0, 0,
                     Math.sin(angle),  Math.cos(angle),  0, 0,
-                    0,                0,                1, 0,
-                    0,                 0,                  0, 1
+                                  0,                0,  1, 0,
+                                  0,                0,  0, 1
                 );
             break;
         }
         return mat;
+    },
+
+    rotateOriginAxis : function(axis, angle) {
+        var new_axis = (new THREE.Vector3()).copy(axis).normalize();
+
+        var angles = VectorUtils.unitVectorAngles(new_axis);
+        var Rx   = MatrixUtils.rotateAxis4(MatrixUtils.AXIS_Z, -angles.x);
+        var Ry   = MatrixUtils.rotateAxis4(MatrixUtils.AXIS_Y, angles.y);
+        var Rz   = MatrixUtils.rotateAxis4(MatrixUtils.AXIS_Z, angle);
+        var Rx_1 = MatrixUtils.getInverseMatrix4(Rx);
+        var Ry_1 = MatrixUtils.getInverseMatrix4(Ry);
+
+        return MatrixUtils.multiplyMatrices([Rx, Ry, Rz, Ry_1, Rx_1]);
+
+    },
+
+    rotateOriginAxisCondensed : function(axis, angle) {
+        var u = (new THREE.Vector3()).copy(axis).normalize();
+        var sin = Math.sin;
+        var cos = Math.cos;
+
+        return new THREE.Matrix4().set(
+            u.x * u.x + cos(angle) * (1 - u.x * u.x),          u.x * u.y * (1 - cos(angle)) - u.z * sin(angle),   u.x * u.z * (1 - cos(angle) + u.y * sin(angle)), 0,
+            u.x * u.y * (1 - cos(angle)) + u.z * sin(angle),   u.y * u.y + cos(angle) * (1 - u.y * u.y),          u.y * u.z * (1 - cos(angle) - u.x * sin(angle)), 0,
+            u.x * u.z * (1 - cos(angle)) - u.y * sin(angle),   u.y * u.z * (1 - cos(angle)) + u.x * sin(angle),   u.z * u.z + cos(angle) * (1 - u.z * u.z),        0,
+                                                          0,                                                 0,                                          0,        1
+        );
+
     },
 
     translate2d : function(vector) {
@@ -506,12 +643,69 @@ var MatrixUtils = {
         var mso = MatrixUtils.matrixStackOrder([T], R);
         var new_mat = MatrixUtils.multiplyMatrices(mso);
 
-        // new_mat = MatrixUtils.multiply3x3(MatrixUtils.multiply3x3(MatrixUtils.multiply3x3(MatrixUtils.multiply3x3(T, R), M), R_1), T_1);
-         // new_mat = MatrixUtils.multiply3x3(T_1, R_1);
-         // new_mat2 = MatrixUtils.multiply3x3(R, T);
-         // new_mat3 = MatrixUtils.multiply3x3(new_mat, M);
-         // new_mat4 = MatrixUtils.multiply3x3(new_mat3, new_mat2);
         return new_mat;
+    },
+
+    mirrorOnMainPlane4: function(plane_normal) {
+        var mat;
+        switch(plane_normal) {
+            case MatrixUtils.AXIS_X:
+                mat = new THREE.Matrix4().set(
+                  -1, 0, 0, 0,
+                   0, 1, 0, 0,
+                   0, 0, 1, 0,
+                   0, 0, 0, 1
+                );
+            break;
+            case MatrixUtils.AXIS_Y:
+                mat = new THREE.Matrix4().set(
+                   1,  0, 0, 0,
+                   0, -1, 0, 0,
+                   0,  0, 1, 0,
+                   0,  0, 0, 1
+                );
+            break;
+
+            case MatrixUtils.AXIS_Z:
+                mat = new THREE.Matrix4().set(
+                   1, 0,  0, 0,
+                   0, 1,  0, 0,
+                   0, 0, -1, 0,
+                   0, 0,  0, 1
+                );
+            break;
+        }
+        return mat;
+    },
+
+    mirrorOnMainPlane3: function(plane_normal) {
+        var mat;
+        switch(plane_normal) {
+            case MatrixUtils.AXIS_X:
+                mat = new THREE.Matrix3().set(
+                  -1, 0, 0,
+                   0, 1, 0,
+                   0, 0, 1
+                   
+                );
+            break;
+            case MatrixUtils.AXIS_Y:
+                mat = new THREE.Matrix3().set(
+                   1,  0, 0,
+                   0, -1, 0,
+                   0,  0, 1
+                );
+            break;
+
+            case MatrixUtils.AXIS_Z:
+                mat = new THREE.Matrix3().set(
+                   1, 0,  0,
+                   0, 1,  0,
+                   0, 0, -1
+                );
+            break;
+        }
+        return mat;
     },
 
     mirrorOnXAxis: function() {
@@ -520,6 +714,11 @@ var MatrixUtils = {
             0, -1, 0,
             0,  0, 1
         );
+    },
+
+    lookAt : function(eye, target, up) {
+        console.log(arguments);
+        return (new THREE.Matrix4()).lookAt(eye, target, up);
     },
 
     getInverseMatrix : function(mat) {

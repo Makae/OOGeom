@@ -17,7 +17,7 @@ function homogenous_example_translation() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0xff0000/*#color*/);
     var x = 25/*#float:5:10*/;
     var y = 25/*#float:5*/;
-    
+
     var points = PointUtils.getDefaultPointSet();
     /* Neue R^3 Matrix für Berechnungen in R^2 */
     var matx = new THREE.Matrix3();
@@ -29,6 +29,7 @@ function homogenous_example_translation() {
     MatrixUtils.applyMatrix(points, matx);
     PrintUtils.printPoints(points, 0x0000ff/*#color*/);
 
+    return;
 
     var points = PointUtils.getDefaultPointSet();
     /* Neue R^3 Matrix für Berechnungen in R^2 */
