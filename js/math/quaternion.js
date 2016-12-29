@@ -18,8 +18,20 @@ Quaternion.prototype.fromArray = function(arr) {
     this.j = arr[2];
     this.k = arr[3];
 
+    this.uninitialized = (typeof a == 'undefined') ? true : false;
+
     return this;
-}
+};
+
+Quaternion.prototype.asArray = function() {
+    var arr = [];
+    arr[0] = this.a; 
+    arr[1] = this.i; 
+    arr[2] = this.j;
+    arr[3] = this.k;
+
+    return arr;
+};
 
 /**
  * The axis has to be normalized
@@ -30,10 +42,10 @@ Quaternion.prototype.fromEuler = function(axis, angle) {
 }
 
 Quaternion.prototype.applyToVector = function(v) {
-    var v = new Quaternion(0, v[0], v[1], v[2]);
+    var q = new Quaternion(0, v[0], v[1], v[2]);
     //debugger;
     // q*vq
-    var q_vq = this.conjugate().multiply(v).multiply(this);
+    var q_vq = this.conjugate().multiply(q).multiply(this);
     
     v[0] = q_vq.i;
     v[1] = q_vq.j;
@@ -48,9 +60,39 @@ Quaternion.prototype.multiplyApply = function(q) {
     return this.fromArray(e);
 };
 
+Quaternion.prototype.addApply = function(q) {
+    var e = this._add(this, q);
+    return this.fromArray(e);
+};
+
+Quaternion.prototype.subtractApply = function(q) {
+    var e = this._subtract(this, q);
+    return this.fromArray(e);
+};
+
+Quaternion.prototype.add = function(q) {
+    var e = this._add(this, q);
+    return (new Quaternion()).fromArray(e);
+};
+
+Quaternion.prototype.subtract = function(q) {
+    var e = this._subtract(this, q);
+    return (new Quaternion()).fromArray(e);
+};
+
 Quaternion.prototype.multiply = function(q) {
     var e = this._multiply(this, q);
     return (new Quaternion()).fromArray(e);
+};
+
+Quaternion.prototype.multiplyScalar = function(s) {
+    var e = this._multiplyScalar(this, s);
+    return (new Quaternion()).fromArray(e);
+};
+
+Quaternion.prototype.multiplyScalarApply = function(s) {
+    var e = this._multiplyScalar(this, s);
+    return this.fromArray(e);;
 };
 
 Quaternion.prototype.conjugate = function() {
@@ -58,14 +100,22 @@ Quaternion.prototype.conjugate = function() {
     return (new Quaternion()).fromArray(c);
 };
 
-Quaternion.prototype.norm = function(q) {
-    var n = this._norm(this);
+Quaternion.prototype.normalize = function() {
+    var n = this._normalize(this);
     return (new Quaternion()).fromArray(n);
 };
 
+Quaternion.prototype.normalizeApply = function() {
+    var e = this._normalize(this);
+    return this.fromArray(e);
+};
+
+Quaternion.prototype.dot = function(q) {
+    return this._dot(this, q);
+};
 
 Quaternion.prototype.isUnit = function() {
-    var n = this.norm();
+    var n = this.normalize();
 
     if(n.a + n.i + n.j + n.k == 1)
         return true;
@@ -92,6 +142,24 @@ Quaternion.prototype._fromEuler = function(axis, angle) {
     ];
 }
 
+Quaternion.prototype._add = function(q1, q2) {
+    return [
+        q1.a + q2.a,
+        q1.i + q2.i, 
+        q1.j + q2.j,
+        q1.k + q2.k,
+    ];
+};
+
+Quaternion.prototype._subtract = function(q1, q2) {
+    return [
+        q1.a - q2.a,
+        q1.i - q2.i, 
+        q1.j - q2.j,
+        q1.k - q2.k,
+    ];
+};
+
 Quaternion.prototype._multiply = function(q1, q2) {
     return [
         q1.a * q2.a - q1.i * q2.i - q1.j * q2.j - q1.k * q2.k,
@@ -101,6 +169,19 @@ Quaternion.prototype._multiply = function(q1, q2) {
     ];
 };
 
+Quaternion.prototype._multiplyScalar = function(q, s) {
+    return [
+        q.a * s,
+        q.i * s,
+        q.j * s,
+        q.k * s
+    ];
+};
+
+Quaternion.prototype._dot = function(q1, q2) {
+    return q1.a * q2.a + q1.i * q2.i + q1.j * q2.j + q1.k * q2.k;
+}
+
 Quaternion.prototype._conjugate = function(q) {
     return [
         this.a,
@@ -108,13 +189,13 @@ Quaternion.prototype._conjugate = function(q) {
         -this.j,
         -this.k
     ];
-}
+};
 
-Quaternion.prototype._norm = function(q) {
+Quaternion.prototype._normalize = function(q) {
     return [
         this.a * this.a,
         this.i * this.i, 
         this.j * this.j,
         this.k * this.k
     ];
-}
+};

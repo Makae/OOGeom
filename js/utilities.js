@@ -220,7 +220,7 @@ var PrintUtils = {
     printArc : function(center, radius, start_angle, end_angle, color) {
        
         var points = PointUtils.getArcPoints(center, radius, start_angle, end_angle);
-        PointUtils.printConnectedLines(points, color)
+        PrintUtils.printConnectedLines(points, color)
     },
 
     printConnectedLines : function(points, color) {
@@ -501,7 +501,7 @@ var MatrixUtils = {
         //for(var i = matrices.length - 1; i >= 0; i--) {
         for(var i = 0; i < matrices.length; i++) {
             mats.push(matrices[i]);
-            rev_stack.unshift(MatrixUtils.getInverseMatrix3(matrices[i]));
+            rev_stack.unshift(MatrixUtils.getInverseMatrix(matrices[i]));
             // DEBUG
             //rev_stack.unshift(matrices[i] + "_1");
         }
@@ -624,8 +624,8 @@ var MatrixUtils = {
         var Rx   = MatrixUtils.rotateAxis4(MatrixUtils.AXIS_Z, -angles.x);
         var Ry   = MatrixUtils.rotateAxis4(MatrixUtils.AXIS_Y, angles.y);
         var Rz   = MatrixUtils.rotateAxis4(MatrixUtils.AXIS_Z, angle);
-        var Rx_1 = MatrixUtils.getInverseMatrix4(Rx);
-        var Ry_1 = MatrixUtils.getInverseMatrix4(Ry);
+        var Rx_1 = MatrixUtils.getInverseMatrix(Rx);
+        var Ry_1 = MatrixUtils.getInverseMatrix(Ry);
 
         return MatrixUtils.multiplyMatrices([Rx, Ry, Rz, Ry_1, Rx_1]);
 
@@ -707,8 +707,8 @@ var MatrixUtils = {
 
     rotatePoint2d : function(point, axis, rad) {
         var T = MatrixUtils.translate2d(new THREE.Vector3(-point.x, -point.y, -point.z));
-        var R = MatrixUtils.rotateAxis(axis, rad);
-        var T_1 = MatrixUtils.getInverseMatrix3(T);
+        var R = MatrixUtils.rotateAxis(axis, rad, MatrixUtils.MAT_3);
+        var T_1 = MatrixUtils.getInverseMatrix(T);
         
         var new_mat = MatrixUtils.multiplyMatrices([T_1, R, T]);
         return new_mat;
@@ -721,11 +721,11 @@ var MatrixUtils = {
         /* This is necessary for determining the direction of the angle */
         var angleToX = onTheRight * line.angleTo(x_axis);
 
-        var R = MatrixUtils.rotateAxis(MatrixUtils.AXIS_Z, angleToX);
+        var R = MatrixUtils.rotateAxis(MatrixUtils.AXIS_Z, angleToX, MatrixUtils.MAT_3);
         var M = MatrixUtils.mirrorOnXAxis();
-        var R_1 = MatrixUtils.getInverseMatrix3(R);
+        var R_1 = MatrixUtils.getInverseMatrix(R);
 
-        var new_mat = MatrixUtils.multiply3x3(R, MatrixUtils.multiply3x3(M, R_1));
+        var new_mat = MatrixUtils.multiplyMatrices([R, M, R_1]);
 
         return new_mat;
     },
@@ -736,10 +736,10 @@ var MatrixUtils = {
         var angleToX = onTheRight * line.angleTo(x_axis);
         
         var T = MatrixUtils.translate2d(new THREE.Vector3(0, -offsetY));
-        var T_1 = MatrixUtils.getInverseMatrix3(T);
+        var T_1 = MatrixUtils.getInverseMatrix(T);
         
         var R = MatrixUtils.rotateAxis(MatrixUtils.AXIS_Z, angleToX);
-        var R_1 = MatrixUtils.getInverseMatrix3(R);
+        var R_1 = MatrixUtils.getInverseMatrix(R);
         var M = MatrixUtils.mirrorOnXAxis();
         
 
@@ -845,6 +845,7 @@ var MatrixUtils = {
     },
 
     getInverseMatrix3 : function(mat) {
+        console.log(mat);
         return (new THREE.Matrix3()).getInverse(mat);
     },
 
@@ -923,14 +924,41 @@ var QuatUtils = {
         var vectors_type = vectors instanceof Array ? 'array' : 'single';
         vectors = vectors_type == 'array' ? vectors : [vectors];
         
-        for(var i = 0; i < vectors.length; i++)
+        for(var i = 0; i < vectors.length; i++) {
             quaternion.applyToVector(vectors[i]);
+        }
 
          if(vectors_type == 'single')
             return vectors[0];
         return vectors;
     }
 };
+
+var DualQuatUtils = {
+    applyQuaternion : function(vectors, quaternion) {
+       return QuatUtils.applyQuaternion(vectors, quaternion);
+    },
+
+    translate3d : function(v) {
+        var r = new ThreeQuaternion(1, 0, 0, 0);
+        var d = new ThreeQuaternion(0, v.x / 2, v.y / 2, v.z / 2);
+
+        return new ThreeDualQuaternion(r, d);
+    },
+
+    rotateAxis : function(axis, angle) {
+        var a = axis.normalize();
+        var r = new ThreeQuaternion(
+            Math.cos(angle), 
+            a.x * Math.sin(angle), 
+            a.y * Math.sin(angle), 
+            a.z * Math.sin(angle)
+        );
+        var d = new ThreeQuaternion(0, 0, 0, 0);
+
+        return new ThreeDualQuaternion(r, d);
+    }
+}
 
 var DOMUtils = {
     hasClass : function(element, cls) {

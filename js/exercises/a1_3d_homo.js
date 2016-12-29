@@ -126,7 +126,7 @@ function homogenous_example_rotation_orign_r3() {
 
 
 function homogenous_rotate_euler_r3() {
-PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
     
     var points = PointUtils.getDefaultPointSet3D();
 
@@ -153,39 +153,94 @@ PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
 
 }
 
-function homogenous_example_rotation_complex_r3() {
+function homogenous_example_rotation_quaternion_r3() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0x00ff00/*#color*/);
     
-    var points = PointUtils.getDefaultPointSet3D();
+    var axis_a = new THREE.Vector3(1/*#float:0.1*/, 0/*#float:0.1*/, 0/*#float:0.1*/);
+    var axis_b = new THREE.Vector3(0/*#float:0.1*/, 1/*#float:0.1*/, 0/*#float:0.1*/);
+    var axis_c = new THREE.Vector3(0/*#float:0.1*/, 0/*#float:0.1*/, 1/*#float:0.1*/);
 
-    var real = 30/*#float:5*/;
-    var imaginary = 30/*#float:5*/;
-    var complex = new Complex(real, imaginary);
+    var angle_a = 30/*#float:15*/;
+    var angle_b = 45/*#float:15*/;
+    var angle_c = 90/*#float:15*/;
 
-    var angle = complex.getAngle();
+    axis_a = axis_a.normalize();
+    axis_b = axis_b.normalize();
+    axis_c = axis_c.normalize();
     
-    /* Neue R^3 Matrix für Berechnungen in R^2 */
-    var new_mat = new THREE.Matrix4().set(
-        Math.cos(angle), -Math.sin(angle),  0,
-        Math.sin(angle),  Math.cos(angle),  0,
-        0,                0,                   1
+    var quaternion_a = (new ThreeQuaternion()).fromEuler(
+        [axis_a.x, axis_a.y, axis_a.z],
+        THREE.Math.degToRad(angle_a)
     );
+
+    var quaternion_b = (new ThreeQuaternion()).fromEuler(
+        [axis_b.x, axis_b.y, axis_b.z],
+        THREE.Math.degToRad(angle_b)
+    );
+
+    var quaternion_c = (new ThreeQuaternion()).fromEuler(
+        [axis_c.x, axis_c.y, axis_c.z],
+        THREE.Math.degToRad(angle_c)
+    );
+
+    var quaternion_ab  = (new ThreeQuaternion()).fromQuaternion(quaternion_a.multiply(quaternion_b));
+    var quaternion_bc  = (new ThreeQuaternion()).fromQuaternion(quaternion_b.multiply(quaternion_c));
+    var quaternion_abc = (new ThreeQuaternion()).fromQuaternion(quaternion_a.multiply(quaternion_bc));
+
+    var points = PointUtils.getDefaultPointSet3D();
+    QuatUtils.applyQuaternion(points, quaternion_abc);
+    PrintUtils.printPoints(points, 0x0000ff/*#color*/);
+
+    PrintUtils.printLine(VectorUtils.ORIGIN, 
+        axis_a.multiplyScalar(500), 
+        0xc000c0/*#color*/
+    );
+
+    PrintUtils.printLine(VectorUtils.ORIGIN, 
+        QuatUtils.applyQuaternion(axis_b, quaternion_a).multiplyScalar(500), 
+        0xc0c000/*#color*/
+    );
+
+    PrintUtils.printLine(VectorUtils.ORIGIN, 
+        QuatUtils.applyQuaternion(axis_c, quaternion_ab).multiplyScalar(500), 
+        0x00c0c0/*#color*/
+    );
+
+}
+
+
+function homogenous_example_dual_quaternion_r3() {
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
     
-    MatrixUtils.applyMatrix(points, new_mat);
+    var translation = new THREE.Vector3(-1/*#float:2*/, 1/*#float:2*/, 1/*#float:2*/);
+    var axis = new THREE.Vector3(1/*#float:0.1*/, 1.5/*#float:0.1*/, 0/*#float:0.1*/);
+    var angle = THREE.Math.degToRad(45/*#float:15*/);
+    
+    axis = axis.normalize();
+    
+    var dual_quat_t = DualQuatUtils.translate3d(translation);
+    var dual_quat_r = DualQuatUtils.rotateAxis(axis, angle);
 
-    var point_real   = new THREE.Vector3(real,         0, 0);
-    var point_imag   = new THREE.Vector3(0,    imaginary, 0);
-    var point_meet   = new THREE.Vector3(real, imaginary, 0);
-    var point_origin = new THREE.Vector3(0,            0, 0);
 
-    PrintUtils.printLine(point_real, point_meet, 0x8f3030/*#color*/);
-    PrintUtils.printLine(point_imag, point_meet, 0x308f30/*#color*/);
-    PrintUtils.printLine(point_origin, point_meet, 0xafafaf/*#color*/);
+    var points = PointUtils.getDefaultPointSet3D();
+    DualQuatUtils.applyQuaternion(points, dual_quat_t);
+    PrintUtils.printPoints(points, 0xff0000/*#color*/);
 
-    PrintUtils.printPoints(points, 0xff0000/*#color*/); 
+    var points = PointUtils.getDefaultPointSet3D();
+    DualQuatUtils.applyQuaternion(points, dual_quat_r);
+    PrintUtils.printPoints(points, 0x00ff00/*#color*/);
 
-    var radius = Math.min(complex.getRadius(), 80);
-    PrintUtils.printArc(point_origin, radius, 0, angle, 0x8f8f30/*#color*/);
+    var dual_quat = dual_quat_t.multiply(dual_quat_r).normalizeApply();
+
+    var points = PointUtils.getDefaultPointSet3D();
+    DualQuatUtils.applyQuaternion(points, dual_quat);
+    PrintUtils.printPoints(points, 0xffffff/*#color*/);
+
+    PrintUtils.printLine(VectorUtils.ORIGIN, 
+        axis.multiplyScalar(500), 
+        0xc000c0/*#color*/
+    );
+
 }
 
 function homogenous_example_rotation_point_r3() {
@@ -209,9 +264,8 @@ function homogenous_example_rotation_point_r3() {
     var Ry =  MatrixUtils.rotateAxis4(MatrixUtils.AXIS_Y, beta);
     var Rz =  MatrixUtils.rotateAxis4(MatrixUtils.AXIS_Z, gamma);
     var T_1 = MatrixUtils.getInverseMatrix(T);
-
+    debugger;   
     var new_mat = MatrixUtils.multiplyMatrices([T, Rx, Ry, Rz, T_1]);
-
 
     MatrixUtils.applyMatrix(points, new_mat);
 
