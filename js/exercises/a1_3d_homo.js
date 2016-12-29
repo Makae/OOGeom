@@ -124,6 +124,35 @@ function homogenous_example_rotation_orign_r3() {
     PrintUtils.printPoints(points, 0xffff00/*#color*/);
 }
 
+
+function homogenous_rotate_euler_r3() {
+PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
+    
+    var points = PointUtils.getDefaultPointSet3D();
+
+    var alpha = 45/*#float:10:-360:360*/;
+    var beta  = 45/*#float:10:-360:360*/;
+    var gamma = 45/*#float:10:-360:360*/;
+
+    alpha = THREE.Math.degToRad(alpha);
+    beta  = THREE.Math.degToRad(beta);
+    gamma = THREE.Math.degToRad(gamma);
+
+    /* Using Proper Euler angle: x-y-x  => x (alpha), y' (beta), x'' (gamma) */
+    var mat_euler = MatrixUtils.rotateOriginEuler(
+        [MatrixUtils.AXIS_X, MatrixUtils.AXIS_Y, MatrixUtils.AXIS_X],
+        [alpha,              beta,               gamma]
+    );
+
+    var center = PointUtils.getCenter(points);
+    var arc_pos = new THREE.Vector3(center.x, 0, 0);
+    var radius = Math.min(center.length(), 80);
+    
+    MatrixUtils.applyMatrix(points, mat_euler);
+    PrintUtils.printPoints(points, 0x00ff00/*#color*/);
+
+}
+
 function homogenous_example_rotation_complex_r3() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0x00ff00/*#color*/);
     
@@ -193,7 +222,6 @@ function homogenous_example_rotation_point_r3() {
 
 function homogenous_rotate_origin_axis_r3() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
-    
 
     var angle = 45/*#float:5:-360:360*/;
     angle = THREE.Math.degToRad(angle);
@@ -220,6 +248,34 @@ function homogenous_rotate_origin_axis_r3() {
     new_mat =  MatrixUtils.multiplyMatrices([MatrixUtils.rotateOriginAxisCondensed(axis_normed, angle)]);
     MatrixUtils.applyMatrix(points, new_mat);
     PrintUtils.printPoints(points, 0xa00000/*#color*/);
+}
+
+
+function homogenous_rotate_origin_axis_rodrigues_r3() {
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
+
+    var angle = 45/*#float:5:-360:360*/;
+    angle = THREE.Math.degToRad(angle);
+    var axis = new THREE.Vector3(
+        1/*#float:1*/,
+        1/*#float:1*/,
+        1/*#float:1*/
+    );
+
+    axis = axis.normalize();
+       
+    var axis_line = (new THREE.Vector3()).copy(axis).multiplyScalar(500);
+    PrintUtils.printLine(VectorUtils.ORIGIN, 
+        axis_line, 
+        0xc0c0c0/*#color*/
+    );
+
+    var points = PointUtils.getDefaultPointSet3D();
+    var new_mat = MatrixUtils.rotateOriginAxisRodrigues(axis, angle);
+
+    MatrixUtils.applyMatrix(points, new_mat);
+    PrintUtils.printPoints(points, 0x00a000/*#color*/);
+
 }
 
 function homogenous_mirror_plane_r3() {

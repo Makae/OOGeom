@@ -54,6 +54,7 @@ ExampleBlock.prototype.init = function() {
     }
   });
   
+  console.log(this.fn);
   this.dcc.loadNewCode(window[this.fn].toString());
 
   this.registerHandlers();

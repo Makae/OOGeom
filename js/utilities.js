@@ -103,7 +103,22 @@ var PointUtils = {
         if(vectors_type == 'array')
             return vectors;
         return vectors[0];
-    }
+    },
+
+    getArcPoints : function(center, radius, start_angle, end_angle, color) {
+        var curve = new THREE.EllipseCurve(
+            center.x, center.y,             // ax, aY
+            radius, radius,            // xRadius, yRadius
+            start_angle, end_angle, // aStartAngle, aEndAngle
+            false             // aClockwise
+        );
+
+        var deg_angle = 180;
+        var pieces = deg_angle;
+        var points = curve.getSpacedPoints(pieces);
+
+        return VectorUtils.vec2ToVec3(points);
+    },
 };
 
 var GeomUtils = {
@@ -138,6 +153,7 @@ var GeneralUtils = {
             return objs;
         return objs[0];
     },
+
     clone : function(data) {
         return JSON.parse(JSON.stringify(data));
     }
@@ -202,17 +218,12 @@ var PrintUtils = {
     },
 
     printArc : function(center, radius, start_angle, end_angle, color) {
-        var curve = new THREE.EllipseCurve(
-            center.x, center.y,             // ax, aY
-            radius, radius,            // xRadius, yRadius
-            start_angle, end_angle, // aStartAngle, aEndAngle
-            false             // aClockwise
-        );
+       
+        var points = PointUtils.getArcPoints(center, radius, start_angle, end_angle);
+        PointUtils.printConnectedLines(points, color)
+    },
 
-        var deg_angle = 180;
-        var pieces = deg_angle;
-        var points = curve.getSpacedPoints(pieces);
-
+    printConnectedLines : function(points, color) {
         var path = new THREE.Path();
         var geometry = path.createGeometry( points );
 
@@ -265,6 +276,20 @@ var VectorUtils = {
 
     perp3d : function(v) {
          return  v.z < v.x  ? new THREE.Vector3(v.y, -v.x, 0) : new THREE.Vector3(0, -v.z, v.y);
+    },
+
+    vec2ToVec3 : function(vectors) {
+        var vectors_type = vectors instanceof Array ? 'array' : 'single';
+        vectors = vectors_type == 'array' ? vectors : [vectors];
+        
+        for(var i = 0; i < vectors.length; i++) {
+            vectors[i] = (new THREE.Vector3()).copy(vectors[i]);
+            vectors[i].z = 0;
+        }
+
+        if(vectors_type == 'single')
+            return vectors[0];
+        return vectors;
     },
 
     unitVectorAngles : function(v) {
@@ -344,24 +369,55 @@ var MatrixUtils = {
 
     },
 
-    subtractMatrices : function(m1, m2) {
+    subtract : function(m1, m2) {
         var mat = MatrixUtils.generateSameMatrixType(m1);
+        for(var e = 0; e < mat.elements.length; e++)
+            mat.elements[e] = 0;
         for(var i = 0; i < m1.element.length; i++)
             mat.elements[i] = m1.elements[i] - m1.elements[i];
         return mat;
     },
 
-    addMatrices : function(m1, m2) {
+    add : function(m1, m2) {
         var mat = MatrixUtils.generateSameMatrixType(m1);
+        for(var e = 0; e < mat.elements.length; e++)
+            mat.elements[e] = 0;
         for(var i = 0; i < m1.element.length; i++)
             mat.elements[i] = m1.elements[i] + m1.elements[i];
         return mat;
     },
 
+    /*
+     * Adds an array of matrices together and returns the result
+     */
+    addMatrices : function(matrices) {
+        if(!(matrices instanceof Array))
+            return matrices;
+
+        if(matrices.length == 1)
+            return matrices[0];
+
+        var mat = MatrixUtils.generateSameMatrixType(matrices[0]);
+        for(var e = 0; e < mat.elements.length; e++)
+            mat.elements[e] = 0;
+
+        for(var m = 0; m < matrices.length; m++) {
+            var c_mat = matrices[m];
+            for(var i = 0; i < c_mat.elements.length; i++) {
+                mat.elements[i] += c_mat.elements[i];
+            }
+        }
+
+        return mat;
+    },
 
     generateSameMatrixType : function(matrix) {
+        return MatrixUtils.generateMatrixOfType(MatrixUtils.getMatrixType(matrix));
+    },
+
+    generateMatrixOfType : function(type) {
         var mat;
-        switch(MatrixUtils.getMatrixType(matrix)) {
+        switch(type) {
             case MatrixUtils.MAT_2:
                 mat = new THREE.Matrix2();
             break;
@@ -382,11 +438,15 @@ var MatrixUtils = {
      * Multiplies an array of matrices together and returns the result
      */
     multiplyMatrices : function(matrices) {
+
         if(!(matrices instanceof Array))
             return matrices;
 
         if(matrices.length == 1)
             return matrices[0];
+
+        if(matrices.length == 0)
+            return new THREE.Matrix4();
 
         switch(MatrixUtils.getMatrixType(matrices[0])) {
             case MatrixUtils.MAT_2:
@@ -476,10 +536,10 @@ var MatrixUtils = {
         return new_mat;
     },
 
-    rotateAxis: function(axis, angle, matrix_type) {
+    rotateAxis: function(axis, angle, mat_type) {
         var mat;
-        matrix_type = typeof matrix_type != "undefined" ? matrix_type : MatrixUtils.MAT_3;
-        switch(matrix_type) {
+        mat_type = typeof mat_type != "undefined" ? mat_type : MatrixUtils.MAT_4;
+        switch(mat_type) {
             case MatrixUtils.MAT_2:
                 mat = MatrixUtils.rotateAxis2(axis, angle);
             break;
@@ -582,6 +642,49 @@ var MatrixUtils = {
             u.x * u.z * (1 - cos(angle)) - u.y * sin(angle),   u.y * u.z * (1 - cos(angle)) + u.x * sin(angle),   u.z * u.z + cos(angle) * (1 - u.z * u.z),        0,
                                                           0,                                                 0,                                          0,        1
         );
+
+    },
+
+    rotateOriginEuler : function(axes, angles, mat_type) {
+        mat_type = mat_type || MatrixUtils.MAT_4;
+
+        if(axes.length != angles.length)
+            throw new Error("Same number of axes and angles are necessary");
+
+        var mats = [];
+        for(var a = 0; a < axes.length; a++)
+            mats.push(MatrixUtils.rotateAxis(axes[a], angles[a], mat_type));
+
+        return MatrixUtils.multiplyMatrices(mats);
+
+    },
+
+    rotateOriginAxisRodrigues : function(axis, angle, mat_type) {
+        mat_type = mat_type || MatrixUtils.MAT_4;
+
+        // https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
+        var norm_axis = (new THREE.Vector3()).copy(axis).normalize();
+        var I = new THREE.Matrix3();
+        var N = new THREE.Matrix3();
+
+        N.set(
+                  0,      -norm_axis.z,  norm_axis.y,
+             norm_axis.z,            0, -norm_axis.x,
+            -norm_axis.y,  norm_axis.x,            0
+        );
+        var NN = MatrixUtils.multiply3x3(N, N);
+
+        // R_n(phi) = I + N * sin(phi) + N^2 * (1 - cos(phi))
+        var new_matrix = MatrixUtils.addMatrices([
+            I, 
+            N.multiplyScalar(Math.sin(angle)), 
+            NN.multiplyScalar(1 - Math.cos(angle))
+        ]);
+
+        if(mat_type == MatrixUtils.MAT_4)
+            return MatrixUtils.mat3ToMat4(new_matrix);
+
+        return new_matrix;
 
     },
 
@@ -751,10 +854,10 @@ var MatrixUtils = {
 
     mat3ToMat4 : function(mat3) {
         return new THREE.Matrix4().set(
-            mat3[0], mat3[3], mat3[6], 0,
-            mat3[1], mat3[4], mat3[7], 0,
-            mat3[2], mat3[5], mat3[8], 0,
-                  0,       0,       0, 1
+            mat3.elements[0], mat3.elements[3], mat3.elements[6], 0,
+            mat3.elements[1], mat3.elements[4], mat3.elements[7], 0,
+            mat3.elements[2], mat3.elements[5], mat3.elements[8], 0,
+                           0,                0,                0, 1
         );
     },
 
