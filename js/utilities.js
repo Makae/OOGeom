@@ -243,20 +243,24 @@ var PrintUtils = {
         
         this.context.addObject( plane );
 
+        MatrixUtils.applyMatrix(plane.geometry.vertices, MatrixUtils.rotateAxis(MatrixUtils.AXIS_X, -Math.PI / 2));
+
         var new_mat;
-        var r_xyz_t = [
-            MatrixUtils.lookAt(VectorUtils.ORIGIN, normal, (new THREE.Vector3()).copy(VectorUtils.UNIT_X)),
+        var r_xyz_t = MatrixUtils.multiplyMatrices([
+            MatrixUtils.lookAt(new THREE.Vector3(0, 0, 0), normal, new THREE.Vector3(0, 1, 0)),
             MatrixUtils.translate3d(position)
-        ];
+        ]);
        
-        new_mat = MatrixUtils.multiplyMatrices(r_xyz_t);
+        new_mat = MatrixUtils.multiplyMatrices([
+            MatrixUtils.rotateAxis(MatrixUtils.AXIS_X, -Math.PI / 2),
+            r_xyz_t]);
 
         plane.matrixWorld.copy(new_mat);
         plane.matrix.copy(new_mat);
         plane.matrixAutoUpdate = false;
 
-        var nml = (new THREE.Vector3()).copy(position).add(normal).multiplyScalar(size / 10);
-        PrintUtils.printLine(position, nml, color);
+        MatrixUtils.applyMatrix(position, MatrixUtils.translate3d(position));
+        PrintUtils.printLine(position, (new THREE.Vector3()).copy(position).add(normal.multiplyScalar(20)), color);
 
     }
 }
@@ -359,13 +363,17 @@ var MatrixUtils = {
         return new_mat;
     },
 
-    houseHolder : function(normal) {
-
-        var hh_matrix = new THREE.Matrix4().set(
-
+    houseHolder : function(normal, mat_type) {
+        var mat_type = mat_type || MatrixUtils.MAT_4;
+        var I = MatrixUtils.generateMatrixOfType(mat_type);
+        var HH = (new THREE.Matrix3()).set(
+            normal.x * normal.x, normal.x * normal.y, normal.x * normal.z,
+            normal.y * normal.x, normal.y * normal.y, normal.y * normal.z,
+            normal.z * normal.x, normal.z * normal.y, normal.z * normal.z
         );
 
-        return MatrixUtils.subtract(new THREE.Matrix4(), hh_matrix);
+        HH = mat_type == MatrixUtils.MAT_3 ? HH : MatrixUtils.mat3ToMat4(HH);
+        return MatrixUtils.subtract(I, HH.multiplyScalar(2));
 
     },
 
@@ -373,8 +381,10 @@ var MatrixUtils = {
         var mat = MatrixUtils.generateSameMatrixType(m1);
         for(var e = 0; e < mat.elements.length; e++)
             mat.elements[e] = 0;
-        for(var i = 0; i < m1.element.length; i++)
-            mat.elements[i] = m1.elements[i] - m1.elements[i];
+
+        for(var i = 0; i < m1.elements.length; i++)
+            mat.elements[i] = m1.elements[i] - m2.elements[i];
+
         return mat;
     },
 
@@ -820,7 +830,6 @@ var MatrixUtils = {
     },
 
     lookAt : function(eye, target, up) {
-        console.log(arguments);
         return (new THREE.Matrix4()).lookAt(eye, target, up);
     },
 
@@ -948,6 +957,7 @@ var DualQuatUtils = {
 
     rotateAxis : function(axis, angle) {
         var a = axis.normalize();
+        angle = angle / 2;
         var r = new ThreeQuaternion(
             Math.cos(angle), 
             a.x * Math.sin(angle), 

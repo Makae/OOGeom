@@ -43,7 +43,6 @@ Quaternion.prototype.fromEuler = function(axis, angle) {
 
 Quaternion.prototype.applyToVector = function(v) {
     var q = new Quaternion(0, v[0], v[1], v[2]);
-    //debugger;
     // q*vq
     var q_vq = this.conjugate().multiply(q).multiply(this);
     

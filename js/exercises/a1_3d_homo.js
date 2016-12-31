@@ -214,7 +214,7 @@ function homogenous_example_dual_quaternion_r3() {
     
     var translation = new THREE.Vector3(-1/*#float:2*/, 1/*#float:2*/, 1/*#float:2*/);
     var axis = new THREE.Vector3(1/*#float:0.1*/, 1.5/*#float:0.1*/, 0/*#float:0.1*/);
-    var angle = THREE.Math.degToRad(45/*#float:15*/);
+    var angle = THREE.Math.degToRad(0/*#float:10*/);
     
     axis = axis.normalize();
     
@@ -230,7 +230,7 @@ function homogenous_example_dual_quaternion_r3() {
     DualQuatUtils.applyQuaternion(points, dual_quat_r);
     PrintUtils.printPoints(points, 0x00ff00/*#color*/);
 
-    var dual_quat = dual_quat_t.multiply(dual_quat_r).normalizeApply();
+    var dual_quat = dual_quat_r.multiply(dual_quat_t);
 
     var points = PointUtils.getDefaultPointSet3D();
     DualQuatUtils.applyQuaternion(points, dual_quat);
@@ -335,18 +335,17 @@ function homogenous_rotate_origin_axis_rodrigues_r3() {
 function homogenous_mirror_plane_r3() {
     var points = PointUtils.getDefaultPointSet3D();
     /* E = ax + by + cz + d = 0 */
-    var a = 1/*#float:0.1*/;
-    var b = 1/*#float:0.1*/;
-    var c = 1/*#float:0.1*/;
-    var x = 0/*#float:0.1*/;
-    var y = 0/*#float:0.1*/;
-    var z = 0/*#float:0.1*/;
-    var d = 1/*#float:0.1*/;
+    var a = 1/*#float:0.4*/;
+    var b = 1/*#float:0.4*/;
+    var c = 1/*#float:0.4*/;
+    var x = 0/*#float:0.4*/;
+    var y = 0/*#float:0.4*/;
+    var z = 0/*#float:0.4*/;
+    var d = 1/*#float:0.4*/;
 
     var plane = new Plane(
-        a, x,
-        b, y,
-        c, z,
+        a, b, c,
+        x, y, z,
         d);
 
     PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
@@ -355,31 +354,19 @@ function homogenous_mirror_plane_r3() {
     var position = plane_data[0];
     var normal = plane_data[1];
 
-    var up     = VectorUtils.perp3d((new THREE.Vector3()).copy(normal));
-    var target = (new THREE.Vector3()).copy(normal).negate();
-
-
-    
-    var Rlk   = MatrixUtils.lookAt(normal, target, new THREE.Vector3(1/*#float*/,1/*#float*/,1/*#float*/));
-  
+    /* Make transformation */
+    var HH = MatrixUtils.houseHolder(normal.normalize());
 
     PrintUtils.printPoints(
         MatrixUtils.applyMatrix(
             PointUtils.getDefaultPointSet3D(),
-            MatrixUtils.multiplyMatrices([Rlk])
+            MatrixUtils.multiplyMatrices([HH])
         ), 
         0x00ff00/*#color*/
     );
 
-    PrintUtils.printPlane(position, normal, 150, 0xddaa00/*#color*/, opacity);
-
-    var mat = MatrixUtils.multiplyMatrices([Rlk]);
-
-    MatrixUtils.applyMatrix(points, mat);
-    
-    var opacity = 0.5/*#float:0.1:0.1:1.0*/;
-    PrintUtils.printPoints(points, 0x00ff00/*#color*/); 
-
+    /* Show plane */
+    PrintUtils.printPlane(position, normal, 150, 0xddaa00/*#color*/, 0.75);
 }
 
 function homogenous_shear_r3() {
