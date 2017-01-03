@@ -30,17 +30,19 @@ DualQuaternion.prototype.applyToVector = function(v) {
         new Quaternion(1, 0, 0, 0), 
         new Quaternion(0, v[0], v[1], v[2])
     );
-    debugger;
-    // qpq*
-    var q = this;
-    var qs = this.conjugate();
-    var result = q.multiply(p).multiply(qs);
 
+    // qpq*
+    var q = this.normalize();
+    var q_1 = this.conjugate();
+    var result = q.multiply(p).multiply(q_1);
+    
     v[0] = result.d.i;
     v[1] = result.d.j;
     v[2] = result.d.k;
 
     return v;
+
+
 };
 
 // Applies it to the context quaternion
@@ -123,14 +125,16 @@ DualQuaternion.prototype._multiply = function(dq1, dq2) {
 DualQuaternion.prototype._normalize = function(dq) {
     var magnitude = dq.r.magnitude();
     return [
-        dq.r.multiplyApply(1 / magnitude),
-        dq.d.multiplyApply(1 / magnitude)
+        dq.r.multiplyScalar(1 / magnitude),
+        dq.d.multiplyScalar(1 / magnitude)
     ]
 };
 
+// Check: http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/other/dualQuaternion/functions/index.htm
+// Important to take the third conjugate!
 DualQuaternion.prototype._conjugate = function(dq) {
     return [
         dq.r.conjugate(),
-        dq.d.conjugate()
+        dq.d.conjugate().multiplyScalar(-1)
     ]
 };

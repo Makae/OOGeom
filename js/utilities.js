@@ -950,7 +950,17 @@ var QuatUtils = {
 var DualQuatUtils = {
     
     applyQuaternion : function(vectors, quaternion) {
-       return QuatUtils.applyQuaternion(vectors, quaternion);
+        var vectors_type = vectors instanceof Array ? 'array' : 'single';
+        vectors = vectors_type == 'array' ? vectors : [vectors];
+        
+        for(var i = 0; i < vectors.length; i++) {
+            quaternion.applyToVector(vectors[i]);
+        }
+
+         if(vectors_type == 'single')
+            return vectors[0];
+        
+        return vectors;
     },
 
     translate3d : function(v) {

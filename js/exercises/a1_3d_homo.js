@@ -211,13 +211,15 @@ function homogenous_example_rotation_quaternion_r3() {
 function homogenous_example_dual_quaternion_r3() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
     
-    var translation = new THREE.Vector3(1/*#float:2*/, 1/*#float:2*/, 1/*#float:2*/);
+    var translation = new THREE.Vector3(42/*#float:2*/, 10/*#float:2*/, 10/*#float:2*/);
     var axis = new THREE.Vector3(1/*#float:0.1*/, 1.5/*#float:0.1*/, 0/*#float:0.1*/);
     var angle = THREE.Math.degToRad(125/*#float:10*/);
     
     axis = axis.normalize();
     
     var dual_quat_t = DualQuatUtils.translate3d(translation);
+    console.log(dual_quat_t);
+    console.log("---");
     var dual_quat_r = DualQuatUtils.rotateAxis(axis, angle);
 
 
@@ -225,15 +227,15 @@ function homogenous_example_dual_quaternion_r3() {
     DualQuatUtils.applyQuaternion(points, dual_quat_t);
     PrintUtils.printPoints(points, 0xff0000/*#color*/);
 
-    // var points = PointUtils.getDefaultPointSet3D();
-    // DualQuatUtils.applyQuaternion(points, dual_quat_r);
-    // PrintUtils.printPoints(points, 0x00ff00/*#color*/);
+    var points = PointUtils.getDefaultPointSet3D();
+    DualQuatUtils.applyQuaternion(points, dual_quat_r);
+    PrintUtils.printPoints(points, 0x00ff00/*#color*/);
 
-    // var dual_quat = dual_quat_t.multiply(dual_quat_r);
+    var dual_quat = dual_quat_t.multiply(dual_quat_r);
 
-    // var points = PointUtils.getDefaultPointSet3D();
-    // DualQuatUtils.applyQuaternion(points, dual_quat);
-    // PrintUtils.printPoints(points, 0xffffff/*#color*/);
+    var points = PointUtils.getDefaultPointSet3D();
+    DualQuatUtils.applyQuaternion(points, dual_quat);
+    PrintUtils.printPoints(points, 0xffffff/*#color*/);
 
     PrintUtils.printLine(VectorUtils.ORIGIN, 
         axis.multiplyScalar(500), 
