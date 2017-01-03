@@ -1,17 +1,37 @@
 var PointUtils = { 
     getDefaultPointSet : function() {
         return PointUtils.threePointSet(
-        3, 20, 40, 
-        3, 20, 40
+            3, 20, 40, 
+            3, 20, 40
         );
     },
 
-    getDefaultPointSet3D : function() {
-        return PointUtils.three3dPointSet(
-        3, 20, 40, 
-        3, 20, 40,
-        3, 20, 40
+    getDefaultPointSet3D : function(vec_type) {
+        var vec_type = vec_type || VectorUtils.VEC_3;
+        
+        var points = PointUtils.three3dPointSet(
+            3, 20, 40, 
+            3, 20, 40,
+            3, 20, 40
         );
+        return vec_type == VectorUtils.VEC_3 ? points : PointUtils.vec3toVec4(points);
+    },
+
+    vec3toVec4 : function(points) {
+        var new_points = [];
+        for(var i = 0; i < points.length; i++) {
+            var p = (new THREE.Vector4()).copy(points[i]);
+            p.setW(1);
+            new_points.push(p);
+        }
+        return new_points;
+    },
+
+    clonePoints : function(points) {
+        var new_points = [];
+        for(var i = 0; i < points.length; i++)
+            new_points.push(points[i].clone());
+        return new_points;
     },
 
     threePointSet: function(numX, minX, maxX, 
@@ -105,6 +125,24 @@ var PointUtils = {
         return vectors[0];
     },
 
+    deHomogenize3D : function(vectors) {
+        var vectors_type = vectors instanceof Array ? 'array' : 'single';
+        vectors = vectors_type == 'array' ? vectors : [vectors];
+        
+        for(var i = 0; i < vectors.length; i++) {
+            if(vectors[i].w != 1 && vectors[i].w != 0){
+                vectors[i].x /= vectors[i].w
+                vectors[i].y /= vectors[i].w
+                vectors[i].z /= vectors[i].w
+                vectors[i].w = 1;
+            }
+        }
+
+        if(vectors_type == 'array')
+            return vectors;
+        return vectors[0];
+    },
+
     getArcPoints : function(center, radius, start_angle, end_angle, color) {
         var curve = new THREE.EllipseCurve(
             center.x, center.y,             // ax, aY
@@ -166,6 +204,8 @@ var PrintUtils = {
     },
 
     printPoints : function(points, color) {
+        points = points instanceof Array ? points : [points];
+
         for(var i = 0; i < points.length; i++) {
             var r_point = PointUtils.newThreePoint(points[i]);
             GeneralUtils.colorMaterial(r_point, color);
@@ -265,6 +305,8 @@ var PrintUtils = {
 };
 
 var VectorUtils = {
+    VEC_3 : 3,
+    VEC_4 : 4,
     ORIGIN : new THREE.Vector3(0, 0, 0),
     UNIT_X : new THREE.Vector3(1, 0, 0),
     UNIT_Y : new THREE.Vector3(0, 1, 0),
@@ -353,6 +395,7 @@ var MatrixUtils = {
     },
 
     project2: function(u, v) {
+        var mat_type = mat_type || MatrixUtils.MAT_4;
         var new_mat = new THREE.Matrix3().set(
             1,           0, 0,
             0,           1, 0,
@@ -362,9 +405,27 @@ var MatrixUtils = {
         return new_mat;
     },
 
-    projectOnPlane : function(normal) {
-        // [abcd]T × [pqr1] − (au + bv + cw + d)I
+    project3: function(u, v, w) {
+        var new_mat = new THREE.Matrix4().set(
+            1,           0,     0, 0,
+            0,           1,     0, 0,
+            0,           0,     1, 0,
+            1/u.x, 1/v.y, 1/w.z,   1
+        );
 
+        return new_mat;
+    },
+
+    projectPlaneXZ : function(normal, mat_type) {
+        var mat_type = mat_type || MatrixUtils.MAT_4;
+       
+        var P = (new THREE.Matrix3()).set(
+            1, 0, 0,
+            0, 0, 0,
+            0, 0, 1
+        );
+
+        return mat_type == MatrixUtils.MAT_3 ? P : MatrixUtils.mat3ToMat4(P);
     },
 
     houseHolder : function(normal, mat_type) {
@@ -378,7 +439,6 @@ var MatrixUtils = {
 
         HH = mat_type == MatrixUtils.MAT_3 ? HH : MatrixUtils.mat3ToMat4(HH);
         return MatrixUtils.subtract(I, HH.multiplyScalar(2));
-
     },
 
     subtract : function(m1, m2) {
@@ -834,7 +894,7 @@ var MatrixUtils = {
     },
 
     lookAt : function(eye, target, up) {
-        return (new THREE.Matrix4()).lookAt(eye, target, up);
+        return (new THREE.Matrix4()).lookAt(eye.clone(), target.clone(), up.clone());
     },
 
     getInverseMatrix : function(mat) {

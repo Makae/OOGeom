@@ -265,7 +265,7 @@ function homogenous_example_rotation_point_r3() {
     var Ry =  MatrixUtils.rotateAxis4(MatrixUtils.AXIS_Y, beta);
     var Rz =  MatrixUtils.rotateAxis4(MatrixUtils.AXIS_Z, gamma);
     var T_1 = MatrixUtils.getInverseMatrix(T);
-    debugger;   
+    
     var new_mat = MatrixUtils.multiplyMatrices([T, Rx, Ry, Rz, T_1]);
 
     MatrixUtils.applyMatrix(points, new_mat);
@@ -377,43 +377,90 @@ function homogenous_shear_r3() {
 
     var shear_x = 0.5/*#float:0.1:-100:100*/;
     var shear_y = 0/*#float:0.1:-100:100*/;
+    var shear_z = 0/*#float:0.1:-100:100*/;
 
     PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0x00ff00/*#color*/);
 
     var mat =  new THREE.Matrix4().set(
-        1, shear_x,  0,
-        shear_y, 1,  0,
-        0,       0,   1
+        1, shear_x,       0,  0,
+        shear_y, 1,       0,  0,
+        0,       shear_z, 1,  0,
+        0,       0,        0,  1
     );
 
     MatrixUtils.applyMatrix(points, mat);
     PrintUtils.printPoints(points, 0xff0000/*#color*/); 
 }
 
-function homogenous_perspective_two_r3() {
-    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0x00ff00/*#color*/);
+function homogenous_perspective_three_r3() {
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(VectorUtils.VEC_4), 0x00ff00/*#color*/);
     
-    var points = PointUtils.getDefaultPointSet3D();
-    var vanishing_point_x = new THREE.Vector3(40/*#float:10*/, 0);
-    var vanishing_point_y = new THREE.Vector3(0, -90/*#float:10*/);
-    var mat = MatrixUtils.project2(
+    var points = PointUtils.getDefaultPointSet3D(VectorUtils.VEC_4);
+    var vanishing_point_x = new THREE.Vector3(350/*#float:10*/, 0);
+    var vanishing_point_y = new THREE.Vector3(0, -170/*#float:10*/, 0);
+    var vanishing_point_z = new THREE.Vector3(0, 0, -150/*#float:10*/);
+    var mat = MatrixUtils.project3(
             vanishing_point_x,
-            vanishing_point_y
+            vanishing_point_y,
+            vanishing_point_z
     );
     
     var new_points = MatrixUtils.applyMatrix(points, mat);
     PrintUtils.printPoints(new_points, 0x3344ff/*#color*/);
     
-
-    new_points = PointUtils.deHomogenize2D(new_points);
+    new_points = PointUtils.deHomogenize3D(new_points);
 
     /* Visualize Projection */
     PrintUtils.printPoints([vanishing_point_x], 0xffffff/*#color*/);
     PrintUtils.printPoints([vanishing_point_y], 0xffffff/*#color*/);
-    PrintUtils.printLine(vanishing_point_x, new_points[0], 0xafafaf/*#color*/);
-    PrintUtils.printLine(vanishing_point_x, new_points[2], 0xafafaf/*#color*/);
-    PrintUtils.printLine(vanishing_point_y, new_points[0], 0xafafaf/*#color*/);
-    PrintUtils.printLine(vanishing_point_y, new_points[6], 0xafafaf/*#color*/);
+    PrintUtils.printPoints([vanishing_point_z], 0xffffff/*#color*/);
+
+    PrintUtils.printLine(vanishing_point_x, new_points[0], 0xaf2222/*#color*/);
+    PrintUtils.printLine(vanishing_point_x, new_points[2], 0xaf2222/*#color*/);
+    PrintUtils.printLine(vanishing_point_x, new_points[6], 0xaf2222/*#color*/);
+    PrintUtils.printLine(vanishing_point_x, new_points[8], 0xaf2222/*#color*/);
+
+    PrintUtils.printLine(vanishing_point_y, new_points[6], 0x22af22/*#color*/);
+    PrintUtils.printLine(vanishing_point_y, new_points[8], 0x22af22/*#color*/);
+    PrintUtils.printLine(vanishing_point_y, new_points[24], 0x22af22/*#color*/);
+    PrintUtils.printLine(vanishing_point_y, new_points[26], 0x22af22/*#color*/);
+
+    PrintUtils.printLine(vanishing_point_z, new_points[2], 0x2222af/*#color*/);
+    PrintUtils.printLine(vanishing_point_z, new_points[8], 0x2222af/*#color*/);
+    PrintUtils.printLine(vanishing_point_z, new_points[20], 0x2222af/*#color*/);
+    PrintUtils.printLine(vanishing_point_z, new_points[26], 0x2222af/*#color*/);
+
 
     PrintUtils.printPoints(new_points, 0xff0000/*#color*/);
+ }
+
+ function homogenous_normal_project_plane() {
+    var points = PointUtils.getDefaultPointSet3D();
+
+    var alpha = 10/*#float:10:-360:360*/;
+    var beta  = 90/*#float:10:-360:360*/;
+    var gamma = 45/*#float:10:-360:360*/;
+
+    alpha = THREE.Math.degToRad(alpha);
+    beta  = THREE.Math.degToRad(beta);
+    gamma = THREE.Math.degToRad(gamma);
+
+    var mat_euler = MatrixUtils.rotateOriginEuler(
+        [MatrixUtils.AXIS_X, MatrixUtils.AXIS_Y, MatrixUtils.AXIS_X],
+        [alpha,              beta,               gamma]
+    );
+
+    MatrixUtils.applyMatrix(points, mat_euler);
+
+    PrintUtils.printPoints(points, 0xd0d0d0/*#color*/);
+    
+    points = PointUtils.clonePoints(points);
+    var mat_project_xz = MatrixUtils.projectPlaneXZ();
+
+    MatrixUtils.applyMatrix(points, mat_project_xz);
+    PrintUtils.printPoints(points, 0x0c0c0c);
+
+    /* Show plane */
+    PrintUtils.printPlane(VectorUtils.ORIGIN, VectorUtils.UNIT_Y, 150, 0xddaa00/*#color*/, 0.75);
+
  }
