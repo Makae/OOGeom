@@ -208,13 +208,12 @@ function homogenous_example_rotation_quaternion_r3() {
 
 }
 
-
 function homogenous_example_dual_quaternion_r3() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
     
-    var translation = new THREE.Vector3(-1/*#float:2*/, 1/*#float:2*/, 1/*#float:2*/);
+    var translation = new THREE.Vector3(1/*#float:2*/, 1/*#float:2*/, 1/*#float:2*/);
     var axis = new THREE.Vector3(1/*#float:0.1*/, 1.5/*#float:0.1*/, 0/*#float:0.1*/);
-    var angle = THREE.Math.degToRad(0/*#float:10*/);
+    var angle = THREE.Math.degToRad(125/*#float:10*/);
     
     axis = axis.normalize();
     
@@ -226,15 +225,15 @@ function homogenous_example_dual_quaternion_r3() {
     DualQuatUtils.applyQuaternion(points, dual_quat_t);
     PrintUtils.printPoints(points, 0xff0000/*#color*/);
 
-    var points = PointUtils.getDefaultPointSet3D();
-    DualQuatUtils.applyQuaternion(points, dual_quat_r);
-    PrintUtils.printPoints(points, 0x00ff00/*#color*/);
+    // var points = PointUtils.getDefaultPointSet3D();
+    // DualQuatUtils.applyQuaternion(points, dual_quat_r);
+    // PrintUtils.printPoints(points, 0x00ff00/*#color*/);
 
-    var dual_quat = dual_quat_r.multiply(dual_quat_t);
+    // var dual_quat = dual_quat_t.multiply(dual_quat_r);
 
-    var points = PointUtils.getDefaultPointSet3D();
-    DualQuatUtils.applyQuaternion(points, dual_quat);
-    PrintUtils.printPoints(points, 0xffffff/*#color*/);
+    // var points = PointUtils.getDefaultPointSet3D();
+    // DualQuatUtils.applyQuaternion(points, dual_quat);
+    // PrintUtils.printPoints(points, 0xffffff/*#color*/);
 
     PrintUtils.printLine(VectorUtils.ORIGIN, 
         axis.multiplyScalar(500), 
@@ -341,12 +340,11 @@ function homogenous_mirror_plane_r3() {
     var x = 0/*#float:0.4*/;
     var y = 0/*#float:0.4*/;
     var z = 0/*#float:0.4*/;
-    var d = 1/*#float:0.4*/;
 
     var plane = new Plane(
         a, b, c,
-        x, y, z,
-        d);
+        x, y, z
+    );
 
     PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
 
@@ -355,15 +353,17 @@ function homogenous_mirror_plane_r3() {
     var normal = plane_data[1];
 
     /* Make transformation */
-    var HH = MatrixUtils.houseHolder(normal.normalize());
+    var T   = MatrixUtils.translate3d((new THREE.Vector3().copy(position)).multiplyScalar(-1));
+    var HH  = MatrixUtils.houseHolder(normal.normalize());
+    /* Because we have now mirrored coordinates */
+    var T2 = T;
 
-    PrintUtils.printPoints(
-        MatrixUtils.applyMatrix(
-            PointUtils.getDefaultPointSet3D(),
-            MatrixUtils.multiplyMatrices([HH])
-        ), 
-        0x00ff00/*#color*/
-    );
+    var points = PointUtils.getDefaultPointSet3D();
+    var new_mat =  MatrixUtils.multiplyMatrices([T, HH, T2]);
+
+    MatrixUtils.applyMatrix(points, new_mat);
+
+    PrintUtils.printPoints(points, 0x00ff00/*#color*/);
 
     /* Show plane */
     PrintUtils.printPlane(position, normal, 150, 0xddaa00/*#color*/, 0.75);

@@ -6,7 +6,7 @@ function Plane(a, b, c, x, y, z, d) {
     this.y = y;
     this.z = z;
 
-    this.d = d;
+    this.d = d || 0;
 }
 
 Plane.prototype.fromNormalVector = function(position, normal) {

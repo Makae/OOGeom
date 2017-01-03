@@ -26,52 +26,21 @@ DualQuaternion.prototype.asArray = function() {
 
 DualQuaternion.prototype.applyToVector = function(v) {
 
-    // var qn = new DualQuaternion(
-    //     new Quaternion(1, 0, 0, 0), 
-    //     new Quaternion(0, v[0], v[1], v[2]));
-    // // q*vq
-    // var q_qnq = this.multiply(qn);
-    // q_qnq.multiply(this.conjugate());
-    
-    // v[0] = q_qnq.d.i;
-    // v[1] = q_qnq.d.j;
-    // v[2] = q_qnq.d.k;
-    // console.log(qn);
-    // console.log(v);
-    // console.log(q_qnq);
-    // return v;
-
-    /*
-     *               p0------------------------------------   p1--------------------------------------------
-     * v' = v + 2 * (cross(r.xyz,  cross(r.xyz, v) + r.w*v) + r.w*d.xyz - d.w*r.xyz + cross(r.xyz, d.xyz))
-     *               G             E               F    D        C           B        A
-     */
-
-    var clc_v = new PersistentVectorCalc(v);
-     var clc_r = new PersistentVectorCalc(this.r.asArray().splice(1));
-     var clc_d = new PersistentVectorCalc(this.d.asArray().splice(1));
-    // // var A = clc_r.clone().cross(clc_d);
-    // // var B = clc_r.clone().multiply(this.d.a);
-    // // var C = clc_d.clone().multiply(this.r.a);
-    // // var D = clc_v.clone().multiply(this.r.a);
-    // // var E = clc_r.clone().cross(clc_v);
-    // // var F = E.add(D);
-    // // var G = clc_r.cross(F);
-    // // var p0 = G.add(C).add(B).add(A);
-   
-    var p0 = clc_r.cross(
-             clc_r.cross(clc_v)
-                  .add(clc_v.multiplyScalar(this.r.a))
+    var p = new DualQuaternion(
+        new Quaternion(1, 0, 0, 0), 
+        new Quaternion(0, v[0], v[1], v[2])
     );
+    debugger;
+    // qpq*
+    var q = this;
+    var qs = this.conjugate();
+    var result = q.multiply(p).multiply(qs);
 
-    var p1 = clc_d.multiplyScalar(this.r.a)
-                  .subtract(clc_r.multiplyScalar(this.d.a))
-                  .add(clc_r.cross(clc_d)
-    );
+    v[0] = result.d.i;
+    v[1] = result.d.j;
+    v[2] = result.d.k;
 
-    var v = clc_v.add(p0.add(p1).multiplyScalar(2));
-
-    return v.result();
+    return v;
 };
 
 // Applies it to the context quaternion
@@ -116,7 +85,13 @@ DualQuaternion.prototype.normalizeApply = function() {
 };
 
 DualQuaternion.prototype.isUnit = function() {
+    // Unshure if correct
+    var n = this.r.conjugate().multiply(this.d).add(this.d.conjugate().multiply(this.r));
+    n.normalize();
 
+    if(n.a + n.i + n.j + n.k == 0)
+        return true;
+    return false;
 };
 
 DualQuaternion.prototype.isPure = function() {
@@ -139,15 +114,17 @@ DualQuaternion.prototype._subtract = function(dq1, dq2) {
 DualQuaternion.prototype._multiply = function(dq1, dq2) {
     return [
         dq1.r.multiply(dq2.r),
-        dq1.d.multiply(dq2.r).add(dq2.r.multiply(dq1.d))
+        dq1.r.multiply(dq2.d).add(dq1.d.multiply(dq2.r))
     ];
 };
 
 
+// Check: http://stackoverflow.com/questions/23174899/properly-normalizing-a-dual-quaternion
 DualQuaternion.prototype._normalize = function(dq) {
+    var magnitude = dq.r.magnitude();
     return [
-        dq.r.normalizeApply(),
-        dq.d.subtract(dq.r.multiplyScalar(dq.r.dot(dq.d)))
+        dq.r.multiplyApply(1 / magnitude),
+        dq.d.multiplyApply(1 / magnitude)
     ]
 };
 

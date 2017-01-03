@@ -259,11 +259,10 @@ var PrintUtils = {
         plane.matrix.copy(new_mat);
         plane.matrixAutoUpdate = false;
 
-        MatrixUtils.applyMatrix(position, MatrixUtils.translate3d(position));
         PrintUtils.printLine(position, (new THREE.Vector3()).copy(position).add(normal.multiplyScalar(20)), color);
 
     }
-}
+};
 
 var VectorUtils = {
     ORIGIN : new THREE.Vector3(0, 0, 0),
@@ -361,6 +360,11 @@ var MatrixUtils = {
         );
 
         return new_mat;
+    },
+
+    projectOnPlane : function(normal) {
+        // [abcd]T × [pqr1] − (au + bv + cw + d)I
+
     },
 
     houseHolder : function(normal, mat_type) {
@@ -944,6 +948,7 @@ var QuatUtils = {
 };
 
 var DualQuatUtils = {
+    
     applyQuaternion : function(vectors, quaternion) {
        return QuatUtils.applyQuaternion(vectors, quaternion);
     },
@@ -957,12 +962,12 @@ var DualQuatUtils = {
 
     rotateAxis : function(axis, angle) {
         var a = axis.normalize();
-        angle = angle / 2;
+
         var r = new ThreeQuaternion(
-            Math.cos(angle), 
-            a.x * Math.sin(angle), 
-            a.y * Math.sin(angle), 
-            a.z * Math.sin(angle)
+            Math.cos(angle / 2), 
+            a.x * Math.sin(angle / 2), 
+            a.y * Math.sin(angle / 2), 
+            a.z * Math.sin(angle / 2)
         );
         var d = new ThreeQuaternion(0, 0, 0, 0);
 

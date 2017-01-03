@@ -25,7 +25,7 @@ VectorCalc.prototype.cross = function(v2) {
         this.calculation[1] * v2[2] - this.calculation[2] * v2[1],
         this.calculation[2] * v2[0] - this.calculation[0] * v2[2],
         this.calculation[0] * v2[1] - this.calculation[1] * v2[0]
-    ]
+    ];
     return this;
 };
 

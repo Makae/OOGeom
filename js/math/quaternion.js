@@ -1,15 +1,9 @@
 function Quaternion(a, i, j, k) {
-    this.uninitialized = false;
-    
     this.a = a;
     this.i = i;
     this.j = j;
     this.k = k;
     
-    if(typeof a == 'undefined') {
-        this.uninitialized = true;
-        return;
-    }
 }
 
 Quaternion.prototype.fromArray = function(arr) {
@@ -17,8 +11,6 @@ Quaternion.prototype.fromArray = function(arr) {
     this.i = arr[1]; 
     this.j = arr[2];
     this.k = arr[3];
-
-    this.uninitialized = (typeof a == 'undefined') ? true : false;
 
     return this;
 };
@@ -94,6 +86,10 @@ Quaternion.prototype.multiplyScalarApply = function(s) {
     return this.fromArray(e);;
 };
 
+Quaternion.prototype.magnitude = function() {
+    return Math.sqrt(this.a * this.a + this.i * this.i + this.j * this.j + this.k * this.k);
+}
+
 Quaternion.prototype.conjugate = function() {
     var c = this._conjugate(this);
     return (new Quaternion()).fromArray(c);
@@ -160,11 +156,20 @@ Quaternion.prototype._subtract = function(q1, q2) {
 };
 
 Quaternion.prototype._multiply = function(q1, q2) {
+    // (r1, v1)*(r2, v2) = (r1*r2 - v1°v2, r1*v2 + r2*v1 + v1 x v2)
+    // var cross = [
+    //     q1.j * q2.k - q1.k * q2.j,
+    //     q1.k * q2.i - q1.i * q2.k
+    //     q1.i * q2.j - q1.j * q2.i,
+    // ];
+
     return [
+    // q1   * q2   - v1 ° v2
         q1.a * q2.a - q1.i * q2.i - q1.j * q2.j - q1.k * q2.k,
-        q1.a * q2.i + q1.i * q2.a + q1.j * q2.k - q1.k * q2.j, 
-        q1.a * q2.j - q1.i * q2.k + q1.j * q2.a + q1.k * q2.i,
-        q1.a * q2.k + q1.i * q2.j - q1.j * q2.i + q1.k * q2.a,
+    //  r1   * v2   + r2   * v1   + v1 x v2
+        q1.a * q2.i + q2.a * q1.i + q1.j * q2.k - q1.k * q2.j,
+        q1.a * q2.j + q2.a * q1.j + q1.k * q2.i - q1.i * q2.k,
+        q1.a * q2.k + q2.a * q1.k + q1.i * q2.j - q1.j * q2.i
     ];
 };
 
@@ -190,11 +195,13 @@ Quaternion.prototype._conjugate = function(q) {
     ];
 };
 
+// Check: https://ch.mathworks.com/help/aerotbx/ug/quatnormalize.html
 Quaternion.prototype._normalize = function(q) {
+    var magnitude = this.magnitude();
     return [
-        this.a * this.a,
-        this.i * this.i, 
-        this.j * this.j,
-        this.k * this.k
+        this.a / magnitude,
+        this.i / magnitude, 
+        this.j / magnitude,
+        this.k / magnitude
     ];
 };
