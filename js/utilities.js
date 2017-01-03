@@ -1,9 +1,16 @@
 var PointUtils = { 
-    getDefaultPointSet : function() {
-        return PointUtils.threePointSet(
+    getDefaultPointSet : function(vec_type) {
+        var vec_type = vec_type || VectorUtils.VEC_3;
+        var points = PointUtils.threePointSet(
             3, 20, 40, 
             3, 20, 40
         );
+        
+        if(vec_type == VectorUtils.VEC_2) {
+            return VectorUtils.vec3toVec2(points);
+        }
+
+        return points;
     },
 
     getDefaultPointSet3D : function(vec_type) {
@@ -207,7 +214,8 @@ var PrintUtils = {
         points = points instanceof Array ? points : [points];
 
         for(var i = 0; i < points.length; i++) {
-            var r_point = PointUtils.newThreePoint(points[i]);
+            var p = VectorUtils.toVec3(points[i])
+            var r_point = PointUtils.newThreePoint(p);
             GeneralUtils.colorMaterial(r_point, color);
             this.context.addObject(r_point);
         }
@@ -305,8 +313,10 @@ var PrintUtils = {
 };
 
 var VectorUtils = {
+    VEC_2 : 2,
     VEC_3 : 3,
     VEC_4 : 4,
+
     ORIGIN : new THREE.Vector3(0, 0, 0),
     UNIT_X : new THREE.Vector3(1, 0, 0),
     UNIT_Y : new THREE.Vector3(0, 1, 0),
@@ -323,6 +333,35 @@ var VectorUtils = {
          return  v.z < v.x  ? new THREE.Vector3(v.y, -v.x, 0) : new THREE.Vector3(0, -v.z, v.y);
     },
 
+    getVectorType : function(vector) {
+        if(typeof vector.z == "undefined")
+            return VectorUtils.VEC_2;
+        if(typeof vector.w == "undefined")
+            return VectorUtils.VEC_3;
+        return VectorUtils.VEC_4;
+    },
+
+    toVec3 : function(vectors) {
+        var vectors_type = vectors instanceof Array ? 'array' : 'single';
+        vectors = vectors_type == 'array' ? vectors : [vectors];
+        
+        for(var i = 0; i < vectors.length; i++) {
+            var v = vectors[i];
+            var v_new = (new THREE.Vector3());
+            v_new.setX(v.x);
+            v_new.setY(v.y);
+            if(typeof v.z != "undefined")
+                v_new.setZ(v.z);
+            else
+                v_new.setZ(0);
+            vectors[i] = v_new;
+        }
+
+        if(vectors_type == 'single')
+            return vectors[0];
+        return vectors;
+    },
+
     vec2ToVec3 : function(vectors) {
         var vectors_type = vectors instanceof Array ? 'array' : 'single';
         vectors = vectors_type == 'array' ? vectors : [vectors];
@@ -330,6 +369,19 @@ var VectorUtils = {
         for(var i = 0; i < vectors.length; i++) {
             vectors[i] = (new THREE.Vector3()).copy(vectors[i]);
             vectors[i].z = 0;
+        }
+
+        if(vectors_type == 'single')
+            return vectors[0];
+        return vectors;
+    },
+
+    vec3toVec2 : function(vectors) {
+        var vectors_type = vectors instanceof Array ? 'array' : 'single';
+        vectors = vectors_type == 'array' ? vectors : [vectors];
+        
+        for(var i = 0; i < vectors.length; i++) {
+            vectors[i] = (new THREE.Vector2()).copy(vectors[i]);
         }
 
         if(vectors_type == 'single')
@@ -926,6 +978,15 @@ var MatrixUtils = {
         return (new THREE.Matrix4()).getInverse(mat);
     },
 
+
+    mat2ToMat3 : function(mat2) {
+        return new THREE.Matrix3().set(
+            mat2.elements[0], mat2.elements[2], 0,
+            mat2.elements[1], mat2.elements[3], 0,
+            0,                               0, 1
+        );
+    },
+
     mat3ToMat4 : function(mat3) {
         return new THREE.Matrix4().set(
             mat3.elements[0], mat3.elements[3], mat3.elements[6], 0,
@@ -959,8 +1020,20 @@ var MatrixUtils = {
     },
 
     applyMatrix2 : function(vectors, mat) {
-        for(var i = 0; i < vectors.length; i++)
-            vectors[i].applyMatrix2(mat);
+        var n_mat = mat;
+        if(this.getMatrixType(mat) == MatrixUtils.MAT_2) {
+            n_mat = MatrixUtils.mat2ToMat3(mat);
+        }
+        for(var i = 0; i < vectors.length; i++) {
+            if(VectorUtils.getVectorType(vectors[i]) == VectorUtils.VEC_2) {
+                n_vec = VectorUtils.vec2ToVec3(vectors[i].clone());
+                n_vec.applyMatrix3(n_mat);
+                vectors[i].setX(n_vec.x);
+                vectors[i].setY(n_vec.y);
+            } else {
+                vectors[i].applyMatrix3(mat);
+            }
+        }
         return vectors;
     },
 

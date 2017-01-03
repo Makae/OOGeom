@@ -55,7 +55,8 @@ function homogenous_example_translation() {
 }
 
 function homogenous_example_rotation_orign() {
-    PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
+    var original_points = PointUtils.getDefaultPointSet();
+    PrintUtils.printPoints(original_points, 0x00ff00/*#color*/);
     
     var points = PointUtils.getDefaultPointSet();
 
@@ -70,7 +71,11 @@ function homogenous_example_rotation_orign() {
     );
     
     MatrixUtils.applyMatrix(points, new_mat);
-    PrintUtils.printPoints(points, 0xff0000/*#color*/); 
+    PrintUtils.printPoints(points, 0xff0000/*#color*/);
+
+    var start_angle = VectorUtils.UNIT_X.angleTo(original_points[0]);
+
+    PrintUtils.printArc(VectorUtils.ORIGIN.clone(), 30, start_angle, start_angle + angle, 0x8f8f30/*#color*/);
 }
 
 function homogenous_example_rotation_complex() {

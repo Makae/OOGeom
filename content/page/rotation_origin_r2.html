@@ -1,0 +1,41 @@
+ <article class="row">
+    <header>
+        <h1>Rotation um den Ursprung in &real;<sup>2</sup></h1>
+    </header>
+    <section>
+            <p>Die Rotation um den Ursprung kann mit einem Winkel &phi; angegeben werden oder als Komplexe Zahl &#8450;. Der Unterschied ist hierbei, dass die Komplexe zahl den Winkel als Sinus und Kosinuskomponenten ausdrückt.</p>
+    </section>
+
+    <header>
+        <h2>Rotation mit Affinen Koordinaten</h2>
+    </header>
+    <section>
+        
+        <div class="example_block_template" data-type="threejs-orto" data-fn="affine_example_rotation_orign" data-autoexec="1"></div>
+    </section>
+
+    <header>
+        <h2>Rotation mit Homogenen Koordinaten</h2>
+    </header>
+    <section>
+        <p>Verwendet man Homogene Koordinaten für die Rotation, so kann gleich vorgegangen werden wie bei der Affinen Methode. Man muss aber aufpassen dass man die Matrix mt der neuen Spalte und Zeile ergänzt. Dies ergibt die zusätzliche Reihe und Spalte am Ende der Matrix. Wir rechnen also mit einer 3x3-Matrix anstatt der 2x2-Matrix<br />
+        Wichtig ist jedoch in Matrix bei <strong>M<sub>3,3</sub></strong> eine 1 reinzuschreiben, die restlichen neuen Zellen werden mit einer 0 abgefüllt. Dies führt dazu dass der gesammte neue Bereich keine Auswirkung auf die bestehende Berechnung hat.</p>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_example_rotation_orign" data-autoexec="1"></div>
+    </section>
+
+    <header>
+        <h2>Rotation mit einer Komplexen Zahl &#8450;</h2>
+    </header>
+    <section>
+        <div class="row">
+            <div class="col-md-5 col-sm-12">
+               <p>Wie schon angemerkt wird hier nicht der Winkel, sondern dessen Sinus- und Kosinuskomponenten gespeichert. Beim berechnen wird dann über den Arcus-Tangens den Winkel bestimmt. Hierbei müssen jedoch die Spezialfälle für sin(90°) und sin(270°) berücksichtigt werden. Da ansonsten ein DIV\0-Fehler erscheint.</p>
+            </div>
+            <div class="col-md-7 col-sm-12">
+                <pre class="example-short">c = a + bi
+Wobei a = cos(&phi;) und b = sin(&phi;)</pre>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_example_rotation_complex" data-autoexec="1"></div>
+    </section>

@@ -1,0 +1,42 @@
+ <article class="row">
+    <header>
+        <h1>Rotation um beliebigen Punkt in &real;<sup>2</sup></h1>
+    </header>
+    <section>
+        <div>
+            <p>Hier bauen wir auf die bestehende Rotation um den Ursprung auf. Aber anstatt die Rotation direkt auszuführen transformieren wir die Punkte zuerst um die Abstand des Rotationspunktes zum Ursprung. Nach der Rotation werden die Punkte wieder zurückgeschoben.</p>
+           <p>Wir führen also folgende Schritte aus:</p>
+            <ul>
+                <li><strong>X&Y-Translation:</strong> -P<sub>x</sub> und P<sub>y</sub></li>
+                <li><strong>Rotation:</strong> im Gegenuhrzeigersinn um Winkel &alpha;</li>
+                <li><strong>X&Y-Rücktranslation:</strong> +P<sub>x</sub> und P<sub>y</sub></li>
+            </ul>
+
+        </div>
+    </section>
+    <header>
+        <h2>Rotation mit Affinen Koordinaten</h2>
+    </header>
+    <section>
+        <p>Werden Affine Koordinaten eingesetzt, so müssen wir die 3 oben erwähnten Operationen einzeln durchführen. Dies ist so, da wir die Translation nicht mit der Rotation verbinden können.</p>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="affine_example_rotation_point" data-autoexec="1"></div>
+    </section>
+
+    <header>
+        <h2>Rotation mit Homogenen Koordinaten</h2>
+    </header>
+    <section>
+          <p>Hier zeigt sich das erste mal die Stärke der Homogenen Transformation. Man hat nämlich die ganze Berechnung schlussendlich innerhalb einer einzigen Matrix. Diese kann dann für alle Punkte angewandt werden.</p>
+        <p>Da wir nur Rotationen um den Ursprung kennen, müssen wir das zu rotierende Objekt zuerst in den Ursprung versetzen. Dies tun wir, in dem wir die Position des Rotationszentrums (r_point_x und r_point_y) vom Objekt abziehen durch eine Translation. Erst danach können wir eine Rotation um den gewünschten Winkel ausführen. Damit die Punkte schlussendlich wieder an der richtigen Position stehen, müssen sie wieder um die Position des Rotationszentrums r_point_x und r_point_y verschoben werden durch die Inverse Matrix der vorherigen Transformation.</p>
+        <p>Wir führen also folgende 3 Matrixoperationen durch:</p>
+        <ul>
+            <li><strong>Translation T</strong>: Verschiebung um -r_point_x und -r_point_y </li>
+            <li><strong>Rotation R</strong>: Rotation um Winkel &alpha; </li>
+            <li><strong>Translation T<sup>1</sup></strong>: Verschiebung um +r_point_x und +r_point_y </li>
+        </ul>
+        <p>
+            <strong>Achtung! Die Multiplikation wird in folgender Reihenfolge ausgeführt:<br /></strong>
+            <pre class="example-short">M = T<sup>1</sup> * R * T</pre>
+        </p>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_example_rotation_point" data-autoexec="1"></div>
+    </section>
