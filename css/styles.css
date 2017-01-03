@@ -5,14 +5,64 @@ body {
     padding-top: 70px;
 }
 
-nav li a {
+
+ul.nav.nav-main li {
+  height: 54px;
+}
+
+ul.nav.nav-main li ul.sub-menu {
+  position:absolute;
+  display: none;
+  width: 280px;
+}
+
+ul.nav.nav-main li:hover ul.sub-menu {
+  display:block;
+}
+
+ul.nav.nav-main li ul.sub-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  line-height: 0em;
+  background-color: #F8F8F8;
+  border: 1px solid #E7E7E7;
+  border-top: none;
+}
+
+ul.nav.nav-main li ul.sub-menu li {
+  list-style: none;
+  padding: 1em;
+  margin: 0;
+  height: 2em;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+}
+
+ul.nav.nav-main li ul.sub-menu li a {
+  text-decoration: none; 
+  color: #777777;
+}
+
+ul.nav.nav-main li ul.sub-menu li:hover {
+  border-left: 2px solid #f0ad4e;
+  color: #f0ad4e;
+}
+
+ul.nav.nav-main li ul.sub-menu li:hover a {
+  color: #f0ad4e;
+}
+
+
+
+nav .nav-main > li > a {
     border-top: 3px solid transparent;
     color: #ffcc66;
 }
 
-nav li a[data-active],
-nav li:hover a, 
-nav li:focus a {
+nav .nav-main > li > a[data-active],
+nav .nav-main > li:hover > a, 
+nav .nav-main > li:focus > a {
     border-top: 3px solid #f0ad4e;
     color: #f0ad4e !important;
 }

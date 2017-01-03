@@ -1049,4 +1049,4 @@ var DOMUtils = {
     hasClass : function(element, cls) {
         return ( (" " + element.className + " ").replace(/[\n\t]/g, " ").indexOf(" " + cls + " ") > -1 )
     }
-}
+};
