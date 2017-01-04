@@ -119,18 +119,18 @@ Matrix2.prototype = {
 
     },
 
-    getInverse: function () {
+    getInverse: function (mat2) {
         var mat3 = new THREE.Matrix3();
         mat3.set(
-            this.elements[0], this.elements[2], 0,
-            this.elements[1], this.elements[3], 0,
+            mat2.elements[0], mat2.elements[2], 0,
+            mat2.elements[1], mat2.elements[3], 0,
             0,                               0, 1
         );
 
         var inv = (new THREE.Matrix3()).getInverse(mat3);
-        return Matrix2(
-            m3.elements[0], m3.elements[3],
-            m3.elements[1], m3.elements[5]
+        return (new THREE.Matrix2()).set(
+            inv.elements[0], inv.elements[3],
+            inv.elements[1], inv.elements[4]
         );
     }
 

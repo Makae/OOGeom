@@ -53,6 +53,15 @@ ul.nav.nav-main li ul.sub-menu li:hover a {
   color: #f0ad4e;
 }
 
+ul.nav.nav-main li ul.sub-menu li.seperator {
+  border-left: none;
+  font-weight: bolder;
+  cursor: inherit;
+}
+ul.nav.nav-main li ul.sub-menu li.seperator:hover {
+  color: #666666;
+  border-left: none;
+}
 
 
 nav .nav-main > li > a {

@@ -1,0 +1,22 @@
+ <article class="row">
+    <header>
+        <h1>Spiegelung in &real;<sup>3</sup></h1>
+    </header>
+
+    <header>
+        <h2>Mit Affinen Koordinaten</h2>
+    </header>
+    <section>
+        <h3>Ebene</h3>
+        <p>Für die Spiegelung an einer Ebene kommt die HouseHolder Matrix zum Einsatz. Sie bietet die spiegelung an einer Ebene welche durch den Ursprung verläuft. Damit wir auch an einer Ebene spiegeln können welche nicht durch den Ursprung verläuft, müssen wir zuerst eine Translation auf die Punkte anwenden.</p>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="affine_mirror_plane_r3" data-autoexec="1"></div>
+    </section>
+
+    <header>
+        <h2>Mit Homogenen Koordinaten</h2>
+    </header>
+    <section>
+         <h3>Ebene</h3>
+        <p>Für die Spiegelung an einer Ebene kommt die HouseHolder Matrix zum Einsatz. Im Gegensatz zu den Affinen Koordinaten können wir alle Matrixoperationen (Translation, HouseHolder, Rücktranslation) in eine einzige Matrix zusammenfassen.<br />Bei der Rücktranslation muss man berücksichtigen, dass man nun mit den gespiegelten Koordinaten rechnet. Deshalb muss man die selbe (positive) Translation wie bei Schritt 1 anwenden.</p>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_mirror_plane_r3" data-autoexec="1"></div>
+    </section>

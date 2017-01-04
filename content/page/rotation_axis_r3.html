@@ -1,0 +1,64 @@
+ <article class="row">
+    <header>
+        <h1>Rotation um eine Achse in &real;<sup>3</sup></h1>
+    </header>
+    <section>
+        <h2>Rotation mit Affinen Koordinaten</h2>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="affine_rotate_origin_axis_r3" data-autoexec="1" data-config="camerapos:50,50,50"></div>
+         <h2>Rotation mit Homogenen Koordinaten</h2>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_rotate_origin_axis_r3" data-autoexec="1" data-config="camerapos:50,50,50"></div>
+    </section>
+
+    <header>
+        <h2>Rotation mit Rodrigues</h2>
+    </header>
+    <section class="row">
+     <div class="col-md-5 col-sm-12">
+        <p>Mit Hilfe der <strong>normalisierten</strong> Rotationsachse und des rotationswinkels können wir über die Methode von Rodrigues einen Punkt um eine beliebige Achse durch den Mittelpunkt rotieren lassen.</p><p>
+        Die Herleitung kann hier nachgelesen werden: <br /> <a href="https://de.wikipedia.org/wiki/Rodrigues-Formel" target="_blank">Rodrigues auf Wikipedia</a></p>
+        </div>
+        <div class="col-md-7 col-sm-12">
+           <pre class="example-long">Rodrigues(&phi;) = I + N*sin(&phi;) + N<sup>2</sup>*(1 - cos(&phi;))
+wobei N = (                         und |axis| = 1
+     0,      -axis.z,  axis.y,
+     axis.z,       0, -axis.x,
+    -axis.y,  axis.x,       0
+    )
+</pre>
+        </div>
+        <div class="clearfix"></div>
+       
+        
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_rotate_origin_axis_rodrigues_r3" data-autoexec="1" data-config="camerapos:50,50,50"></div>
+    </section>
+
+    <header>
+        <h2>Rotation mit Quaternion</h2>
+    </header>
+    <section>
+        <p>Mit Hilfe der Quaternionen kann man sehr schnell die Rotation um eine Achse definieren.</p>
+        <pre class="example-middle">Q = cos(&phi; / 2)               <b><i>a</i></b> is the rotation axis with length 1
+    + i * <b><i>a<sub>x</sub></i></b> * sin(&phi; / 2) 
+    + j * <b><i>a<sub>y</sub></i></b> * sin(&phi; / 2) 
+    + k * <b><i>a<sub>z</sub></i></b> * sin(&phi; / 2) </pre>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_example_rotation_axis_quaternion_r3" data-autoexec="1" data-config="camerapos:50,50,50"></div>
+    </section>
+    <header>
+        <h2>Rotation mit Dualen Quaternion</h2>
+    </header>
+    <section>
+        <p>Die Dualen Quaternionen können ebenso verwendet werden für die Rotation. Man belässt dabei den Dualen Teil auf dem Unit Quaternion und gibt keine Werte für die Translation an.</p>
+        <pre class="example-middle">
+𝔻&#8461; = <b><i>r</i></b> + 𝜀<b><i>d</i></b>
+wobei <b><i>r</i></b>, <b><i>d</i></b> &isin; &#8474;   and  <b><i>a</i></b> is the rotation axis with length 1
+<b><i>r</i></b> = (
+    cos(&phi; / 2) , 
+    <b><i>a<sub>x</sub></i></b> * sin(&phi; / 2), 
+    <b><i>a<sub>y</sub></i></b> * sin(&phi; / 2), 
+    <b><i>a<sub>y</sub></i></b> * sin(&phi; / 2)
+)
+<b><i>d</i></b> = (0, 0, 0, 0)
+        </pre>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_example_dual_quaternion_rotation_r3" data-autoexec="1" data-config="camerapos:50,50,50"></div>
+    </section>
+</article>

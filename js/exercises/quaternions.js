@@ -37,15 +37,3 @@ function task_quaternion_3daxis() {
     QuatUtils.applyQuaternion(points, quaternion90xy);
     PrintUtils.printPoints(points, 0x0000ff/*#color*/);
 }
-
-function task_quaternion_translation() {
-    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0x00ff00/*#color*/);
-    
-    var points = PointUtils.getDefaultPointSet3D();
-    /* Around z-axis / 90deg */
-    // var quaternionZ = (new ThreeQuaternion()).fromArray([0, 0, 0, -2])
-    
-    // test
-    QuatUtils.applyQuaternion(points, quaternionZ);
-    PrintUtils.printPoints(points, 0x0000ff/*#color*/);
-}

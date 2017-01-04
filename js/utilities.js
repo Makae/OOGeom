@@ -390,14 +390,14 @@ var VectorUtils = {
     },
 
     unitVectorAngles : function(v) {
-        var v_xz = new THREE.Vector3(v.x, 0, v.z);
-        var v_yz = new THREE.Vector3(0, v.y, v.z);
+        var v_xz = (new THREE.Vector3(v.x, 0, v.z));
+        var v_yz = (new THREE.Vector3(0, v.y, v.z));
 
         var result = {
-            y : VectorUtils.UNIT_Z.angleTo(v_xz),
-            x : VectorUtils.UNIT_Z.angleTo(v_yz)
+            x : VectorUtils.UNIT_Z.angleTo(v_yz),
+            y : v_xz.angleTo(VectorUtils.UNIT_Z)
         };
-
+        return result;
 
         var result2 = {
             x: Math.acos(
@@ -416,11 +416,7 @@ var VectorUtils = {
                 v.x / Math.sqrt(v.x * v.x + v.z * v.z)
             )
         };
-        console.log(result);
-        console.log(result2);
-        console.log(result3);
         result.y = 2 * Math.PI - result.y;
-        console.log(result);
         return result;
     }
 };
@@ -591,6 +587,16 @@ var MatrixUtils = {
         return mat;
     },
 
+    multiplyMatrices2 : function(matrices) {
+        var mats = []
+        for(var i = 0; i < matrices.length; i++) {
+            mats[i] = MatrixUtils.mat2ToMat3(matrices[i]);
+        }
+        var mat = MatrixUtils.multiplyMatrices3(mats);
+        console.log(mat);
+        return MatrixUtils.mat3ToMat2(mat);
+    },
+
     multiplyMatrices3 : function(matrices) {
         var mat = matrices[matrices.length - 1];
         for(var i = matrices.length - 2; i >= 0; i--) {
@@ -682,6 +688,26 @@ var MatrixUtils = {
        return mat
     },
 
+    rotateAxis2 : function(axis, angle) {
+        var mat;
+        switch(axis) {
+            case MatrixUtils.AXIS_X:
+               throw Error("Can't rotate around X in 2d");
+            break;
+            case MatrixUtils.AXIS_Y:
+               throw Error("Can't rotate around Y in 2d");
+            break;
+
+            case MatrixUtils.AXIS_Z:
+                mat = new THREE.Matrix2().set(
+                    Math.cos(angle), -Math.sin(angle),
+                    Math.sin(angle),  Math.cos(angle)
+                );
+            break;
+        }
+        return mat;
+    },
+
     rotateAxis3 : function(axis, angle) {
         var mat;
         switch(axis) {
@@ -743,17 +769,19 @@ var MatrixUtils = {
         return mat;
     },
 
-    rotateOriginAxis : function(axis, angle) {
-        var new_axis = (new THREE.Vector3()).copy(axis).normalize();
+    rotateOriginAxis : function(axis, angle, mat_type) {
+        var mat_type = mat_type || MatrixUtils.MAT_4;
+        var new_axis = axis.clone().normalize();
 
         var angles = VectorUtils.unitVectorAngles(new_axis);
-        var Rx   = MatrixUtils.rotateAxis4(MatrixUtils.AXIS_Z, -angles.x);
-        var Ry   = MatrixUtils.rotateAxis4(MatrixUtils.AXIS_Y, angles.y);
-        var Rz   = MatrixUtils.rotateAxis4(MatrixUtils.AXIS_Z, angle);
+        
+        var Ry   = MatrixUtils.rotateAxis(MatrixUtils.AXIS_Y, -angles.y, mat_type);
+        var Rx   = MatrixUtils.rotateAxis(MatrixUtils.AXIS_X, angles.x, mat_type);
+        var Rz   = MatrixUtils.rotateAxis(MatrixUtils.AXIS_Z, angle, mat_type);
         var Rx_1 = MatrixUtils.getInverseMatrix(Rx);
         var Ry_1 = MatrixUtils.getInverseMatrix(Ry);
 
-        return MatrixUtils.multiplyMatrices([Rx, Ry, Rz, Ry_1, Rx_1]);
+        return MatrixUtils.multiplyMatrices([Ry, Rx, Rz, Rx_1, Ry_1]);
 
     },
 
@@ -822,7 +850,7 @@ var MatrixUtils = {
         );
     },
 
-    translate3d : function(vector) {
+    translate3d : function(vector, mat_type) {
         return new THREE.Matrix4().set(
             1, 0, 0, vector.x,
             0, 1, 0, vector.y,
@@ -840,15 +868,16 @@ var MatrixUtils = {
         return new_mat;
     },
 
-    mirrorOriginLine2d: function(line) {
+    mirrorOriginLine2d: function(line, mat_type) {
+        var mat_type = mat_type || MatrixUtils.MAT_3;
         var x_axis = new THREE.Vector3(1, 0, 0);
         /* check if the line vector is on the left or on the right of the x-axis */
         var onTheRight = -1 * VectorUtils.isLeftOf(line, x_axis);
         /* This is necessary for determining the direction of the angle */
         var angleToX = onTheRight * line.angleTo(x_axis);
 
-        var R = MatrixUtils.rotateAxis(MatrixUtils.AXIS_Z, angleToX, MatrixUtils.MAT_3);
-        var M = MatrixUtils.mirrorOnXAxis();
+        var R = MatrixUtils.rotateAxis(MatrixUtils.AXIS_Z, angleToX, mat_type);
+        var M = MatrixUtils.mirrorOnXAxis(mat_type);
         var R_1 = MatrixUtils.getInverseMatrix(R);
 
         var new_mat = MatrixUtils.multiplyMatrices([R, M, R_1]);
@@ -937,12 +966,16 @@ var MatrixUtils = {
         return mat;
     },
 
-    mirrorOnXAxis: function() {
-        return new THREE.Matrix3().set(
-            1,  0, 0,
-            0, -1, 0,
-            0,  0, 1
-        );
+    mirrorOnXAxis: function(mat_type) {
+        var mat = new THREE.Matrix2().set(
+                1,  0,
+                0, -1
+            );
+
+        if(mat_type == MatrixUtils.MAT_2)
+            return mat;
+
+        return MatrixUtils.mat2ToMat3(mat);
     },
 
     lookAt : function(eye, target, up) {
@@ -966,11 +999,10 @@ var MatrixUtils = {
     },
 
     getInverseMatrix2 : function(mat) {
-        return (new THREE.Matrix3()).getInverse(mat);
+        return (new THREE.Matrix2()).getInverse(mat);
     },
 
     getInverseMatrix3 : function(mat) {
-        console.log(mat);
         return (new THREE.Matrix3()).getInverse(mat);
     },
 
@@ -984,6 +1016,13 @@ var MatrixUtils = {
             mat2.elements[0], mat2.elements[2], 0,
             mat2.elements[1], mat2.elements[3], 0,
             0,                               0, 1
+        );
+    },
+
+    mat3ToMat2 : function(mat3) {
+        return new THREE.Matrix2().set(
+            mat3.elements[0], mat3.elements[3],
+            mat3.elements[1], mat3.elements[4]
         );
     },
 

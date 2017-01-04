@@ -156,7 +156,9 @@ Quaternion.prototype._subtract = function(q1, q2) {
 };
 
 Quaternion.prototype._multiply = function(q1, q2) {
+    // Formula for Quaternion multiplication:
     // (r1, v1)*(r2, v2) = (r1*r2 - v1°v2, r1*v2 + r2*v1 + v1 x v2)
+    // Cross product
     // var cross = [
     //     q1.j * q2.k - q1.k * q2.j,
     //     q1.k * q2.i - q1.i * q2.k

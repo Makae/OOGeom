@@ -80,6 +80,7 @@
                     <ul class="nav navbar-nav nav-main">
                         <li>
                             <a href="#page/home.html" data-async-target="main">Home</a>
+                            <!--
                             <ul class="sub-menu">
                                  <li>
                                     <a href="#page/home_basics.html" data-async-target="main">Grundlagen</a>
@@ -87,25 +88,27 @@
                                 <li>
                                     <a href="#page/home_about.html" data-async-target="main">About</a>
                                 </li>
-                            </ul>
+                            </ul>-->
                         </li>
                         <li>
                             <a href="#">Rotationen</a>
                             <ul class="sub-menu">
+                                <li class="seperator">Operationen in &real;<sup>2</sup></li>
                                 <li>
-                                    <a href="#page/rotation_origin_r2.html" data-async-target="main">Um Ursprung &real;<sup>2</sup></a>
+                                    <a href="#page/rotation_origin_r2.html" data-async-target="main">Um Ursprung</a>
                                 </li>
                                 <li>
-                                    <a href="#page/rotation_arbitrary_r2.html" data-async-target="main">Um Punkt &real;<sup>2</sup></a>
+                                    <a href="#page/rotation_arbitrary_r2.html" data-async-target="main">Um Punkt</a>
+                                </li>
+                                <li class="seperator">Operationen in &real;<sup>3</sup></li>
+                                <li>
+                                    <a href="#page/rotation_origin_r3.html" data-async-target="main">Um Ursprung</a>
                                 </li>
                                 <li>
-                                    <a href="#page/rotation_origin_r3.html" data-async-target="main">Ursprung &real;<sup>3</sup></a>
+                                    <a href="#page/rotation_arbitrary_r3.html" data-async-target="main">Um Punkt</a>
                                 </li>
                                 <li>
-                                    <a href="#page/rotation_arbitrary_r3.html" data-async-target="main">Punkt &real;<sup>3</sup></a>
-                                </li>
-                                <li>
-                                    <a href="#page/rotation_axis_r3.html" data-async-target="main">Achse &real;<sup>3</sup></a>
+                                    <a href="#page/rotation_axis_r3.html" data-async-target="main">Um Achse</a>
                                 </li>
                             </ul>
                         </li>
@@ -113,46 +116,35 @@
                             <a href="#">Translationen</a>
                             <ul class="sub-menu">
                                 <li>
-                                    <a href="#page/translate_r2.html" data-async-target="main">Affin &amp; Homogen in <sup>2</sup></a>
+                                    <a href="#page/translate_r2.html" data-async-target="main">Affin &amp; Homogen in &real;<sup>2</sup></a>
                                 </li>
                                 <li>
-                                    <a href="#page/translate_r3.html" data-async-target="main">Affin &amp; Homogen in &real;<sup>3</sup></a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#">Rigid Transformationen</a>
-                            <ul class="sub-menu">
-                                <li>
-                                    <a href="#page/transformation_affine.html" data-async-target="main">Affin in &real;<sup>2</sup> &amp; &real;<sup>3</sup></a>
-                                </li>
-                                <li>
-                                    <a href="#page/transformation_homogenous.html" data-async-target="main">Homogen in &real;<sup>2</sup> &amp; &real;<sup>3</sup></a>
-                                </li>
-                                <li>
-                                    <a href="#page/transformation_dual_quaternions.html" data-async-target="main">Punkt &real;<sup>3</sup></a>
+                                    <a href="#page/translate_r3.html" data-async-target="main">Affin, Homogen  &amp; Dual.Quat. in &real;<sup>3</sup></a>
                                 </li>
                             </ul>
                         </li>
                         <li>
-                            <a href="#">Spiegelung</a>
+                            <a href="#">Spiegelung, Streckung &amp; Scherung</a>
                             <ul class="sub-menu">
+                                <li class="seperator">Operationen in &real;<sup>2</sup></li>
                                 <li>
-                                    <a href="#page/mirror_line_r2.html" data-async-target="main">Gerade &real;<sup>2</sup></a>
+                                    <a href="#page/mirror_r2.html" data-async-target="main">Spiegelung</a>
                                 </li>
                                 <li>
-                                    <a href="#page/mirror_plane_r3.html" data-async-target="main">Ebene &real;<sup>3</sup></a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#">Streckung &amp; Scherung</a>
-                            <ul class="sub-menu">
-                                <li>
-                                    <a href="#page/stretch.html" data-async-target="main">Streckung &real;<sup>2</sup> &amp; &real;<sup>3</sup></a>
+                                    <a href="#page/scale_r2.html" data-async-target="main">Streckung</a>
                                 </li>
                                 <li>
-                                    <a href="#page/shear.html" data-async-target="main">Scherung &real;<sup>2</sup> &amp; &real;<sup>3</sup></a>
+                                    <a href="#page/shear_r2.html" data-async-target="main">Scherung</a>
+                                </li>
+                                <li class="seperator">Operationen in &real;<sup>3</sup></li>
+                                <li>
+                                    <a href="#page/mirror_r3.html" data-async-target="main">Spiegelung</a>
+                                </li>
+                                <li>
+                                    <a href="#page/scale_r3.html" data-async-target="main">Streckung</a>
+                                </li>
+                                <li>
+                                    <a href="#page/shear_r3.html" data-async-target="main">Scherung</a>
                                 </li>
                             </ul>
                         </li>
@@ -167,6 +159,18 @@
                                 </li>
                             </ul>
                         </li>
+                        <!--
+                        <li>
+                            <a href="#">(Duales) Quaternion</a>
+                            <ul class="sub-menu">
+                                <li>
+                                    <a href="#page/quaternions.html" data-async-target="main">Quaternion</a>
+                                </li>
+                                <li>
+                                    <a href="#page/dual_quaternions.html" data-async-target="main">Duales Quaternion</a>
+                                </li>
+                            </ul>
+                        </li> -->
                     </ul>
                 </div>
             </div>

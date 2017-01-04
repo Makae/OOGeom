@@ -21,6 +21,7 @@ var config = {
                     /(GeneralUtils\.[a-zA-Z0-9_]+)\(/gi,
                     /(DualQuatUtils\.[a-zA-Z0-9_]+)\(/gi,
                     /[^l](QuatUtils\.[a-zA-Z0-9_]+)\(/gi
+
                 ]
             },
             {
@@ -35,6 +36,13 @@ var config = {
                 'replace' : '<span data-codepeeker-fn="Quaternion.prototype.$2">$1</span>',
                 'patterns' : [
                     /(quaternion[a-zA-Z0-9_]*\.([a-zA-Z0-9_]+)\()/gi
+                ]
+            },
+            {
+                'id' : 'three-quaternion',
+                'replace' : '<span data-codepeeker-fn="ThreeQuaternion.prototype.$2">$1</span>',
+                'patterns' : [
+                    /( ThreeQuaternion\(\)\)\.([a-zA-Z0-9_]+)\()/gi
                 ]
             },
             {

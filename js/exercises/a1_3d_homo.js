@@ -21,11 +21,13 @@ function homogenous_example_translation_r3() {
     var y = 25/*#float:5*/;
     var z = 25/*#float:5*/;
     
+    var translation = new THREE.Vector3(x, y, z);
+
     var points = PointUtils.getDefaultPointSet3D();
-    /* Neue R^3 Matrix für Berechnungen in R^2 */
+    /* Neue 4x4 Matrix für Berechnungen in R^3 */
     var matx = new THREE.Matrix4();
     matx.set(
-       1, 0, 0, x,
+       1, 0, 0, translation.x,
        0, 1, 0, 0,
        0, 0, 1, 0,
        0, 0, 0, 1
@@ -34,11 +36,11 @@ function homogenous_example_translation_r3() {
     PrintUtils.printPoints(points, 0xff0000/*#color*/);
 
     var points = PointUtils.getDefaultPointSet3D();
-    /* Neue R^3 Matrix für Berechnungen in R^2 */
+    /* Neue 4x4 Matrix für Berechnungen in R^3 */
     var maty = new THREE.Matrix4();
     maty.set(
        1, 0, 0, 0,
-       0, 1, 0, y,
+       0, 1, 0, translation.y,
        0, 0, 1, 0,
        0, 0, 0, 1
     );
@@ -46,29 +48,36 @@ function homogenous_example_translation_r3() {
     PrintUtils.printPoints(points, 0x00ff00/*#color*/);
 
     var points = PointUtils.getDefaultPointSet3D();
-    /* Neue R^3 Matrix für Berechnungen in R^2 */
+    /* Neue 4x4 Matrix für Berechnungen in R^3 */
     var matz = new THREE.Matrix4();
     matz.set(
        1, 0, 0, 0,
        0, 1, 0, 0,
-       0, 0, 1, z,
+       0, 0, 1, translation.z,
        0, 0, 0, 1
     );
     MatrixUtils.applyMatrix(points, matz);
     PrintUtils.printPoints(points, 0x0000ff/*#color*/);
 
     var points = PointUtils.getDefaultPointSet3D();
-    /* Neue R^3 Matrix für Berechnungen in R^2 */
+    /* Neue 4x4 Matrix für Berechnungen in R^3 */
     var matxyz = new THREE.Matrix4();
     matxyz.set(
-       1, 0, 0, x,
-       0, 1, 0, y,
-       0, 0, 1, z,
+       1, 0, 0, translation.x,
+       0, 1, 0, translation.y,
+       0, 0, 1, translation.z,
        0, 0, 0, 1
     );
 
     MatrixUtils.applyMatrix(points, matxyz);
-    PrintUtils.printPoints(points, 0x00ffff/*#color*/);
+    PrintUtils.printPoints(points, 0xffffff/*#color*/);
+
+    var from = PointUtils.getCenter(PointUtils.getDefaultPointSet3D());
+    PrintUtils.printLine(
+        from, 
+        from.clone().add(translation),
+        0xff00ff/*#color*/
+    );
 }
 
 function homogenous_example_rotation_orign_r3() {
@@ -139,6 +148,7 @@ function homogenous_rotate_euler_r3() {
     gamma = THREE.Math.degToRad(gamma);
 
     /* Using Proper Euler angle: x-y-x  => x (alpha), y' (beta), x'' (gamma) */
+    /* Check MatrixUtils.rotateAxis4() */
     var mat_euler = MatrixUtils.rotateOriginEuler(
         [MatrixUtils.AXIS_X, MatrixUtils.AXIS_Y, MatrixUtils.AXIS_X],
         [alpha,              beta,               gamma]
@@ -150,6 +160,34 @@ function homogenous_rotate_euler_r3() {
     
     MatrixUtils.applyMatrix(points, mat_euler);
     PrintUtils.printPoints(points, 0x00ff00/*#color*/);
+
+}
+
+function homogenous_example_rotation_axis_quaternion_r3() {
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
+    
+    var axis = new THREE.Vector3(1/*#float:0.1*/, 2/*#float:0.1*/, 1/*#float:0.1*/);
+
+    var angle = 30/*#float:15*/;
+
+    axis = axis.normalize();
+
+    
+    var quaternion = (new ThreeQuaternion()).fromEuler(
+        [axis.x, axis.y, axis.z],
+        THREE.Math.degToRad(angle)
+    );
+
+
+    var points = PointUtils.getDefaultPointSet3D();
+    QuatUtils.applyQuaternion(points, quaternion);
+    PrintUtils.printPoints(points, 0x00ff00/*#color*/);
+    PrintUtils.printLine(
+        VectorUtils.ORIGIN, 
+        axis.multiplyScalar(500), 
+        0xc000c0/*#color*/
+    );
+
 
 }
 
@@ -208,6 +246,47 @@ function homogenous_example_rotation_quaternion_r3() {
 
 }
 
+function homogenous_example_dual_quaternion_rotation_r3() {
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
+
+    var axis = new THREE.Vector3(1/*#float:0.1*/, 1.5/*#float:0.1*/, 0/*#float:0.1*/);
+    var angle = THREE.Math.degToRad(125/*#float:10*/);
+    
+    axis = axis.normalize();
+    
+    var dual_quat_r = DualQuatUtils.rotateAxis(axis, angle);
+
+    var points = PointUtils.getDefaultPointSet3D();
+    DualQuatUtils.applyQuaternion(points, dual_quat_r);
+    PrintUtils.printPoints(points, 0x00ff00/*#color*/);
+
+    PrintUtils.printLine(VectorUtils.ORIGIN, 
+        axis.multiplyScalar(500), 
+        0xc000c0/*#color*/
+    );
+
+}
+
+function homogenous_example_dual_quaternion_translation_r3() {
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
+
+    var translation = new THREE.Vector3(20/*#float:2*/, 20/*#float:2*/, 20/*#float:2*/);
+    
+    var dual_quat_t = DualQuatUtils.translate3d(translation);
+
+    var points = PointUtils.getDefaultPointSet3D();
+    DualQuatUtils.applyQuaternion(points, dual_quat_t);
+    PrintUtils.printPoints(points, 0x00ff00/*#color*/);
+
+    var from = PointUtils.getCenter(PointUtils.getDefaultPointSet3D());
+    PrintUtils.printLine(
+        from, 
+        from.clone().add(translation),
+        0xff00ff/*#color*/
+    );
+
+}
+
 function homogenous_example_dual_quaternion_r3() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
     
@@ -218,8 +297,6 @@ function homogenous_example_dual_quaternion_r3() {
     axis = axis.normalize();
     
     var dual_quat_t = DualQuatUtils.translate3d(translation);
-    console.log(dual_quat_t);
-    console.log("---");
     var dual_quat_r = DualQuatUtils.rotateAxis(axis, angle);
 
 
@@ -237,10 +314,48 @@ function homogenous_example_dual_quaternion_r3() {
     DualQuatUtils.applyQuaternion(points, dual_quat);
     PrintUtils.printPoints(points, 0xffffff/*#color*/);
 
+
     PrintUtils.printLine(VectorUtils.ORIGIN, 
         axis.multiplyScalar(500), 
         0xc000c0/*#color*/
     );
+
+}
+
+function homogenous_example_rotation_point_dual_quaternion_r3() {
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
+    
+    var point = new THREE.Vector3(26.6/*#float:2*/, 26.6/*#float:2*/, 26.6/*#float:2*/);
+    var axis = new THREE.Vector3(1/*#float:0.1*/, 1.5/*#float:0.1*/, 0/*#float:0.1*/);
+    var angle = THREE.Math.degToRad(125/*#float:10*/);
+    
+    axis = axis.normalize();
+    
+    var dual_quat_t = DualQuatUtils.translate3d(point.clone().multiplyScalar(-1));
+    var dual_quat_r = DualQuatUtils.rotateAxis(axis, angle);
+    var dual_quat_t_1 = DualQuatUtils.translate3d(point);
+
+    /* Same as the Matrices we have to multiply the "reversed" way */
+    var d1 = dual_quat_t;
+    var d2 = dual_quat_r.multiply(dual_quat_t);
+    var d3 = dual_quat_t_1.multiply(d2);
+
+    var points = PointUtils.getDefaultPointSet3D();
+    DualQuatUtils.applyQuaternion(points, d1);
+    PrintUtils.printPoints(points, 0xc00000/*#color*/);
+
+    var points = PointUtils.getDefaultPointSet3D();
+    DualQuatUtils.applyQuaternion(points, d2);
+    PrintUtils.printPoints(points, 0x00c000/*#color*/);
+
+
+    var points = PointUtils.getDefaultPointSet3D();
+    DualQuatUtils.applyQuaternion(points, d3);
+    PrintUtils.printPoints(points, 0x00ff00/*#color*/);
+
+  
+    PrintUtils.printPoints(point, 0xff0000)
+    PrintUtils.printLine(VectorUtils.ORIGIN, axis.clone().multiplyScalar(200), 0x00ffff/*#color*/);
 
 }
 
@@ -282,8 +397,8 @@ function homogenous_rotate_origin_axis_r3() {
     angle = THREE.Math.degToRad(angle);
     var axis = new THREE.Vector3(
         1/*#float:1*/,
-        1/*#float:1*/,
-        1/*#float:1*/
+        4/*#float:1*/,
+        3/*#float:1*/
     );
 
     var axis_normed = (new THREE.Vector3()).copy(axis).normalize();
@@ -298,11 +413,16 @@ function homogenous_rotate_origin_axis_r3() {
     new_mat =  MatrixUtils.multiplyMatrices([MatrixUtils.rotateOriginAxis(axis_normed, angle)]);
     MatrixUtils.applyMatrix(points, new_mat);
     PrintUtils.printPoints(points, 0x00a000/*#color*/);
+
+    /* Projection on XZ-Plane, for angle of y-Axis */
+    var v_xz = (new THREE.Vector3(axis_normed.x, 0, axis_normed.z));
+    PrintUtils.printLine(VectorUtils.ORIGIN, v_xz.clone().multiplyScalar(200), 0xff00ff/*#color*/);
     
-    var points = PointUtils.getDefaultPointSet3D();
-    new_mat =  MatrixUtils.multiplyMatrices([MatrixUtils.rotateOriginAxisCondensed(axis_normed, angle)]);
-    MatrixUtils.applyMatrix(points, new_mat);
-    PrintUtils.printPoints(points, 0xa00000/*#color*/);
+    /* Projection on YZ-Plane, for angle of x-Axis */
+    var v_yz = (new THREE.Vector3(0, axis_normed.y, axis_normed.z));
+    PrintUtils.printLine(VectorUtils.ORIGIN, v_yz.clone().multiplyScalar(200), 0x00ffff/*#color*/);
+
+
 }
 
 
@@ -373,19 +493,34 @@ function homogenous_mirror_plane_r3() {
 
 function homogenous_shear_r3() {
     var points = PointUtils.getDefaultPointSet3D();
-    var line = new THREE.Vector3(1, 0, 0);
-
-    var shear_x = 0.5/*#float:0.1:-100:100*/;
-    var shear_y = 0/*#float:0.1:-100:100*/;
-    var shear_z = 0/*#float:0.1:-100:100*/;
 
     PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0x00ff00/*#color*/);
 
     var mat =  new THREE.Matrix4().set(
-        1, shear_x,       0,  0,
-        shear_y, 1,       0,  0,
-        0,       shear_z, 1,  0,
-        0,       0,        0,  1
+                1, 0.1/*#float:0.1:-100:100*/, 0/*#float:0.1:-100:100*/,  0,
+        0.1/*#float:0.1:-100:100*/,         1, 0/*#float:0.1:-100:100*/,  0,
+        0/*#float:0.1:-100:100*/, 0.1/*#float:0.1:-100:100*/,         1,  0,
+                0,         0,         0,  1
+    );
+
+    MatrixUtils.applyMatrix(points, mat);
+    PrintUtils.printPoints(points, 0xff0000/*#color*/); 
+}
+
+function homogenous_scale_r3() {
+    var points = PointUtils.getDefaultPointSet3D();
+
+    var scale_x = 0.5/*#float:0.1:-100:100*/;
+    var scale_y = 0.3/*#float:0.1:-100:100*/;
+    var scale_z = 0.6/*#float:0.1:-100:100*/;
+
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0x00ff00/*#color*/);
+
+    var mat =  new THREE.Matrix4().set(
+        scale_x,       0,         0, 0,
+        0,       scale_y,         0, 0,
+        0,              0, scale_z,  0,
+        0,              0,         1, 1
     );
 
     MatrixUtils.applyMatrix(points, mat);

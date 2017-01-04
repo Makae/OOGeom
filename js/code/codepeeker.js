@@ -6,7 +6,7 @@ var CodePeeker = (function(){
     this.codelinks = config.codelinks;
     this.container = config.container;
 
-    this.prepareCode(this.container);
+    this.prepareCode(this.container, config.custom_codelinks || []);
     this.registerHandlers(this.container);
   };
 
@@ -20,13 +20,21 @@ var CodePeeker = (function(){
     return this.callbacks[task](data);
   };
 
-  CodePeeker.prototype.prepareCode = function(element) {
+  CodePeeker.prototype.prepareCode = function(element, custom_codelinks) {
     var code = element.innerHTML;
-    for(var i = 0; i < this.codelinks.length; i++) {
-      var cl = this.codelinks[i];
- 
+
+    custom_codelinks = custom_codelinks || [];
+    for(var i = 0; i < this.codelinks.length; i++)
+      custom_codelinks.push(this.codelinks[i]);
+    
+
+
+    for(var i = 0; i < custom_codelinks.length; i++) {
+      var cl = custom_codelinks[i];
+      
       for(var n = 0; n < cl.patterns.length; n++) {
         var pattern = cl.patterns[n]; 
+
         code = code.replace(pattern, cl.replace);
       }
     }
@@ -95,7 +103,19 @@ var CodePeeker = (function(){
   CodePeeker.prototype.showPeek = function(idx, dimensions, identifier) {
     this.hidePeekById(identifier);
     var self = this;
-    
+
+    var custom_codelinks = [];
+    if(identifier.match(/[A-Za-z0-9_]+\.prototype\./)) {
+      var this_link = identifier.replace(/\.prototype\..*/, ".prototype");
+      custom_codelinks.push({
+                'id' : 'this-links',
+                'replace' : '<span data-codepeeker-fn="' + this_link + '.$2">$1$2</span>(',
+                'patterns' : [
+                    /(\<span[^\>]+\>this\<\/span\>\.)([a-zA-Z0-9_]+)\(/gi,
+                ]
+            });
+      }
+
     var code = this.loadCode(identifier);
     code = codehighlighter.highlightCode(code);
     code = codehighlighter.prepareCode(code);
@@ -114,7 +134,10 @@ var CodePeeker = (function(){
     var cp_wrapper_elm =  document.querySelector("[data-codepeeker-idx='" + idx + "']");
     var code_elm = cp_wrapper_elm.querySelector("code");
 
-    codehighlighter.addCodePeeker(code_elm);
+    var cfg = {
+      'custom_codelinks' : custom_codelinks
+    };
+    codehighlighter.addCodePeeker(code_elm, undefined, cfg);
     
     code_elm.className += " hljs";
 

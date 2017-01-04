@@ -37,11 +37,16 @@ var codehighlighter = (function() {
     return code.value;
   };
 
-  CodeHighlighter.prototype.addCodePeeker = function(element, codepeeker) {
+  CodeHighlighter.prototype.addCodePeeker = function(element, codepeeker, additional_config) {
     var codepeeker = typeof codepeeker != "undefined" ? codepeeker : true;
+    additional_config = additional_config || {};
+    
     if(codepeeker) { 
       var cfg = config.codepeeker;
+      for(var i in additional_config)
+        cfg[i] = additional_config[i];
       cfg.container = element;
+
       new CodePeeker(cfg);
     }
   }

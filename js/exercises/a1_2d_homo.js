@@ -15,27 +15,27 @@ function homogenous_example_matrix() {
 
 function homogenous_example_translation() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0xff0000/*#color*/);
-    var x = 25/*#float:5:10*/;
-    var y = 25/*#float:5*/;
+    var x = -25/*#float:5*/;
+    var y = -40/*#float:5*/;
+
+    var translation = new THREE.Vector2(x, y);
 
     var points = PointUtils.getDefaultPointSet();
     /* Neue R^3 Matrix für Berechnungen in R^2 */
     var matx = new THREE.Matrix3();
     matx.set(
-       1, 0, x,
+       1, 0, translation.x,
        0, 1, 0,
        0, 0, 1
     );
     MatrixUtils.applyMatrix(points, matx);
     PrintUtils.printPoints(points, 0x0000ff/*#color*/);
 
-    return;
-
     var points = PointUtils.getDefaultPointSet();
     /* Neue R^3 Matrix für Berechnungen in R^2 */
     var maty = new THREE.Matrix3().set(
        1, 0, 0,
-       0, 1, y,
+       0, 1, translation.y,
        0, 0, 1
     );
     MatrixUtils.applyMatrix(points, maty);
@@ -45,8 +45,8 @@ function homogenous_example_translation() {
     var points = PointUtils.getDefaultPointSet();
     /* Neue R^3 Matrix für Berechnungen in R^2 */
     var matxy = new THREE.Matrix3().set(
-       1, 0, x,
-       0, 1, y,
+       1, 0, translation.x,
+       0, 1, translation.y,
        0, 0, 1
     );
 
@@ -141,7 +141,6 @@ function homogenous_example_rotation_point() {
 
 function homogenous_mirror_axis() {
     var points = PointUtils.getDefaultPointSet();
-    var line = new THREE.Vector3(1, 0, 0);
 
     var mirror_x = -1/*#float:2:-1:1*/;
     var mirror_y = 1/*#float:2:-1:1*/;
@@ -162,6 +161,8 @@ function homogenous_mirror_axis() {
 function homogenous_mirror_origin_line() {
     var points = PointUtils.getDefaultPointSet();
     var declination = 2.5/*#float:0.1*/;
+
+    /* ThreeJS cant calculate the angleTo on a Vector2 */
     var line = new THREE.Vector3(1, declination, 0);
 
     PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
@@ -177,10 +178,9 @@ function homogenous_mirror_origin_line() {
 
 function homogenous_shear() {
     var points = PointUtils.getDefaultPointSet();
-    var line = new THREE.Vector3(1, 0, 0);
 
     var shear_x = 0.5/*#float:0.1:-100:100*/;
-    var shear_y = 0/*#float:0.1:-100:100*/;
+    var shear_y = 0.7/*#float:0.1:-100:100*/;
 
     PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
 
@@ -188,6 +188,24 @@ function homogenous_shear() {
         1, shear_x,  0,
         shear_y, 1,  0,
         0,       0,   1
+    );
+
+    MatrixUtils.applyMatrix(points, mat);
+    PrintUtils.printPoints(points, 0xff0000/*#color*/); 
+}
+
+function homogenous_scale() {
+    var points = PointUtils.getDefaultPointSet();
+
+    var scale_x = 0.5/*#float:0.1:-100:100*/;
+    var scale_y = 0.3/*#float:0.1:-100:100*/;
+
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet(), 0x00ff00/*#color*/);
+
+    var mat =  new THREE.Matrix3().set(
+        scale_x,   0, 0,
+        0,   scale_y, 0,
+        0,          0, 1
     );
 
     MatrixUtils.applyMatrix(points, mat);
@@ -214,10 +232,10 @@ function homogenous_perspective_two() {
     /* Visualize Projection */
     PrintUtils.printPoints([vanishing_point_x], 0xffffff/*#color*/);
     PrintUtils.printPoints([vanishing_point_y], 0xffffff/*#color*/);
-    PrintUtils.printLine(vanishing_point_x, new_points[0], 0xafafaf/*#color*/);
-    PrintUtils.printLine(vanishing_point_x, new_points[2], 0xafafaf/*#color*/);
-    PrintUtils.printLine(vanishing_point_y, new_points[0], 0xafafaf/*#color*/);
-    PrintUtils.printLine(vanishing_point_y, new_points[6], 0xafafaf/*#color*/);
+    PrintUtils.printLine(vanishing_point_x, new_points[0], 0xaf0000/*#color*/);
+    PrintUtils.printLine(vanishing_point_x, new_points[2], 0xaf0000/*#color*/);
+    PrintUtils.printLine(vanishing_point_y, new_points[0], 0x0000af/*#color*/);
+    PrintUtils.printLine(vanishing_point_y, new_points[6], 0x0000af/*#color*/);
 
     PrintUtils.printPoints(new_points, 0xff0000/*#color*/);
  }
