@@ -5,9 +5,9 @@
     <section>
             <p>Grundsätzlich kann man einen Punkt um eine der 3 Koordinatenachsen drehen. Dabei wird, wenn die Achse zum Beobachter zeigt, immer gegen den Uhrzeigersinn gedreht. Es gibt aber verschiedene Ansätze um dies zu tun.</p>
             <h4>Eulerwinkel</h4>
-            <p>In der Industrie und der Forschung werden Eulerwinkel eingesetzt, um die Rotationen um den Ursprungspunkt zu bestimmen. Die drei Winkel werden Gier- (z-Achse), Nick- (y-Achse), Roll-Winkel (x-Achse) genannt. Mit diesen Winkeln kann man zum Beispiel die Position und Rotation eines Flugzeuges in der Atmosphäre angeben.<br />Bei den Eulerwinkeln kann es aber zu einem sogenannten Gimbal-Lock kommen. Bei diesem verliehren wir eine Rotationsgrad, da wir eine Koordinatenachse um 90° auf eine andere Koordinatenachse gedreht haben.</p>
+            <p>In der Industrie werden oft Eulerwinkel eingesetzt um die Rotationen um den Ursprungspunkt zu bestimmen. Die drei Winkel werden Gier- (z-Achse), Nick- (y-Achse), Roll-Winkel (x-Achse) genannt. Mit diesen Winkeln kann man zum Beispiel die Position und Rotation eines Flugzeuges in der Atmosphäre angeben.<br />Bei den Eulerwinkeln kann es aber zu einem sogenannten Gimbal-Lock kommen. Bei diesem verliehren wir eine Rotationsgrad, da wir eine Koordinatenachse um 90° auf eine andere Koordinatenachse gedreht haben.</p>
             <h4>Quaternionen</h4>
-            <p>In der Computervision und Spieleindustrie sind Quaternionen sehr beliebt. Sie sind erst in den letzten 15 Jahren aufgekommen. Durch den geschickten einsatz von Imaginären Zahlenanteilen tritt das Gimbal-Lock-Problem nicht mehr auf</p>
+            <p>In der Computervision und Spieleindustrie sind Quaternionen sehr beliebt und sind erst in den letzten ~15 Jahren aufgekommen. Quaternione verwenden Imaginäre zahlen und umgehen das Gimbal-Lock-Problem.</p>
     </section>
 
     <header>
@@ -15,7 +15,7 @@
     </header>
     <section>
         <h4>Generelle Rotation um Koordinatenachsen</h4>
-        <p>Dieses Beispiel zeigt auf wie die Punkte um die Koordinatenachsen gedreht werden. Auffällig ist vor allem, dass die resultierenden (gelben) Punkte sich nicht rechtwinklig zu den Koordinatenachsen Y und Z bewegen wenn die dazugehörigen Winkel angepasst werden. Dies kommt daher, dass sich die Rotationen nach der ersten Matrixmultiplikationen auf das gedrehte Koordinatensystem beziehen und nicht auf das Ursprüngliche.</p>
+        <p>Dieses Beispiel zeigt auf, wie die Punkte um die Koordinatenachsen gedreht werden. Auffällig ist vor allem, dass die resultierenden (gelben) Punkte sich nicht rechtwinklig zu den Koordinatenachsen Y und Z bewegen wenn die dazugehörigen Winkel angepasst werden. Dies kommt daher, dass sich die Rotationen nach der ersten Matrixmultiplikationen auf das gedrehte Koordinatensystem beziehen und nicht auf das Ursprüngliche.</p>
         <div class="example_block_template" data-type="threejs-orto" data-fn="affine_example_rotation_orign_r3" data-config="camerapos:50,50,50" data-autoexec="1"></div>
         <h4>Eulerwinkel</h4>
         <div class="example_block_template" data-type="threejs-orto" data-fn="affine_rotate_euler_r3" data-config="camerapos:50,50,50" data-autoexec="1"></div>
@@ -25,18 +25,29 @@
         <h2>Rotation mit Homogenen Koordinaten</h2>
     </header>
     <section>
-        <h4>Generelle Rotation um Koordinatenachsen</h4>
+       <h4>Generelle Rotation um Koordinatenachsen</h4>
+       <p>Analog zu den Affinen Koordinaten aber mit einer 4x4-Matrix</p>
        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_example_rotation_orign_r3" data-config="camerapos:50,50,50" data-autoexec="1"></div>
        <h4>Euler</h4>
+       <p>Analog zu den Affinen Koordinaten aber mit einer 4x4-Matrix</p>
        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_rotate_euler_r3" data-config="camerapos:50,50,50" data-autoexec="1"></div>
     </section>
 
     <header>
-        <h2>Rotation mit einem Quaternion</h2>
+        <h2>Rotation mit (Dualen) Quaternion</h2>
     </header>
     <section>
        <h4>Quaternion</h4>
        <p>Ein Quaternion besteht aus 1 Realanteil und 3 Imaginäranteilen. Quaternione können gleich wie bei den Matrizen über Multiplikation zusammengeführt werden und in einer Operation auf einen Vektor angewendet werden.<br /> Auch hier können wir erkennen, dass die Rotationen nach der ersten nicht mehr rechtwinklig zur ursprünglichen Achse angewandt werden.</p>
         <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_example_rotation_quaternion_r3" data-config="camerapos:50,50,50" data-autoexec="1"></div>
+        <h4>Duales Quaterion</h4>
+       <p>Analog zum normalen Quaternion können wir auch ein Duales Quaternion verwenden. Ein Duales Quaternion besitzt einen reellen teil <b><i>r<b><i> für die Rotation und einen dualen Teil 𝜀<b><i>d</b></i> für die Translation. Dabei belassen wir den dualen Anteil 𝜀<b><i>d</b></i> auf dem Standardwert und setzen für den realen Teil die gewünschte Rotation:</p>
+        <pre class="example-long">
+DH = <b><i>r</i></b> + 𝜀<b><i>d</i></b>
+while <b><i>r</i></b>, <b><i>d</i></b> &isin; &#8474;   and  <b><i>t</i></b> is the desired translation and  <b><i>&phi;</i></b> is the desired rotation angle
+&#8474; = &lang;     real,   imag-i,   imag-j,   imag-k &rang;
+<b><i>r</i></b> = &lang; cos(&phi;/2), sin(&phi;/2), sin(&phi;/2), sin(&phi;/2) &rang;
+<b><i>d</i></b> = &lang;        0,        0,        0,        0 &rang;</pre>
+        <div class="example_block_template" data-type="threejs-orto" data-fn="homogenous_example_dual_quaternion_rotation_r3" data-config="camerapos:50,50,50" data-autoexec="1"></div>
     </section>
 </article>

@@ -1,11 +1,11 @@
 function homogenous_example_matrix() {
-    /* Alte, "affine" Matrix in R^2 für R^2 */
+    /* Alte, "affine" 2x2 Matrix für R^2 */
     var mat_affin = new THREE.Matrix2().set(
         Math.cos(angle), -Math.sin(angle),
         Math.sin(angle),  Math.cos(angle)
     );
     
-    /* Neue, homogene Matrix in R^3 für R^2 */
+    /* Neue, homogene Matrix 3x3 für R^2 */
     var mat_homogenous = new THREE.Matrix3().set(
         Math.cos(angle), -Math.sin(angle),  0,
         Math.sin(angle),  Math.cos(angle),  0,
@@ -21,7 +21,7 @@ function homogenous_example_translation() {
     var translation = new THREE.Vector2(x, y);
 
     var points = PointUtils.getDefaultPointSet();
-    /* Neue R^3 Matrix für Berechnungen in R^2 */
+    /* Neue 3x3 Matrix für Berechnungen in R^2 */
     var matx = new THREE.Matrix3();
     matx.set(
        1, 0, translation.x,
@@ -32,7 +32,7 @@ function homogenous_example_translation() {
     PrintUtils.printPoints(points, 0x0000ff/*#color*/);
 
     var points = PointUtils.getDefaultPointSet();
-    /* Neue R^3 Matrix für Berechnungen in R^2 */
+    /* Neue 3x3 Matrix für Berechnungen in R^2 */
     var maty = new THREE.Matrix3().set(
        1, 0, 0,
        0, 1, translation.y,
@@ -43,7 +43,7 @@ function homogenous_example_translation() {
 
 
     var points = PointUtils.getDefaultPointSet();
-    /* Neue R^3 Matrix für Berechnungen in R^2 */
+    /* Neue 3x3 Matrix für Berechnungen in R^2 */
     var matxy = new THREE.Matrix3().set(
        1, 0, translation.x,
        0, 1, translation.y,
@@ -63,7 +63,7 @@ function homogenous_example_rotation_orign() {
     var angle = 45/*#float:5:-360:360*/;
     angle = THREE.Math.degToRad(angle);
 
-    /* Neue R^3 Matrix für Berechnungen in R^2 */
+    /* Neue 3x3 Matrix für Berechnungen in R^2 */
     var new_mat = new THREE.Matrix3().set(
         Math.cos(angle), -Math.sin(angle),  0,
         Math.sin(angle),  Math.cos(angle),  0,
@@ -89,7 +89,7 @@ function homogenous_example_rotation_complex() {
 
     var angle = complex.getAngle();
     
-    /* Neue R^3 Matrix für Berechnungen in R^2 */
+    /* Neue 3x3 Matrix für Berechnungen in R^2 */
     var new_mat = new THREE.Matrix3().set(
         Math.cos(angle), -Math.sin(angle),  0,
         Math.sin(angle),  Math.cos(angle),  0,

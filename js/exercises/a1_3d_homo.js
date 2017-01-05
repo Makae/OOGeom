@@ -1,12 +1,12 @@
 function homogenous_example_matrix_r3() {
-    /* Alte, "affine" Matrix in R^3 für R^3 */
+    /* Alte, "affine" 3x3 Matrix für R^3 */
     var mat_affin_rot_y = new THREE.Matrix4().set(
         Math.cos(angle),  0,  Math.sin(angle), 
         0,                  1,  0,
         -Math.sin(angle), 0,  Math.cos(angle)
     );
     
-    /* Neue, homogene Matrix in R^4 für R^3 */
+    /* Neue, homogene Matrix 4x4 Matrix für R^3 */
     var mat_homogenous_rot_y = new THREE.Matrix4().set(
         Math.cos(angle),  0,  Math.sin(angle), 0,
         0,                 1,  0,                 0,
@@ -249,7 +249,30 @@ function homogenous_example_rotation_quaternion_r3() {
 function homogenous_example_dual_quaternion_rotation_r3() {
     PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
 
-    var axis = new THREE.Vector3(1/*#float:0.1*/, 1.5/*#float:0.1*/, 0/*#float:0.1*/);
+    /* Wählen wir eien Koordinatenachse so rotieren wir um diese */
+    var axis = new THREE.Vector3(1/*#float:1:0:1*/, 0/*#float:1:0:1*/, 0/*#float:1:0:1*/);
+    var angle = THREE.Math.degToRad(125/*#float:10*/);
+    
+    axis = axis.normalize();
+    
+    var dual_quat_r = DualQuatUtils.rotateAxis(axis, angle);
+
+    var points = PointUtils.getDefaultPointSet3D();
+    DualQuatUtils.applyQuaternion(points, dual_quat_r);
+    PrintUtils.printPoints(points, 0x00ff00/*#color*/);
+
+    PrintUtils.printLine(VectorUtils.ORIGIN, 
+        axis.multiplyScalar(500), 
+        0xc000c0/*#color*/
+    );
+
+}
+
+function homogenous_example_dual_quaternion_rotation_axis_r3() {
+    PrintUtils.printPoints(PointUtils.getDefaultPointSet3D(), 0xc0c0c0/*#color*/);
+
+    /* Wählen wir eien Koordinatenachse so rotieren wir um diese */
+    var axis = new THREE.Vector3(2/*#float:0.5*/, 1/*#float:0.5*/, 1/*#float:0.5*/);
     var angle = THREE.Math.degToRad(125/*#float:10*/);
     
     axis = axis.normalize();

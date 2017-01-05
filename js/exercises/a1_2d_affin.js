@@ -49,7 +49,7 @@ function affine_example_rotation_orign() {
 
     var angle = 45/*#float:5:-360:360*/;
     angle = THREE.Math.degToRad(angle);
-    /* Neue R^2 Matrix für Berechnungen */
+    /* Neue 2x2 Matrix für Berechnungen */
     var new_mat = new THREE.Matrix2().set(
         Math.cos(angle), -Math.sin(angle),
         Math.sin(angle),  Math.cos(angle)
