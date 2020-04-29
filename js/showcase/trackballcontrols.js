@@ -49,6 +49,9 @@ THREE.TrackballControls = function ( object, domElement ) {
 	var lastPosition = new THREE.Vector3();
 	var lastZoom = 1;
 
+	_this.isPerspectiveCamera = _this instanceof THREE.PerspectiveCamera;
+	_this.isOrthographicCamera = _this instanceof THREE.OrthographicCamera;
+	
 	var _state = STATE.NONE,
 		_keyState = STATE.NONE,
 
@@ -196,11 +199,11 @@ THREE.TrackballControls = function ( object, domElement ) {
 			factor = _touchZoomDistanceStart / _touchZoomDistanceEnd;
 			_touchZoomDistanceStart = _touchZoomDistanceEnd;
 
-			if ( _this.object.isPerspectiveCamera ) {
+			if ( _this.object.isPerspectiveCamera) {
 
 				_eye.multiplyScalar( factor );
 
-			} else if ( _this.object.isOrthographicCamera ) {
+			} else if ( _this.object.isOrthographicCamera) {
 
 				_this.object.zoom *= factor;
 				_this.object.updateProjectionMatrix();
