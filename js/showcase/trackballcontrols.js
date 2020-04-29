@@ -49,8 +49,8 @@ THREE.TrackballControls = function ( object, domElement ) {
 	var lastPosition = new THREE.Vector3();
 	var lastZoom = 1;
 
-	_this.isPerspectiveCamera = _this instanceof THREE.PerspectiveCamera;
-	_this.isOrthographicCamera = _this instanceof THREE.OrthographicCamera;
+	_this.isPerspectiveCamera = _this.object instanceof THREE.PerspectiveCamera;
+	_this.isOrthographicCamera = _this.object instanceof THREE.OrthographicCamera;
 	
 	var _state = STATE.NONE,
 		_keyState = STATE.NONE,
